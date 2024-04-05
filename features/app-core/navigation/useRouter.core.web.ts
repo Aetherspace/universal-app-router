@@ -1,12 +1,12 @@
-import { useRouter } from 'next/navigation'
-import { UniversalRouterMethods } from './useUniversalRouter.types'
-import { useUniversalRouteParams } from './useUniversalRouteParams'
+import { useRouter as useNextRouter } from 'next/navigation'
+import { UniversalRouterMethods } from './useRouter.types'
+import { useRouteParams } from './useRouteParams.core.native'
 
-/* --- useUniversalRouter() -------------------------------------------------------------------- */
+/* --- useRouter() -------------------------------------------------------------------- */
 
-export const useUniversalRouter = () => {
+export const useRouter = () => {
     // Hooks
-    const nextRouter = useRouter()
+    const nextRouter = useNextRouter()
 
     // -- Helpers --
 
