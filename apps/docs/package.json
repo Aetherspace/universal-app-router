@@ -1,0 +1,20 @@
+{
+  "name": "@app/docs",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.1.4",
+    "@types/mdx": "^2.0.12",
+    "next": "~14.0.4",
+    "nextra": "^2.13.4",
+    "nextra-theme-docs": "^2.13.4"
+  },
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "build": "next build",
+    "start": "next start -p 4000",
+    "env:local": "cp .env.example .env.local"
+  }
+}

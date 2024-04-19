@@ -1,0 +1,46 @@
+import { RemoteContent } from 'nextra/data'
+import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote'
+import { pluginsConfig } from '../../remote/pluginsConfig'
+
+export async function getStaticProps({ params }) {
+    
+    const pluginBranch = params.pluginBranchSlug?.join('/') || null
+    const branchNamePath = pluginsConfig.branches.find(filePath => filePath.replace(/\.mdx?/, '') === pluginBranch)
+    const branchName = branchNamePath?.replace(/\.mdx?/, '')?.replace?.('plugins/', '')
+    let pageMarkdown = '# 404 | Plugin Not Found\n\nThe page may not exist, or a remote MDX rate limit may have triggered'
+    try {
+    if (branchName) {
+        const githubApiBranchPRsUrl = `https://api.github.com/repos/Aetherspace/universal-app-router/pulls?head=Aetherspace:with/${branchName}`
+        const response = await fetch(githubApiBranchPRsUrl)
+        const branchPRs = await response.json()
+        const branchPR = branchPRs[0]
+        const branchPRMarkdown = branchPR.body
+        const branchPRTitle = branchPR.title
+        pageMarkdown = branchPRMarkdown.split('\n').reduce((acc, line) => {
+            let newLine = line
+            if (line.includes('<img ') && line.includes('">')) newLine = newLine.replace('">', '" />')
+            return acc + newLine + '\n'
+        }, `# \`${branchPRTitle}\`\n\n`)
+    }
+    } catch (error) {
+        if (!error) console.error(error)
+    }
+    const dynamicMDX = await buildDynamicMDX(pageMarkdown, { defaultShowCopyCode: true })
+    const dynamicMeta = await buildDynamicMeta()
+    return {
+        props: {
+            ...dynamicMeta,
+            ...dynamicMDX,
+        },
+        revalidate: false,
+    }
+}
+
+export const getStaticPaths = () => ({
+  fallback: 'blocking',
+  paths: pluginsConfig.branches.map(filePath => ({
+    params: { pluginBranchSlug: filePath.replace(/\.mdx?$/, '').split('/') }
+  }))
+})
+
+<RemoteContent />
