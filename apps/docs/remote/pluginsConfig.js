@@ -6,6 +6,7 @@ module.exports = {
             'mdx',
             'graphql-server-apollo',
             'react-query',
+            'mdx-docs-nextra'
         ],
         nestedMetaData: {
             "nativewind": {
@@ -27,6 +28,10 @@ module.exports = {
             "react-query": {
                 "title": "@tanstack/react-query",
                 "route": "/plugins/react-query"
+            },
+            "mdx-docs-nextra": {
+                "title": "MDX Docs (Nextra)",
+                "route": "/plugins/mdx-docs-nextra"
             }
         }
     }
