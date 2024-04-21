@@ -22,5 +22,9 @@
     "mdx-docs-nextra": {
         "title": "MDX Docs (Nextra)",
         "route": "/plugins/mdx-docs-nextra"
+    },
+    "turborepo": {
+        "title": "Turborepo",
+        "route": "/plugins/turborepo"
     }
 }

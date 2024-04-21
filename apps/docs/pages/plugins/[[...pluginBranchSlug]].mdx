@@ -31,7 +31,8 @@ export async function getStaticProps({ params }) {
         props: {
             ...dynamicMeta,
             ...dynamicMDX,
-        }
+        },
+        revalidate: 60, // 1 hour in seconds
     }
 }
 

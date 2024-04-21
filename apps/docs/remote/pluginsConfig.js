@@ -6,7 +6,8 @@ module.exports = {
             'mdx',
             'graphql-server-apollo',
             'react-query',
-            'mdx-docs-nextra'
+            'mdx-docs-nextra',
+            'turborepo'
         ],
         nestedMetaData: {
             "nativewind": {
@@ -32,6 +33,10 @@ module.exports = {
             "mdx-docs-nextra": {
                 "title": "MDX Docs (Nextra)",
                 "route": "/plugins/mdx-docs-nextra"
+            },
+            "turborepo": {
+                "title": "Turborepo",
+                "route": "/plugins/turborepo"
             }
         }
     }
