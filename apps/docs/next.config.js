@@ -1,8 +1,11 @@
 const { withExpo } = require("@expo/next-adapter");
-const withMDX = require("@next/mdx")();
+const withNextra = require("nextra")({
+  theme: "nextra-theme-docs",
+  themeConfig: "./docs.theme.js",
+});
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withMDX(withExpo({
+const nextConfig = withNextra(withExpo({
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: [

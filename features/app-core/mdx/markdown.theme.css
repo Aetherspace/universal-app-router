@@ -1,0 +1,62 @@
+
+/* --- Resets ---------------------------------------------------------------------------------- */
+
+ul {
+    padding-inline-start: 0px;
+    list-style: none;
+}
+
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Markdown theme -------------------------------------------------------------------------- */
+/* -i- duplicate from 'MarkdownTheme.tsx', keep them in sync */
+
+#markdown-theme h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+#markdown-theme h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+#markdown-theme p {
+    font-size: 16px;
+    margin-bottom: 16px;
+    line-height: 22px;
+}
+
+#markdown-theme ul {
+    padding: 0;
+}
+
+#markdown-theme li {
+    font-size: 16px;
+    margin-bottom: 16px;
+    line-height: 22px;
+}
+
+#markdown-theme blockquote {
+    border-width: 0;
+    border-style: solid;
+    border-left-color: lightgray;
+    border-left-width: 6px;
+    font-size: 16px;
+    padding-left: 16px;
+    padding-top: 4px;
+    line-height: 22px;
+}
+
+#markdown-theme a {
+    margin-top: 16px;
+    font-size: 16px;
+    color: blue;
+    text-align: center;
+    text-decoration: underline;
+}
