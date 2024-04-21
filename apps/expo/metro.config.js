@@ -21,5 +21,9 @@ config.resolver.nodeModulesPaths = [
 // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
 // config.resolver.disableHierarchicalLookup = true;
 
+// 4. Add .md & .mdx files to the file extensions Metro will handle
+config.resolver.sourceExts.push('md', 'mdx');
+config.transformer.babelTransformerPath = require.resolve('./transformer.js');
+
 // Export the modified config
 module.exports = config;
