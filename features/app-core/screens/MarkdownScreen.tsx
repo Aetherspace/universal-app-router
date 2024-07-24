@@ -1,42 +1,46 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, ScrollView, Dimensions } from 'react-native'
 import { Link } from '../navigation/Link' // @ts-ignore
 import ReadMe from '../mdx/readme.mdx'
 import MarkdownTheme from '../mdx/MarkdownTheme'
 
 /* --- <MarkdownScreen/> --------------------------------------------------------------------------- */
 
-const MarkdownScreen = () => {
-  return (
-    <View style={styles.container}>
-        <Link
-            href="/"
-            style={{ ...styles.backButton, ...styles.link, textDecorationLine: 'none' }}
-        >
-            {`< Back`}
-        </Link>
-        <View style={styles.markdownWrapper}>
-            <MarkdownTheme>
-                <ReadMe />
-            </MarkdownTheme>
+const MarkdownScreen = () => (
+    <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.mainPage}>
+            <Link
+                href="/"
+                style={{ ...styles.backButton, ...styles.link, textDecorationLine: 'none' }}
+            >
+                {`< Back`}
+            </Link>
+            <View style={styles.markdownWrapper}>
+                <MarkdownTheme>
+                    <ReadMe />
+                </MarkdownTheme>
+            </View>
         </View>
-    </View>
-  )
-}
+    </ScrollView>
+)
 
 /* --- Styles ---------------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+    },
+    mainPage: {
+        flex: 1,
         alignItems: 'center',
         padding: 24,
+        minWidth: Math.min(600, Dimensions.get('window').width)
     },
     markdownWrapper: {
         width: '100%',
         position: 'relative',
         alignItems: 'flex-start',
+        paddingTop: 50,
         maxWidth: 600,
     },
     backButton: {

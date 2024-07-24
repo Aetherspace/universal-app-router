@@ -60,3 +60,7 @@ blockquote {
     text-align: center;
     text-decoration: underline;
 }
+
+#markdown-theme img {
+    max-width: 100%;
+}

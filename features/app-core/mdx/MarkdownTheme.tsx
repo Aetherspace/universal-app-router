@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
+import { MarkdownImage } from './MarkdownImage'
 import { MDXStyles, MDXComponents } from '@bacons/mdx'
 import { Link } from '../navigation/Link'
 import './markdown.theme.css' // Duplicate of the React-Native styles from this file
@@ -14,7 +15,7 @@ type MarkdownScreenProps = {
 
 const MarkdownTheme = ({ children }: MarkdownScreenProps) => {
   return (
-        <View nativeID="markdown-theme">
+        <View id="markdown-theme">
             <MDXStyles
                 h1={styles.h1}
                 h2={styles.h2}
@@ -23,6 +24,7 @@ const MarkdownTheme = ({ children }: MarkdownScreenProps) => {
                 li={styles.li}
                 blockquote={styles.blockquote}
                 a={styles.link}
+                img={styles.img}
             >
                 <MDXComponents
                     h1={(props) => <Text {...props} style={{ ...styles.h1 }} />}
@@ -32,6 +34,7 @@ const MarkdownTheme = ({ children }: MarkdownScreenProps) => {
                     li={(props) => <Text {...props} style={{ ...styles.li }} />}
                     blockquote={(props) => <View {...props} style={{ ...styles.blockquote }} />} // prettier-ignore
                     a={(props) => <Link {...props} style={{ ...styles.link }} />}
+                    img={(props) => <MarkdownImage {...props} />}
                 >
                     {children}
                 </MDXComponents>
@@ -83,6 +86,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         textDecorationLine: 'underline',
     },
+    img: {
+        maxWidth: '100%',
+        marginTop: 16,
+    }
 })
 
 /* --- Exports --------------------------------------------------------------------------------- */
