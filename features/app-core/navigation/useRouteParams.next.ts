@@ -1,5 +1,6 @@
 import type { useLocalSearchParams } from 'expo-router'
 import type { UniversalRouteScreenProps } from './useRouteParams.types'
+import type { useLocalSearchParams } from 'expo-router'
 
 /** --- useRouteParams() ----------------------------------------------------------------------- */
 /** -i- Gets the route search and query params on both web and mobile */
