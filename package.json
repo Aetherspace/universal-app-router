@@ -11,11 +11,12 @@
     "node": ">=18.19.1"
   },
   "overrides": {
+    "graphql": "16.8.1",
     "next": "~14.0.4"
   },
   "scripts": {
     "dev": "npm run dev:web & npm run dev:mobile",
-    "dev:web": "npm -w @app/next run dev",
+    "dev:web": "npm -w @app/core run build:schema && npm -w @app/next run dev",
     "dev:mobile": "npm -w @app/expo run dev",
     "android": "npm -w @app/expo run android",
     "ios": "npm -w @app/expo run ios",
@@ -23,5 +24,8 @@
     "build": "npm -w @app/next run build",
     "add-dependencies": "npm -w @app/expo run add-dependencies",
     "env:local": "npm -w @app/next run env:local & npm -w @app/expo run env:local"
+  },
+  "devDependencies": {
+    "@0no-co/graphqlsp": "^1.9.1"
   }
 }
