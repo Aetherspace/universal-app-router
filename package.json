@@ -11,17 +11,24 @@
     "node": ">=18.19.1"
   },
   "overrides": {
-    "next": "~14.0.4"
+    "next": "~14.0.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.48"
   },
   "scripts": {
     "dev": "npm run dev:web & npm run dev:mobile",
     "dev:web": "npm -w @app/next run dev",
     "dev:mobile": "npm -w @app/expo run dev",
+    "dev:docs": "npm -w @app/docs run dev",
+    "dev:all": "npm run dev:web & npm run dev:mobile & npm run dev:docs",
     "android": "npm -w @app/expo run android",
     "ios": "npm -w @app/expo run ios",
     "expo:web": "npm -w @app/expo run web",
     "build": "npm -w @app/next run build",
+    "build:docs": "npm -w @app/docs run build",
     "add-dependencies": "npm -w @app/expo run add-dependencies",
-    "env:local": "npm -w @app/next run env:local & npm -w @app/expo run env:local"
+    "env:local": "npm -w @app/next run env:local & npm -w @app/expo run env:local",
+    "postinstall": "npx patch-package"
   }
 }

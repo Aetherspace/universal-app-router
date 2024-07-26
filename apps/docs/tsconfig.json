@@ -1,0 +1,12 @@
+{
+    "extends": "@app/core/tsconfig",
+    "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mdx",
+        ".next/types/**/*.ts",
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+}
