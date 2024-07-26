@@ -7,7 +7,8 @@ module.exports = {
             'graphql-server-apollo',
             'react-query',
             'mdx-docs-nextra',
-            'turborepo'
+            'turborepo',
+            'green-stack'
         ],
         nestedMetaData: {
             "nativewind": {
@@ -27,7 +28,7 @@ module.exports = {
                 "route": "/plugins/graphql-server-apollo"
             },
             "react-query": {
-                "title": "@tanstack/react-query",
+                "title": "React Query",
                 "route": "/plugins/react-query"
             },
             "mdx-docs-nextra": {
@@ -37,6 +38,10 @@ module.exports = {
             "turborepo": {
                 "title": "Turborepo",
                 "route": "/plugins/turborepo"
+            },
+            "green-stack": {
+                "title": "GREEN stack",
+                "route": "/plugins/green-stack"
             }
         }
     }

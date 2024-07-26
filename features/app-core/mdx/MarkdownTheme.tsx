@@ -7,13 +7,13 @@ import './markdown.theme.css' // Duplicate of the React-Native styles from this 
 
 /* --- Types -------------------------------------------------------------------------------------- */
 
-type MarkdownScreenProps = {
+type MarkdownThemeProps = {
     children: React.ReactNode
 }
 
 /* --- <MarkdownTheme/> --------------------------------------------------------------------------- */
 
-const MarkdownTheme = ({ children }: MarkdownScreenProps) => {
+const MarkdownTheme = ({ children }: MarkdownThemeProps) => {
   return (
         <View id="markdown-theme">
             <MDXStyles
