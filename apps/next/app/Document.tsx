@@ -27,7 +27,7 @@ const Document = (props: { children: React.ReactNode }) => {
       </head>
       <body>
         <UniversalRootLayout>
-          {children}
+          <main className="flex min-w-screen min-h-screen">{children}</main>
         </UniversalRootLayout>
       </body>
     </html>
