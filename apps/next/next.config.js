@@ -1,7 +1,8 @@
 const { withExpo } = require("@expo/next-adapter");
+const withMDX = require("@next/mdx")();
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withExpo({
+const mainNextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: [
@@ -9,8 +10,12 @@ const nextConfig = withExpo({
     "react-native-web",
     "expo",
     "nativewind",
+    "@bacons/mdx",
+    "@bacons/react-views",
+    "@expo/html-elements",
     // Add more React Native / Expo packages here...
   ],
+  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -25,6 +30,11 @@ const nextConfig = withExpo({
       }
     ]
   }
-});
+}
+
+/** @type {import('next').NextConfig} */
+const nextConfig = withMDX(withExpo(mainNextConfig));
 
 module.exports = nextConfig;
+
+module.exports.mainNextConfig = mainNextConfig;

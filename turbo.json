@@ -1,5 +1,5 @@
 {
-    "$schema": "https://turbo.build/schema.json",
+    "$schema": "https://turbo.build/schema.v1.json",
     "pipeline": {
         "build": {
             "dependsOn": ["@green-stack/core#build:schema"],
@@ -16,6 +16,14 @@
         },
         "@app/expo#dev": {
             "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/docs#dev": {
+            "cache": false
+        },
+        "@app/docs#build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "outputs": [".next/**", "!.next/cache/**"],
             "cache": false
         },
         "android": {

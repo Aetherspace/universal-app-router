@@ -12,16 +12,23 @@
   },
   "overrides": {
     "graphql": "16.8.1",
-    "next": "~14.0.4"
+    "next": "~14.0.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.48"
   },
   "scripts": {
-    "dev": "npx turbo run dev",
+    "dev": "npm run dev:apps",
+    "dev:apps": "npx turbo run @app/next#dev @app/expo#dev",
     "dev:web": "npx turbo run @app/next#dev",
     "dev:mobile": "npx turbo run @app/expo#dev",
+    "dev:docs": "npx turbo run @app/docs#dev",
+    "dev:all": "npx turbo run @app/next#dev @app/expo#dev @app/docs#dev",
     "android": "npx turbo run android",
     "ios": "npx turbo run ios",
     "expo:web": "npx turbo run @app/expo#web",
     "build": "npx turbo run build",
+    "build:docs": "npx turbo run @app/docs#build",
     "build:schema": "npx turbo run @green-stack/core#build:schema",
     "check:workspaces": "npx turbo run @green-stack/core#check:workspaces",
     "check:workspaces:fix": "FIX_MODE=true npx turbo run @green-stack/core#check:workspaces",
@@ -36,7 +43,8 @@
     "gen": "npx turbo gen",
     "turbo:login": "npx turbo login",
     "turbo:link": "npx turbo link",
-    "turbo:unlink": "npx turbo unlink"
+    "turbo:unlink": "npx turbo unlink",
+    "postinstall": "npx patch-package"
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.9.1",
