@@ -22,6 +22,10 @@ export default {
         link: 'https://github.com/Aetherspace/universal-app-router',
         title: 'Universal Base Starter - FullProduct.dev',
     },
+    banner: {
+        key: 'beta-disclaimer',
+        text: <span><strong>FullProduct.dev</strong> is still in <strong>Beta</strong>. 🚧 Official release coming in october ⏳</span>,
+    },
     footer: {
         text: <span>Need a <strong>Full-Product</strong> / Universal App Setup? 🚀 Check out <a href="https://codinsonn.dev" target="_blank" style={{ ...styles.tagLink, fontWeight: 'bold' }}>FullProduct.dev</a> by <a href="https://codinsonn.dev" target="_blank" style={styles.tagLink}>Thorr ⚡️ codinsonn</a></span>
     },
