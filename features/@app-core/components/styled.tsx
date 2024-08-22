@@ -1,6 +1,11 @@
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'
 import { styled } from 'nativewind'
-import { Text as RNText, View as RNView, ScrollView as RNScrollView } from 'react-native'
+import {
+    Text as RNText,
+    View as RNView,
+    TouchableOpacity as RNTouchableOpacity,
+    Pressable as RNPressable,
+} from 'react-native'
 import { Link as UniversalLink } from '@green-stack/navigation/Link'
 import { UniversalLinkProps } from '@green-stack/navigation/Link.types'
 import { Image as UniversalImage } from '@green-stack/components/Image'
@@ -10,6 +15,9 @@ import { Image as UniversalImage } from '@green-stack/components/Image'
 export const View = styled(RNView, '')
 export const Text = styled(RNText, '')
 export const Image = styled(UniversalImage, '')
+
+export const TouchableOpacity = styled(RNTouchableOpacity, '')
+export const Pressable = styled(RNPressable, '')
 
 /* --- Typography ------------------------------------------------------------------------------ */
 

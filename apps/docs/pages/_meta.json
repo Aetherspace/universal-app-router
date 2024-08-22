@@ -1,4 +1,28 @@
 {
+    "-- Universal Base Starter": {
+        "type": "separator",
+        "title": "Universal Base Starter"
+    },
     "index": "Introduction",
-    "plugins": "Plugin Branches"
+    "plugins": "Plugin Branches",
+    "-- FullProduct.dev ⚡️": {
+        "type": "separator",
+        "title": "FullProduct.dev ⚡️ Upgrade"
+    },
+    "quickstart": {
+        "title": "Quickstart",
+        "route": "/quickstart"
+    },
+    "core-concepts": {
+        "title": "Core Concepts",
+        "route": "/core-concepts"
+    },
+    "project-structure": {
+        "title": "Project Structure",
+        "route": "/project-structure"
+    },
+    "single-sources-of-truth": {
+        "title": "Single Sources of Truth",
+        "route": "/single-sources-of-truth"
+    }
 }

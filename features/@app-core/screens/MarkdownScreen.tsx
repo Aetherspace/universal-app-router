@@ -8,14 +8,14 @@ import BackButton from '../components/BackButton'
 /* --- <MarkdownScreen/> --------------------------------------------------------------------------- */
 
 const MarkdownScreen = () => (
-    <ScrollView contentContainerStyle={styles.container}>
-        <View className="flex flex-1 justify-center items-center bg-white">
+    <ScrollView>
+        <View className="flex flex-col justify-center items-center bg-white">
             <BackButton
                 backLink="/subpages/Universal%20Nav"
                 color="#333333"
             />
-            <View className="h-20 ios:h-40 android:h-40" />
-            <View className="relative w-full items-start px-4 max-w-[600px]">
+            <View className="h-20 ios:h-24 android:h-24" />
+            <View className="relative flex flex-col w-full items-start px-4 max-w-[600px]">
                 <MarkdownTheme>
                     <ReadMe />
                 </MarkdownTheme>
@@ -24,20 +24,6 @@ const MarkdownScreen = () => (
         </View>
     </ScrollView>
 )
-
-/* --- Styles ---------------------------------------------------------------------------------- */
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    mainPage: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 24,
-        minWidth: Math.min(600, Dimensions.get('window').width)
-    },
-})
 
 /* --- Exports --------------------------------------------------------------------------------- */
 

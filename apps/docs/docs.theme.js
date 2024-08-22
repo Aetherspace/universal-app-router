@@ -29,7 +29,7 @@ export default {
     sidebar: {
         autoCollapse: true,
         defaultMenuCollapseLevel: 2,
-        toggleButton: true,  
+        toggleButton: true,
     },
     useNextSeoProps() {
         const { asPath } = useRouter()

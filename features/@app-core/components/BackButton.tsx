@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Link } from '../components/styled'
+import { View, Text, Link, TouchableOpacity } from '../components/styled'
 import { useRouter } from '@green-stack/navigation/useRouter'
 import { ArrowLeftFilled } from '../icons/ArrowLeftFilled'
 import { schema, z } from '@green-stack/schemas'
@@ -7,7 +7,7 @@ import { schema, z } from '@green-stack/schemas'
 /* --- Props ----------------------------------------------------------------------------------- */
 
 const BackButtonProps = schema('BackButtonProps', {
-  color: z.string().optional(),
+  color: z.string().default('#FFFFFF'),
   backLink: z.string().default('/'),
 })
 
@@ -24,27 +24,38 @@ const BackButton = (props: BackButtonProps) => {
 
   // Vars
   const showBackButton = canGoBack()
-  const textColor = color ? `text-[${color}]` : 'text-white'
+
+  // -- Prerender --
+
+  const innerBackButton = (
+    <View className="flex flex-row p-4 items-center">
+      <ArrowLeftFilled fill={color} size={18} />
+      <View className="w-[5px]" />
+      <Text
+        className={`text-lg text-[${color}]`}
+        style={{ color }}
+      >
+        {`Back`}
+      </Text>
+    </View>
+  )
 
   // -- Render --
 
-  return (
-    <View className="flex flex-row absolute top-8 web:top-0 left-0 p-4 items-center">
-      <ArrowLeftFilled fill={color || '#FFFFFF'} size={18} />
-      <View className="w-[5px]" />
-      {showBackButton ? (
-        <Text
-          className={`text-lg ${textColor}`}
-          onPress={back}
-        >
-          {`Back`}
-        </Text>
-      ) : (
-        <Link href={backLink} className={`text-lg ${textColor} no-underline`}>
-          {`Back`}
-        </Link>
-      )}
-    </View>
+  return showBackButton ? (
+    <TouchableOpacity
+        className={`absolute top-8 web:top-0 left-0`} // @ts-ignore
+        onPress={back}
+      >
+        {innerBackButton}
+      </TouchableOpacity>
+  ) : (
+    <Link
+      className={`absolute top-8 web:top-0 left-0 text-[${color}] no-underline`}
+      href={backLink}
+    >
+      {innerBackButton}
+    </Link>
   )
 }
 

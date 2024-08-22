@@ -1,0 +1,269 @@
+import { Image } from '@app/components/styled'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# Core concepts
+
+Unlike most starterkits, this one is not just a collection of tools and libraries. It's a way of working that's been designed to be scalable from the start.
+
+This document will cover the core concepts that make this starterkit unique:
+
+- [Universal, from the start](#universal-from-the-start)
+- [Evergreen with the GREEN stack](##the-green-stack)
+- [Single Sources of Truth](#single-sources-of-truth)
+- [Design for copy-paste](#design-features-for-copy-paste)
+
+## Universal, from the start
+
+It's a lot harder to add a mobile app later, than it is to build for both web and the app stores from the start.
+
+There used to be good reasons not to do this, e.g. build a quick web MVP to validate with first. Luckily, in Next.js web-apps, as well as your Expo iOS and Android apps, using `react-native` for the UI layer will keep your code write-once for the most part.
+
+There's no extra time wasted writing your features twice or more, as about 90% of react-native styles translates well into web. All it takes is to start with react-native's `View` / `Text` / `Image` primitives which will get transformed to HTML dom nodes on web.
+
+### Build for how users use apps
+
+Aside from the technical aspect, let's think about our users for a second. Think about your own behaviour when interacting with software.
+
+You likely prefer using your smartphone for some apps over the desktop or web version. Then again, when you're at your desk in an office with your laptop already open, it's comes in handy to just type in a url and continue from there.
+
+Depending on the context, all potential users will have this preference for either web or mobile. But that no longer matters, because when building for all of those preferences at no extra cost, everyone is supported.
+
+### Capture on web, convert on mobile
+
+For startups and indie-hackers, this can be a huge competitive advantage. When you do market research and see comments on a competitor's social media asking for an Android of Web version, you can swoop in while they'll likely have to hire an entire other team to build these mobile apps first. Not to mention that with SEO you could show up where you users are already searching for your solution and get some nice organic traffic going. Customer acquisition costs when it comes to paid ads is often cheaper for web than mobile.
+
+With this in mind, why not show a quick interactive demo of the app right on your landingpage to tease them. Hopefully the urge to finish what's been started kicks in and they'll sign up for web first. Those who prefer mobile can install the app there. Meaning your app icon is now listed on your customers phone, taking up valuable screen real estate. On top, you'll have a stronger notification system available to retarget them and keep them engaged. This is why, in the e-commerce space, mobile often drives more sales than web does.
+
+### Universal (Deep)links
+
+Lastly, think about linkability. Expo-router is the first ever url based routing system for mobile. Deeplinking happens automatically. When people want to share anything from the app or the web version, the links will just work. They'll open the correct page or app screen. This will happen whether they've installed the app or not. This might allow hardcore users to become ambassadors of your project simply by them sharing your links.
+
+### More with less
+
+Even if you're just freelancing or working as a digital product studio, being able to deliver the same app on multiple platforms can just give you the advantage you need over your competitors. Either that, or you could charge a premium for the same amount of work. Your choice.
+
+> "Web vs. Native is dead. Web **and** Native is the future."  
+> - Evan Bacon, expo-router maintainer  
+
+## The GREEN stack
+
+### Take what works, make it better
+
+The best way to get both really good and really fast at what you do, is to keep using the same tools for a longer period of time. That means not reinventing the wheel for every new project you start. You want it to be evergreen.
+
+### Expo + Next.js for best DX / UX
+
+When building Universal Apps, the stack you choose should optimize for each device and platform you're trying to target. This is the main reason why this starterkit, tech stack and way of working focuses entirely on Next.js and Expo.
+
+These two meta frameworks are simply best in class when it comes to DX and UX optimizations for their target platforms. NextJS does all it can to set you up for success when it comes to essential SEO things like web-vitals.
+
+Expo has made starting, building, testing, deploying, submitting and updating react-native apps just as easy. Apps made with Expo also result in actual native apps, which have the performance and responsiveness that comes with using platform primitives, because that's what it renders under the hood.
+
+### React-Native for write-once UI
+
+The dream of React has always been "write-once, use anywhere". For now, react-native and react-native-web gets us 90% of the way there. In the future, things like react-strict-dom will likely bump that number up higher. Until then, pairing react-native with Nativewind or a full-blown universal styling system like Tamagui seems like the way to go.
+
+### Universal Data Fetching, with GraphQL
+
+GraphQL's ability to query data from the server, browser and mobile puts in the unique position to service all three platforms. Paired with react-query for optimizing the caching of fetches, and graphql.tada for automatically inferring types from the schema & query definitions, integrated with a universal router, and you have a really great universal initial data fetching solution that's type-safe end to end.
+
+This doesn't mean you only have GraphQL at your disposal. Resolvers in the GREEN stack are quite flexible. They're designed so that porting them to tRPC (through a plugin) and/or Next.js API routes is quick and easy to do. From experience, we're convinded GraphQL works best when used in an RPC manner instead of a REST-like graph you can explore each domain of your data with. Resolvers should typically be created in function of the UI they need data for.
+
+> Think of things like `getDashboardData()` vs. having to call (e.g.) 3 separate `Orders()`, `Products()`, `Transactions()` type resolvers to achieve the same thing.
+
+When used in this manner, which is very similar to tRPC actually, it remains the best for initial data-fetching. Things like mutating data on the other hand might be better served as a tRPC call or API route POST / PUT / DELETE request.
+
+Overall, the starterkit provides a way of working that can limit the amount of footguns and automate a bunch of the hard stuff when it comes to GraphQL.
+
+This includes things like:
+- auto-generating the entire schema from Zod definitions
+- auto-generating fetcher functions and react-query hooks from Zod definitions
+- keeping schema definitions a 1 on 1 match with your RPC / "command-like" resolver functions
+- universal `graphqlRequest()` util that auto infers types from Zod input & output schemas
+- ... or using graphql.tada for type inferrence when only requesting specific fields. 
+
+### Tech that's here to stay.
+
+To bring it all together, you could say the GREEN stack stands for GraphQL, Expo, React-Native, Next.js.
+
+> If you're wondering about the second "E", that's because Expo, with it's drive to bring react-native to web as well, is doing double the lifting.  
+
+> ...but in reality, the main goal of this stack is simply to stay 'Evergreen'
+
+These core technologies and the ecosystems around them create a stack that's both full-featured and flexible where needs be. They, and other essentials like Typescript, Tailwind and Zod, have gained enough popularity, adoption, frequent funding and community support they're very likely to be around for a long time.
+
+It's a stack you can stick with and evolve with to perfect your craft the longer you use it.
+
+## Single Sources of Truth
+
+Think of all the places you may need to (re)define the shape of data.
+
+- ✅ Types
+- ✅ Validation
+- ✅ DB models
+- ✅ Api inputs & outputs
+- ✅ Form state
+- ✅ Documentation
+- ✅ Mock & test data
+- ✅ GraphQL schema defs
+
+Quite an extensive list. Yet this is all describing the same data.
+
+Ideally, you could define the shape of your data just once, and have it be transformed to these other formats where necessary.
+
+### Toolbelt around Zod schemas
+
+Schema validation libraries like zod are actually uniquely positioned to serve as the base of transforming to other formats. Zod even has the design goal to be as compatible with Typescript as possible. There's almost nothing you can define in TS that you can't with Zod. Which is why you can infer super accurate types from your Zod schemas.
+
+With the hardest 2 of 8 total possible data (re)definition scenario's tackled, this starterkit comes with utils that helps convert Zod schemas to the others mentioned above:
+
+- [createSchemaModel()](TODO) - Create a DB model from  Zod schema
+- [createDataBridge()](TODO) - Combines zod input & output schemas for type-safe API bridges
+- [createResolver()](TODO) - Bind a zod bridge to a promise into a portable data resolver
+- [createNextRouteHandler()](TODO) - Transform your zod-powered resolver into a Next.js API route
+- [createGraphResolver()](TODO) - Transform your zod-powered resolver into a GraphQL Mutation or Query
+- [createGraphSchemaDefs()](TODO) - Auto generate the GraphQL SDL statements for your schema.graphql
+- [bridgedFetcher()](TODO) - Transform a zod bridge into a typed GraphQL fetcher
+- [getDocumentationProps()](TODO) - Combine zod prop defs with a React component for autogenerated docs
+
+### Generators - skip repetitive code
+
+This zod-based way of working, combined with the predictability of file-system based routing, can lead to some huge time saved when you automate the repetitive parts.
+
+### Documentation Drives Adoption
+
+Writing documentation is essential, but often requires time teams feel they don't have.
+
+Yet you'll eventually need them.
+
+Imagine being a few months or years down the road. The MVP released with success and it's now time to scale up the team to build all these features your users are requesting. Ideally, you can onboard these new devs rather quickly so they can start adding value sooner, and not require as much mentoring from senior developers.
+
+When you’re a startup or scaling, both docs and onboarding are not necessarily the thing you’d want to "lose" time on early on. Which is why, at least at the start:
+
+> The best docs are the ones you don't have to write yourself.
+
+This is where MDX and using Zod schemas as single sources of truth are a great match. Using the Starterkit's `with/automatic-docgen` plugin, your components and API's will document themselves.
+
+How? By reading the example & default values of you component's Zod schema and generating an MDX file. This file will then render the component and provide a table with prop names, descriptions, nullability and interactive controls you can preview the different props with.
+
+> Think of it like Storybook, but automated and built into your workflow.
+
+More about this pattern in the [Single Sources of Truth](TODO) and [Automations](TODO) docs.
+
+## Design features for copy-paste
+
+What tools like Tailwind and Shad-CN have done for copy-pasting components, we aim to replicate for entire features.
+
+That includes the UI, hooks, logic, resolvers, API's, zod schemas, db models, fetchers, utils and more.
+
+### Portable Workspace Folder Structure
+
+The large majority of project structures don't lean themseves to copy-pasting a single folder between projects in order to reuse a feature.
+
+This often stems from grouping on the wrong level, such as a front-end vs. back-end split.
+
+It does become possible once you start grouping code together on the feature level, as a reusable workspace:
+
+```shell
+features/@some-feature
+
+ └── /schemas/... # <- Single sources of truth
+ └── /models/... # <- Reuses schemas
+ └── /resolvers/... # <- Reuses models & schemas
+
+ └── /components/...
+ └── /screens/... # <- Reuses components
+ └── /routes/... # <- Reuses screens
+     └── /api/... # <- Reuses resolvers
+
+ └── /assets/...
+ └── /icons/... # <- e.g. svg components
+ └── /constants/...
+ └── /utils/...
+```
+
+### Git based plugins you can learn from
+
+> "The best way to learn a new codebase is in the Pull Requests." - Theo Browne, @t3dotgg
+
+[![Screenshot of list of Plugin Branches](https://github.com/user-attachments/assets/f2d4d836-c2ad-4249-bc53-de2ab7d5aac1)](https://github.com/Aetherspace/universal-app-router/pulls)
+
+The best plugin system is one that's close to a workflow you're already used to.
+
+Github PR's and git branches are typically better for a number of reasons:
+
+- ✅ Inspectable diff you can review with a team
+- ✅ Able to check out and test first
+- ✅ Optionally, add your own edits before merging
+
+Finally, PR based plugins solve common issues with other templates:
+
+- ✅ Pick and choose your own preferred tech stack
+
+### Workspace Drivers - Pick your own DB / Auth / Mail / ...
+
+Drivers are a way to abstract away the specific implementation of a feature, like a database or authentication system. This allows you to switch between different implementations without changing the rest of your code.
+
+Typically, drivers are class based. However, we've found a different way of providing a familiar interface, while still providing a familiar way of working.
+
+The key is defining drivers as workspace packages:
+
+```tsx
+// Instead of using specific imports from a package...
+import { signIn } from '@clerk/clerk-expo'
+```
+
+`⬇⬇⬇`
+
+```tsx
+// You can (optionally) import and use a familiar API from a driver workspace:
+import { signIn } from '@auth/driver'
+
+// OR, when mixing solutions, import from multiple drivers:
+import { users } from '@db/mongoose'
+import { settings } from '@db/airtable'
+```
+
+`appConfig.ts`
+
+```ts
+export const appConfig = {
+
+    // Here's how you'd set the main driver to be used:
+    drivers: createDriverConfig({
+        db: DRIVER_OPTIONS.db.mockDB, // -> use as '@db/driver'
+        auth: DRIVER_OPTIONS.auth.clerk // -> @auth/driver
+        mail: DRIVER_OPTIONS.email.resend // -> @mail/driver
+    }),
+
+} as const
+```
+
+> This type of driver use is fully optional, just like most of the suggested ways of working.
+
+> However, you might find it difficult to keep features and workspaces as easily copy-pasteable without these kinds of abstractions.
+
+Drivers and plugins within the Starterkit's way of working have been designed to:
+- Use Zod for validating familiar API across implementations/options
+- Use Zod for providing both types and schemas for said plugin
+- Help keep features as copy-pasteable as possible
+
+## Start scalable, without the effort
+
+With these core-concepts combined, we believe we can provide Typescript and React devs with a really powerful way of working that is at all times:
+
+- Opinionated yet flexible
+- Built for maximum code reuse
+- Universal, write-once, reach any device
+- Helping you easily onboard and scale up the team
+- A huge time-saver at both the start and during the project
+
+All without having to spend the time figuring all that out yourself.
+
+If you're ready to dive deeper into these topics, check out the rest of the docs.

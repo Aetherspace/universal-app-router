@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { MarkdownImage } from './MarkdownImage'
 import { MDXStyles, MDXComponents } from '@bacons/mdx'
-import { Link } from '../components/styled'
+import { Link, View, Text } from '../components/styled'
 import './markdown.theme.css' // Duplicate of the React-Native styles from this file
 
 /* --- Types -------------------------------------------------------------------------------------- */
@@ -15,7 +15,7 @@ type MarkdownThemeProps = {
 
 const MarkdownTheme = ({ children }: MarkdownThemeProps) => {
   return (
-        <View id="markdown-theme">
+        <View id="markdown-theme" className="flex flex-col flex-grow flex-shrink">
             <MDXStyles
                 h1={styles.h1}
                 h2={styles.h2}
@@ -85,6 +85,8 @@ const styles = StyleSheet.create({
         color: 'blue',
         textAlign: 'center',
         textDecorationLine: 'underline',
+        maxWidth: '100%',
+        overflow: 'hidden',
     },
     img: {
         maxWidth: '100%',
