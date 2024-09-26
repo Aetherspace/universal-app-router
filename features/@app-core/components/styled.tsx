@@ -1,29 +1,47 @@
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../tailwind.config'
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'
-import { styled } from 'nativewind'
 import {
     Text as RNText,
     View as RNView,
-    TouchableOpacity as RNTouchableOpacity,
     Pressable as RNPressable,
+    ScrollView as RNScrollView,
+    KeyboardAvoidingView as RNKeyboardAvoidingView,
 } from 'react-native'
 import { Link as UniversalLink } from '@green-stack/navigation/Link'
 import { UniversalLinkProps } from '@green-stack/navigation/Link.types'
 import { Image as UniversalImage } from '@green-stack/components/Image'
+import { styled, cn, getThemeColor } from '@green-stack/styles'
+import { remapProps } from 'nativewind'
+
+/* --- Reexports ------------------------------------------------------------------------------- */
+
+export { styled, cn, getThemeColor }
+
+/* --- Theme ----------------------------------------------------------------------------------- */
+
+export const { theme } = resolveConfig(tailwindConfig)
 
 /* --- Primitives ------------------------------------------------------------------------------ */
 
 export const View = styled(RNView, '')
 export const Text = styled(RNText, '')
 export const Image = styled(UniversalImage, '')
-
-export const TouchableOpacity = styled(RNTouchableOpacity, '')
 export const Pressable = styled(RNPressable, '')
+
+/* --- React-Native ---------------------------------------------------------------------------- */
+
+export const ScrollView = remapProps(styled(RNScrollView), {
+    contentContainerClassName: 'contentContainerStyle',
+})
+
+export const KeyboardAvoidingView = styled(RNKeyboardAvoidingView, '')
 
 /* --- Typography ------------------------------------------------------------------------------ */
 
-export const H1 = styled(RNText, 'font-bold text-2xl text-primary-100')
-export const H2 = styled(RNText, 'font-bold text-xl text-primary-100')
-export const H3 = styled(RNText, 'font-bold text-lg text-primary-100')
+export const H1 = styled(RNText, 'font-bold text-3xl')
+export const H2 = styled(RNText, 'font-bold text-xl')
+export const H3 = styled(RNText, 'font-bold text-lg')
 
 export const P = styled(RNText, 'text-base')
 

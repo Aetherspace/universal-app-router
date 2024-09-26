@@ -60,9 +60,11 @@ export default function (plop: PlopTypes.NodePlopAPI) {
                             console.log('Opening files in VSCode...')
                             const targetPath = plop.getPlopfilePath().replace('/turbo/generators', '')
                             const absolutePaths = config.paths.map((p) => path.join(targetPath, p))
+                            const numFiles = absolutePaths.length
+                            const fileOrFiles = numFiles === 1 ? 'file' : 'files'
                             // Open files in VSCode
                             execSync(`code ${absolutePaths.join(' ')}`)
-                            resolve(`Opened ${absolutePaths.length} files in VSCode`)
+                            resolve(`Opened ${numFiles} ${fileOrFiles} in VSCode`)
                         } catch (error) {
                             console.error('Failed to open files in VSCode:', error)
                             reject(error)
@@ -76,12 +78,12 @@ export default function (plop: PlopTypes.NodePlopAPI) {
                 function (answers, config, plop: PlopTypes.NodePlopAPI) {
                     return new Promise((resolve, reject) => {
                         try {
-                            console.log("Running 'collect-resolvers' script from '@aetherspace' workspace...")
-                            execSync(`yarn workspace aetherspace run collect-resolvers`)
-                            resolve("Ran 'collect-resolvers' script from '@aetherspace' workspace")
+                            console.log("Running 'collect-resolvers' script from '@green-stack/core' workspace...")
+                            execSync(`npm -w @green-stack/core run collect-resolvers`)
+                            resolve("Ran 'collect-resolvers' script from '@green-stack/core' workspace")
                         } catch (error) {
                             console.error(
-                                "Failed to execute 'yarn workspace aetherspace run collect-resolvers':",
+                                "Failed to execute 'npm -w @green-stack/core run collect-resolvers':",
                                 error
                             )
                             reject(error)
@@ -95,11 +97,11 @@ export default function (plop: PlopTypes.NodePlopAPI) {
                 function (answers, config, plop: PlopTypes.NodePlopAPI) {
                     return new Promise((resolve, reject) => {
                         try {
-                            console.log("Running 'link-routes' script from '@aetherspace' workspace...")
-                            execSync(`yarn workspace aetherspace run link-routes`)
-                            resolve("Ran 'link-routes' script from '@aetherspace' workspace")
+                            console.log("Running 'link-routes' script from '@green-stack/core' workspace...")
+                            execSync(`npm -w @green-stack/core run link-routes`)
+                            resolve("Ran 'link-routes' script from '@green-stack/core' workspace")
                         } catch (error) {
-                            console.error("Failed to execute 'yarn workspace aetherspace run link-routes':", error)
+                            console.error("Failed to execute 'npm -w @green-stack/core run link-routes':", error)
                             reject(error)
                         }
                     })
@@ -111,9 +113,9 @@ export default function (plop: PlopTypes.NodePlopAPI) {
                 function (answers, config, plop: PlopTypes.NodePlopAPI) {
                     return new Promise((resolve, reject) => {
                         try {
-                            console.log("Running 'install' on workspace root")
+                            console.log("Running 'install' on monorepo root")
                             execSync(`npm install`)
-                            resolve("Ran 'install' on workspace root")
+                            resolve("Ran 'install' on monorepo root")
                         } catch (error) {
                             console.error("Failed to execute 'npm install':", error)
                             reject(error)

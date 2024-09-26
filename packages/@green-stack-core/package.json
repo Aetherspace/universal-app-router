@@ -4,8 +4,19 @@
     "private": true,
     "dependencies": {
         "@app/registries": "*",
+        "@happy-dom/global-registrator": "^15.0.0",
+        "@rn-primitives/checkbox": "^1.0.3",
+        "@rn-primitives/portal": "^1.0.3",
+        "@rn-primitives/radio-group": "^1.0.3",
+        "@rn-primitives/select": "^1.0.4",
+        "@rn-primitives/switch": "^1.0.3",
+        "@testing-library/jest-dom": "^6.4.8",
+        "@testing-library/react": "^16.0.0",
+        "clsx": "^2.1.1",
         "crypto-js": "^4.2.0",
         "dot-prop": "^9.0.0",
+        "react-native-reanimated": "^3.10.1",
+        "tailwind-merge": "^2.5.2",
         "zod": "^3.23.7"
     },
     "devDependencies": {
@@ -20,6 +31,7 @@
     "scripts": {
         "run:script": "tsx --tsconfig ./tsconfig.scripts.json ./run-script.js",
         "build:schema": "npm run run:script ./scripts/build-graphql-schema.ts",
+        "build:theme-colors": "npm run run:script ./scripts/build-theme-colors.ts",
         "check:workspaces": "npm run run:script ./scripts/check-workspaces.ts",
         "collect:resolvers": "npm run run:script ./scripts/collect-resolvers.ts",
         "collect:generators": "npm run run:script ./scripts/collect-generators.ts",

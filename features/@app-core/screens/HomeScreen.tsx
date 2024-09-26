@@ -1,10 +1,10 @@
 import React from 'react'
 import { ScrollView } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
 import { HydratedRouteProps, createQueryBridge } from '@green-stack/navigation'
-import { View, Link, Image, P, H1, H3, Text, H2 } from '../components/styled'
+import { Pressable, View, Link, Image, P, H1, H3, Text, H2, cn } from '../components/styled'
 import { healthCheckFetcher } from '../resolvers/healthCheck.query'
-import { ArrowRightFilled } from '../icons/ArrowRightFilled'
-import { isLargeTablet } from '../appConfig'
+import { Icon } from '@green-stack/components/Icon'
 
 /* --- Data Fetching --------------------------------------------------------------------------- */
 
@@ -35,37 +35,40 @@ const HomeScreen = (props: HomeScreenProps) => {
 
   return (
     <>
+      <StatusBar style="light" />
       <ScrollView
         contentContainerStyle={{ position: 'relative', minWidth: '100%', minHeight: '100%' }}
         style={{ backgroundColor: '#1e293b' }}
       >
         <View
-          className={[
+          className={cn(
             "flex flex-1 flex-col justify-between items-center bg-slate-800",
             "lg:p-24 lg:justify-start",
-          ].join(' ')}
+          )}
         >
 
-          <View className="hidden invisible lg:visible lg:flex lg:w-full lg:max-w-5xl h-14" accessibilityElementsHidden>
+          <View
+            className="hidden invisible lg:visible lg:flex lg:w-full lg:max-w-5xl h-14"
+            accessibilityElementsHidden
+          >
             <GettingStarted />
           </View>
 
           {/* Side Icons */}
 
           <View
-            className={[
+            className={cn(
               "hidden invisible flex-row top-28 w-screen max-w-5xl h-20 items-center justify-between",
               "lg:absolute lg:visible lg:flex lg:h-[90%] lg:top-0",
               "ios:lg:top-24", // -i- If you need platform specifc flags, e.g. iPad in this case
-            ].join(' ')}
+            )}
           >
             <View className="w-[57px] h-[98px] lg:w-[114px] lg:h-[197px]">
               <Image
                 src={require('../assets/automagic-api-gen-icons.png')}
                 alt="FullProduct.dev Starterkit Logo"
                 quality={100}
-                width="100%"
-                height="100%"
+                fill
               />
             </View>
             <View className="w-[81px] h-[116px] lg:w-[162px] lg:h-[233px]">
@@ -73,8 +76,7 @@ const HomeScreen = (props: HomeScreenProps) => {
                 src={require('../assets/cross-platform-icons.png')}
                 alt="FullProduct.dev Starterkit Logo"
                 quality={100}
-                width="100%"
-                height="100%"
+                fill
               />
             </View>
           </View>
@@ -82,11 +84,11 @@ const HomeScreen = (props: HomeScreenProps) => {
           {/* Logo & Tagline */}
 
           <View
-            className={[
+            className={cn(
               "flex flex-row absolute top-28 w-screen max-w-5xl h-20 items-center justify-center",
               "lg:h-[90%] lg:top-0 lg:max-w-[100%]",
               "ios:lg:top-24",
-            ].join(' ')}
+            )}
           >
             <Link href="https://fullproduct.dev" target="_blank" className="flex flex-row no-underline">
               <View className="w-20 h-20 lg:w-24 lg:h-24">
@@ -115,39 +117,41 @@ const HomeScreen = (props: HomeScreenProps) => {
           <View className="h-64" />
 
           <View
-            className={[
+            className={cn(
               "flex flex-col relative bottom-auto w-screen max-w-5xl items-center justify-center px-8",
               "lg:absolute lg:bottom-24 lg:flex-row lg:top-auto lg:items-start lg:px-0",
-            ].join(' ')}
+            )}
           >
             <InfoSection
               title="Docs 📚"
               summary="Documentation that grows as you build or paste app features"
-              href="https://universal-base-starter-docs.vercel.app/" // TODO: Update this link
+              href="https://universal-base-starter-docs.vercel.app/quickstart" // TODO: Update this link
             />
             <View className="w-0 h-8 lg:w-16 lg:h-0" />
             <InfoSection
               title="Concepts"
               summary="Discover a way of working that's portable, write-once and universal"
-              href="https://universal-base-starter-docs.vercel.app/" // TODO: Update this link
+              href="https://universal-base-starter-docs.vercel.app/core-concepts"
             />
             <View className="w-0 h-8 lg:w-16 lg:h-0" />
             <InfoSection
               title="Cross Nav"
               titleIcon={(
-                <ArrowRightFilled
+                <Icon
+                  name="ArrowRightFilled"
                   size={24}
-                  fill="#FFFFFF"
+                  color="white"
+                  className="text-white"
                 />
               )}
-              summary="Test universal navigation for Web & Mobile, sharing up to 90% UI code"
+              summary="Test universal navigation for Web & Mobile, and share up to 90% UI code"
               href="/subpages/Universal%20Nav"
             />
             <View className="w-0 h-8 lg:w-16 lg:h-0" />
             <InfoSection
               title="Codegen"
               summary="Build even faster with generators for Routes, APIs, GraphQL & more"
-              href="https://universal-base-starter-docs.vercel.app/" // TODO: Update this link
+              href="https://universal-base-starter-docs.vercel.app/quickstart" // TODO: Update this link
             />
           </View>
 
@@ -156,11 +160,11 @@ const HomeScreen = (props: HomeScreenProps) => {
           <View className="h-16 lg:h-0" />
 
           <View
-            className={[
+            className={cn(
               "flex flex-row relative w-screen max-w-5xl h-14 items-center justify-center",
               "lg:bottom-auto lg:absolute lg:justify-end",
               "ios:lg:top-24",
-            ].join(' ')}
+            )}
           >
             <Link
               className="flex flex-row items-center no-underline"
@@ -197,7 +201,7 @@ const HomeScreen = (props: HomeScreenProps) => {
 
       {/* Start from */}
 
-      <View className="flex lg:hidden absolute web:fixed top-0 w-screen max-w-5xl h-14">
+      <View className="flex lg:hidden absolute web:fixed top-0 w-screen h-14">
         <GettingStarted />
       </View>
       
@@ -209,26 +213,22 @@ const HomeScreen = (props: HomeScreenProps) => {
 
 const GettingStarted = () => (
   <View
-    className={[
-      "flex flex-1 flex-row absolute lg:max-w-5xl h-14 items-center justify-start",
-      "left-0 right-0",
-    ].join(' ')}
+    className={cn(
+      'flex flex-1 flex-row absolute h-14 items-center justify-start left-0 right-0',
+      'lg:ios:flex-col ios:lg:items-start',
+    )}
   >
     <P
-      className={[
-        "flex flex-1 absolute left-0 top-0 justify-center bg-slate-700 border-b border-solid border-gray-700 pb-4 pt-10 text-center text-sm text-gray-100",
-        "lg:relative lg:rounded-xl lg:border lg:bg-gray-800 lg:p-4 lg:text-lg",
-        "left-0 right-0 lg:flex-grow-0 lg:flex-row lg:flex-initial",
-      ].join(' ')}
-      style={isLargeTablet ? {
-        borderWidth: 1,
-        borderColor: '#374151',
-        borderRadius: 12
-      } : null}
+      className={cn(
+        'flex flex-1 right-0 absolute left-0 top-0 justify-center bg-slate-700 border-b border-solid border-gray-700 pb-4 pt-10 text-center text-sm text-gray-100',
+        'lg:flex-grow-1 lg:flex-shrink-1 lg:flex-row lg:flex-initial lg:relative lg:rounded-xl lg:border lg:bg-gray-800 lg:p-4 lg:pt-4 lg:text-lg',
+      )}
     >
-      <Text>
+      <Text className="flex">
         <Text>Start from </Text>
-        <Text className="font-bold">@app-core/screens/HomeScreen.tsx</Text>
+        <Text className="font-bold">@app/core</Text>
+        <Text>{` → `}</Text>
+        <Text className="font-bold">HomeScreen.tsx</Text>
       </Text>
     </P>
   </View>
@@ -239,19 +239,22 @@ const GettingStarted = () => (
 const InfoSection = (props: { title: string, titleIcon?: any, summary: string, href: string }) => (
   <View className="flex flex-col flex-1 w-full max-w-[420px]">
     <Link
-      className="flex flex-row items-center justify-center lg:justify-start text-center lg:text-left no-underline mb-2 lg:mb-4"
+      className="flex flex-row w-full items-center justify-center lg:justify-start text-center lg:text-left no-underline mb-2 lg:mb-4"
       href={props.href}
       target={props.href.includes('http') ? "_blank" : undefined}
+      asChild
     >
-      <H2 className="text-gray-100 text-2xl lg:text-3xl">
-        {props.title}
-      </H2>
-      {!!props.titleIcon && (
-        <>
-          <View className="w-2" />
-          {props.titleIcon}
-        </>
-      )}
+      <Pressable className="flex flex-row items-center justify-center">
+        <H2 className="text-gray-100 text-2xl lg:text-3xl">
+          {props.title}
+        </H2>
+        {!!props.titleIcon && (
+          <>
+            <View className="w-2" />
+            {props.titleIcon}
+          </>
+        )}
+      </Pressable>
     </Link>
     <P className="text-center lg:text-left text-lg text-gray-500">
       {props.summary}

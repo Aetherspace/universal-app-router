@@ -1,5 +1,5 @@
 import { UniversalRouteScreen } from '@green-stack/core/navigation/UniversalRouteScreen'
-import ImagesScreen from '../../screens/ImagesScreen'
+import ImagesScreen from '../../../screens/ImagesScreen'
 
 /* --- /images --------------------------------------------------------------------------------- */
 

@@ -1,7 +1,7 @@
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'
 import type { UniversalLinkProps } from './Link.types'
 import { Link as ExpoLink } from 'expo-router'
-import { parseNativeWindStyles } from '../styles/parseNativeWindStyles'
+import { parseNativewindStyles } from '../styles/parseNativewindStyles'
 
 /* --- <Link/> --------------------------------------------------------------------------------- */
 
@@ -14,18 +14,21 @@ export const Link = <
         href,
         params = {},
         style,
+        className,
         replace,
         onPress,
         target,
         asChild,
         push,
         testID,
-        nativeID,
         allowFontScaling,
         numberOfLines,
         maxFontSizeMultiplier,
         suppressHighlighting = true,
     } = props
+
+    // Vars
+    const nativeID = props.id || props.nativeID
 
     // -- Inject params? --
 
@@ -39,7 +42,7 @@ export const Link = <
 
     // -- Nativewind --
 
-    const { nativeWindStyles, restStyle } = parseNativeWindStyles(style)
+    const { nativeWindStyles, restStyle } = parseNativewindStyles(style)
     const finalStyle = { ...nativeWindStyles, ...restStyle }
 
     // -- Render --
@@ -48,6 +51,7 @@ export const Link = <
         <ExpoLink
             href={finalHref}
             style={finalStyle}
+            className={className}
             onPress={onPress}
             target={target}
             asChild={asChild}

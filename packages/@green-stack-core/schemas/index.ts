@@ -1,4 +1,6 @@
-import { z, ZodObject, ZodType } from 'zod'
+import { EnumLike, z, ZodObject, ZodType } from 'zod'
+import type { ComponentProps, JSX, JSXElementConstructor } from 'react'
+import { swapEntries } from '../utils/objectUtils'
 
 /* --- Constants ------------------------------------------------------------------------------- */
 
@@ -99,6 +101,16 @@ export type ZodSchema<S extends z.ZodRawShape = z.ZodRawShape> = z.ZodObject<S>
     | z.ZodDefault<z.ZodNullable<z.ZodObject<S>>>
     | z.ZodDefault<z.ZodOptional<z.ZodObject<S>>>
 
+export type ApplyDefaultsOptions = {
+    logErrors?: boolean,
+    stripUnknown?: boolean,
+}
+
+export type PropsOf<
+    C extends keyof JSX.IntrinsicElements | JSXElementConstructor<any$Unknown>,
+    Z extends z.ZodObject<z.ZodRawShape>,
+> = ComponentProps<C> & z.input<Z>
+
 /* --- Zod extensions -------------------------------------------------------------------------- */
 
 declare module 'zod' {
@@ -135,9 +147,11 @@ declare module 'zod' {
             mask: Mask
         ): z.ZodObject<Omit<T, keyof Mask>, UnknownKeys, Catchall>
 
-        applyDefaults<D extends Record<string, unknown> = Record<string, unknown>>(
+        applyDefaults<
+            D extends Partial<Output> & Record<string, any$Unknown>
+        >(
             data: D,
-            logErrors?: boolean
+            options?: ApplyDefaultsOptions
         ): D & Output
 
         // -- Deprecations --
@@ -247,8 +261,8 @@ if (!ZodType.prototype.metadata) {
         }
         // Enums
         if (zodType === 'ZodEnum') {
-            const _zodEnum = zodStruct as unknown as z.ZodEnum<any>
-            meta.schema = _zodEnum.options?.reduce((acc: Record<string, unknown>, value: any) => {
+            const _inputOptions = zodStruct as unknown as z.ZodEnum<any>
+            meta.schema = _inputOptions.options?.reduce((acc: Record<string, unknown>, value: any) => {
                 return { ...acc, [value]: value }
             }, {})
         }
@@ -365,18 +379,67 @@ if (!ZodType.prototype.metadata) {
         return this.omit(picks).nameSchema(schemaName)
     }
 
-    ZodObject.prototype.applyDefaults = function (data, logErrors = false) {
+    ZodObject.prototype.applyDefaults = function <
+        D extends Partial<(typeof thisSchema)['_type']> & Record<string, any$Unknown>
+    >(
+        data: D,
+        options: ApplyDefaultsOptions = {},
+    ) {
+        const { logErrors = false, stripUnknown = false } = options
         const thisSchema = this.extend({})
         const result = thisSchema.safeParse(data)
-        if (!result.success && logErrors) console.warn(JSON.stringify(result.error, null, 2)) // @ts-ignore
-        return { ...data, ...result.data } as D & (typeof thisSchema)['_type']
+        const introSpectionResult = thisSchema.introspect()
+        const defaultValues = Object.keys(introSpectionResult.schema!).reduce((acc, key) => {
+            const { defaultValue } = introSpectionResult.schema![key] as Metadata
+            const hasDefault = defaultValue !== undefined
+            return hasDefault ? { ...acc, [key]: defaultValue } : acc
+        }, {})
+        const values = { ...defaultValues, ...data, ...result.data } as (typeof thisSchema)['_type']
+        // Log errors if requested
+        if (!result.success && logErrors) console.warn(JSON.stringify(result.error, null, 2))
+        // Strip unknown keys if requested
+        if (stripUnknown) {
+            const validKeys = Object.keys(thisSchema.shape)
+            const validData = Object.fromEntries(Object.entries(values).filter(([key]) => validKeys.includes(key)))
+            return { ...validData } as D & (typeof thisSchema)['_type']
+        }
+        // @ts-ignore
+        return values as D & (typeof thisSchema)['_type']
     }
 }
 
-/* --- Schema Definitions ---------------------------------------------------------------------- */
-
+/** --- schema() ------------------------------------------------------------------------------- */
+/** -i- Similar to z.object(), but requires a name so it may serve as a single source of truth */
 export const schema = <S extends z.ZodRawShape>(name: string, shape: S) => {
     return z.object(shape).nameSchema(name)
+}
+
+/** --- inputOptions() --------------------------------------------------------------------------- */
+/** -i- Builds a zod enum from a read-only object keys, but ensures you can still use it as an actual enum
+ * @example const MyEnum = inputOptions({ key1: 'Some label', key2: '...' })
+ * 
+ * // 💡 Use .entries to get the original object with keys + labels
+ * MyEnum.entries // { key1: 'Some label', key2: '...' }
+ * 
+ * // 💡 Get auto-completion for the enum values / option keys
+ * MyEnum.key1 // => 'key1'
+ * MyEnum.enum.key1 // => 'key1' (alternatively)
+ * 
+ * // 💡 Retrieve list of options as a tuple with the .options property
+ * MyEnum.options // => ['key1', 'key2'] */
+export const inputOptions = <T extends Readonly<Record<string, string>>>(obj: T) => {
+    // Extract the keys from the object
+    type K = Exclude<keyof T, number | symbol>
+    // Create the enum from the keys only
+    const zEnum = z.enum(Object.keys(obj) as [K, ...K[]])
+    // Assign the entries to the enum so it can still be used as such
+    const reassigned = Object.keys(obj).reduce((acc, key) => {
+        return Object.assign(acc, { [key]: obj[key] })
+    }, zEnum)
+    // Return the enum with the entries
+    return Object.assign(reassigned, { entries: obj }) as typeof zEnum & { entries: T } & {
+        [K in keyof T]: T[K]
+    }
 }
 
 /* --- Reexports ------------------------------------------------------------------------------- */

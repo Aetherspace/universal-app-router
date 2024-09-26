@@ -11,11 +11,13 @@
     "node": ">=18.19.1"
   },
   "overrides": {
+    "fsevents": "2.3.2",
     "graphql": "16.8.1",
     "next": "~14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "@types/react": "18.2.48"
+    "react-native-reanimated": "3.10.1",
+    "@types/react": "18.2.79"
   },
   "scripts": {
     "dev": "npm run dev:apps",
@@ -27,9 +29,10 @@
     "android": "npx turbo run android",
     "ios": "npx turbo run ios",
     "expo:web": "npx turbo run @app/expo#web",
-    "build": "npx turbo run build",
+    "build": "node -v && npx turbo run build",
     "build:docs": "npx turbo run @app/docs#build",
     "build:schema": "npx turbo run @green-stack/core#build:schema",
+    "build:theme-colors": "npx turbo run @green-stack/core#build:theme-colors",
     "check:workspaces": "npx turbo run @green-stack/core#check:workspaces",
     "check:workspaces:fix": "FIX_MODE=true npx turbo run @green-stack/core#check:workspaces",
     "collect:generators": "npx turbo run @green-stack/core#collect:generators",

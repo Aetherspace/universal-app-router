@@ -2,7 +2,7 @@ import type { NextApiRequest, GetServerSidePropsContext } from 'next'
 import type { NextRequest } from 'next/server' // @ts-ignore
 import CryptoJS from 'crypto-js'
 import { appConfig } from '@app/config'
-import { normalizeObjectProps } from './objectUtils'
+import { parseUrlParamsObject } from './objectUtils'
 import { isEmpty, warnOnce } from './commonUtils'
 
 /* --- Types ----------------------------------------------------------------------------------- */
@@ -55,7 +55,7 @@ export const getApiParams = (keys: string | string[], apiSources: APISources) =>
 export const getUrlParams = (url: string) => {
     const queryString = url.split('?')[1] || ''
     const urlSearchParams = new URLSearchParams(queryString)
-    return normalizeObjectProps(Object.fromEntries(urlSearchParams))
+    return parseUrlParamsObject(Object.fromEntries(urlSearchParams))
 }
 
 /** --- fireGetAndForget() --------------------------------------------------------------------- */
@@ -111,17 +111,17 @@ export const createMiddlewareHeaderContext = async (
     // Set all extra headers first
     const requestHeaders = new Headers(req.headers)
     Object.keys(extraHeaders).forEach((key) => {
-      requestHeaders.set(key, extraHeaders[key])
+        requestHeaders.set(key, extraHeaders[key])
     })
     // Serialise context data and add signature?
     const shouldAddData = !!APP_SECRET && !isEmpty(data)
     if (shouldAddData) {
-      const serialisedData = JSON.stringify(data)
-      const signableString = `${serialisedData}:${APP_SECRET}`
-      const signature = createHmac(signableString, 'md5')
-      const dataWithSignature = { ...data, signature }
-      const signedHeaderContext = JSON.stringify(dataWithSignature)
-      requestHeaders.set('context', signedHeaderContext)
+        const serialisedData = JSON.stringify(data)
+        const signableString = `${serialisedData}:${APP_SECRET}`
+        const signature = createHmac(signableString, 'md5')
+        const dataWithSignature = { ...data, signature }
+        const signedHeaderContext = JSON.stringify(dataWithSignature)
+        requestHeaders.set('context', signedHeaderContext)
     }
     // Return updated headers
     return requestHeaders

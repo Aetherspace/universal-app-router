@@ -1,28 +1,36 @@
-import * as React from 'react'
-import Svg, { Path } from 'react-native-svg'
-import type { SvgProps } from 'react-native-svg'
+import { Svg, Path, z, iconProps, IconProps, getThemeColor } from '@green-stack/svg'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
-type IconProps = SvgProps & { fill?: string; stroke?: string; size?: number }
+export const ArrowLeftFilledProps = iconProps('ArrowLeftFilled', {
+    color: z.string().default(getThemeColor('--primary')),
+})
 
-/* --- <ArrowLeftFilled/> --------------------------------------------------------------------- */
+export type ArrowLeftFilledProps = IconProps<typeof ArrowLeftFilledProps>
 
-export const ArrowLeftFilled = ({ size = 24, fill = '#333333', ...svgProps }: IconProps) => (
-  <Svg width={size} height={size} fill="none" viewBox="0 0 24 24" {...svgProps}>
-    <Path
-      d="M10 6L4 12L10 18"
-      stroke={fill}
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <Path
-      d="M20 12H4"
-      stroke={fill}
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-)
+/* --- <ArrowLeftFilled/> ---------------------------------------------------------------------- */
+
+export const ArrowLeftFilled = (rawProps: ArrowLeftFilledProps) => {
+    // Props
+    const props = ArrowLeftFilledProps.applyDefaults(rawProps)
+    const color = ArrowLeftFilledProps.getIconColor(props)
+    // Render
+    return (
+        <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 24 24" {...props}>
+            <Path
+                d="M10 6L4 12L10 18"
+                stroke={color}
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <Path
+                d="M20 12H4"
+                stroke={color}
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </Svg>
+    )
+}

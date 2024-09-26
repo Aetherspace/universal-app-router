@@ -2,7 +2,8 @@ import type { ComponentProps } from 'react'
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'
 import type { UniversalLinkProps } from './Link.types'
 import NextLink from 'next/link'
-import { parseNativeWindStyles } from '../styles/parseNativeWindStyles'
+import { parseNativewindStyles } from '../styles/parseNativewindStyles'
+import { cn } from '../utils/styleUtils'
 
 /* --- <Link/> --------------------------------------------------------------------------------- */
 
@@ -27,6 +28,9 @@ export const Link = <
         as,
     } = props
 
+    // Vars
+    const nativeID = props.id || props.nativeID
+
     // -- Inject params? --
 
     const finalHref = Object.keys(params).reduce((acc, key) => {
@@ -39,7 +43,7 @@ export const Link = <
 
     // -- Nativewind --
 
-    const { nativeWindStyles, nativeWindClassName, restStyle } = parseNativeWindStyles(style)
+    const { nativeWindStyles, nativeWindClassName, restStyle } = parseNativewindStyles(style)
     const finalStyle = { ...nativeWindStyles, ...restStyle } as React.CSSProperties
 
     // -- Render --
@@ -47,7 +51,8 @@ export const Link = <
     return (
         <NextLink
             href={finalHref}
-            className={[className, nativeWindClassName].filter(Boolean).join(' ')}
+            id={nativeID}
+            className={cn(className, nativeWindClassName)}
             style={finalStyle as unknown as ComponentProps<typeof NextLink>['style']}
             onClick={onPress}
             target={target}

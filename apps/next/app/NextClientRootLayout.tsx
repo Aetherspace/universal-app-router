@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import UniversalAppProviders from '@app/screens/UniversalAppProviders'
-import { Image as NextContextImage } from '@green-stack/components/Image.next'
-import { Link as NextContextLink } from '@green-stack/navigation/Link.next'
+import { Image as NextContextImage } from '@green-stack/core/components/Image.next'
+import { Link as NextContextLink } from '@green-stack/core/navigation/Link.next'
 import { useRouter as useNextContextRouter } from '@green-stack/navigation/useRouter.next'
 import { useRouteParams as useNextRouteParams } from '@green-stack/navigation/useRouteParams.next'
 
@@ -26,15 +27,22 @@ const NextClientRootLayout = ({ children }: NextClientRootLayoutProps) => {
     // -- Render --
     
     return (
-        <UniversalAppProviders
-            contextImage={NextContextImage}
-            contextLink={NextContextLink}
-            contextRouter={nextContextRouter}
-            useContextRouteParams={useNextRouteParams}
-            isNext
+        <SafeAreaProvider
+            initialMetrics={{
+                frame: { x: 0, y: 0, width: 0, height: 0 },
+                insets: { top: 0, right: 0, bottom: 0, left: 0 },
+            }}
         >
-            {children}
-        </UniversalAppProviders>
+            <UniversalAppProviders
+                contextImage={NextContextImage}
+                contextLink={NextContextLink}
+                contextRouter={nextContextRouter}
+                useContextRouteParams={useNextRouteParams}
+                isNext
+            >
+                {children}
+            </UniversalAppProviders>
+        </SafeAreaProvider>
     )
 }
 
