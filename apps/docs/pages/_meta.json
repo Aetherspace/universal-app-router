@@ -10,19 +10,15 @@
         "title": "FullProduct.dev ⚡️ Upgrade"
     },
     "quickstart": {
-        "title": "Quickstart",
-        "route": "/quickstart"
+        "title": "Quickstart"
     },
     "core-concepts": {
-        "title": "Core Concepts",
-        "route": "/core-concepts"
+        "title": "Core Concepts"
     },
     "project-structure": {
-        "title": "Project Structure",
-        "route": "/project-structure"
+        "title": "Project Structure"
     },
     "single-sources-of-truth": {
-        "title": "Single Sources of Truth",
-        "route": "/single-sources-of-truth"
+        "title": "Single Sources of Truth"
     }
 }

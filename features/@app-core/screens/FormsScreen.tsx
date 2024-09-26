@@ -441,6 +441,7 @@ const FormsScreen = (props: TestForm) => {
                                         key={`projects-per-year-${formState.values.identifiesWith}`}
                                         placeholder="projects per year"
                                         className="mr-4"
+                                        textInputClassName="max-w-[130]"
                                         min={1}
                                         {...formState.getInputProps('projectsPerYear')}
                                     />

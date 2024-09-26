@@ -10,6 +10,6 @@ export const testableFeatures = [
     },
     {
         title: 'Test Markdown?',
-        link: '/markdown'
+        link: '/demos/markdown'
     }
 ]

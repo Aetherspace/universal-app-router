@@ -1,9 +1,9 @@
 const { withExpo } = require("@expo/next-adapter");
+const withMDX = require("@next/mdx")();
+
 const mainNextConfig = require("./next.config.base");
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withExpo(mainNextConfig);
+const nextConfig = withMDX(withExpo(mainNextConfig));
 
 module.exports = nextConfig;
-
-module.exports.mainNextConfig = mainNextConfig;

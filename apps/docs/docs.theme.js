@@ -20,7 +20,6 @@ export default {
     logo: <span><strong>FullProduct.dev</strong> ⚡️ Universal Base Starter</span>,
     project: {
         link: 'https://github.com/Aetherspace/universal-app-router',
-        title: 'Universal Base Starter - FullProduct.dev',
     },
     banner: {
         key: 'beta-disclaimer',
