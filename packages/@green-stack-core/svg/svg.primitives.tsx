@@ -1,5 +1,5 @@
 import * as RNSVG from 'react-native-svg'
-import { cssInterop } from 'nativewind'
+import { colorScheme, cssInterop } from 'nativewind'
 import { extractCssVar, getThemeColor, THEME_COLOR_KEYS } from '@green-stack/utils/styleUtils'
 import { z, schema } from '../schemas'
 
@@ -15,7 +15,9 @@ export const Svg = cssInterop(RNSVG.Svg, {
 // @ts-ignore
 export const Path = cssInterop(RNSVG.Path, {
     className: {
+        // @ts-ignore
         target: 'style',
+        // @ts-ignore
         nativeStyleToProp: { fill: true, color: true, stroke: true }
     }
 })
@@ -50,7 +52,7 @@ export const iconProps = <S extends z.ZodRawShape>(iconName: string, override?: 
         override || {}
     ) as z.ZodObject<typeof IconPropsBase['shape'] & S>
     // Utils
-    const getIconColor = (props: SvgProps & z.infer<typeof IconPropsBase>): string => {
+    const getIconColor = (props: SvgProps & z.infer<typeof IconPropsBase>, log = false): string => {
         const defaults = IconProps.applyDefaults(props as any$Todo)
         // Check for color in props, className transformed styles
         const extractColor = () => {
@@ -60,6 +62,7 @@ export const iconProps = <S extends z.ZodRawShape>(iconName: string, override?: 
             if (Array.isArray(props.styles) && props.styles?.[0]?.color) return props.styles[0].color
         }
         const color = extractColor()
+        // if (log) console.warn({ color, colorScheme: colorScheme.get() })
         // Transform theme colors
         if (color.includes('--')) {
             const cssVar = extractCssVar(color)

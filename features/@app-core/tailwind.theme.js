@@ -20,7 +20,7 @@ const universalTheme = {
 
             /* light - #FFFFFF - colors.white */
             /* dark - #111827 - colors.gray[900] */
-            'primary-light': 'hsl(var(--primary-light))',
+            'primary-inverse': 'hsl(var(--primary-inverse))',
 
             /* light - #1f2937 - colors.gray[800] */
             /* dark - #1f2937 - colors.gray[800] */
@@ -28,7 +28,7 @@ const universalTheme = {
 
             /* light - #f3f4f6 - colors.gray[100] */
             /* dark - #f3f4f6 - colors.gray[100] */
-            'secondary-light': 'hsl(var(--secondary-light))',
+            'secondary-inverse': 'hsl(var(--secondary-inverse))',
 
             /* light - #9ca3af - colors.gray[400] */
             /* dark - #9ca3af - colors.gray[400] */
@@ -50,9 +50,9 @@ const universalTheme = {
             background: theme('colors.background'),
             foreground: theme('colors.foreground'),
             primary: theme('colors.primary'),
-            'primary-light': theme('colors.primary-light'),
+            'primary-inverse': theme('colors.primary-inverse'),
             secondary: theme('colors.secondary'),
-            'secondary-light': theme('colors.secondary-light'),
+            'secondary-inverse': theme('colors.secondary-inverse'),
             muted: theme('colors.muted'),
             danger: theme('colors.danger'),
             ring: theme('colors.ring'),
@@ -62,9 +62,9 @@ const universalTheme = {
             background: theme('colors.background'),
             foreground: theme('colors.foreground'),
             primary: theme('colors.primary'),
-            'primary-light': theme('colors.primary-light'),
+            'primary-inverse': theme('colors.primary-inverse'),
             secondary: theme('colors.secondary'),
-            'secondary-light': theme('colors.secondary-light'),
+            'secondary-inverse': theme('colors.secondary-inverse'),
             muted: theme('colors.muted'),
             danger: theme('colors.danger'),
             ring: theme('colors.ring'),
@@ -74,9 +74,9 @@ const universalTheme = {
             background: theme('colors.background'),
             foreground: theme('colors.foreground'),
             primary: theme('colors.primary'),
-            'primary-light': theme('colors.primary-light'),
+            'primary-inverse': theme('colors.primary-inverse'),
             secondary: theme('colors.secondary'),
-            'secondary-light': theme('colors.secondary-light'),
+            'secondary-inverse': theme('colors.secondary-inverse'),
             muted: theme('colors.muted'),
             danger: theme('colors.danger'),
             ring: theme('colors.ring'),
