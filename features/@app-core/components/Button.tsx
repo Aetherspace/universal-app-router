@@ -6,6 +6,7 @@ import { cn, Pressable, View, Text, Link, getThemeColor } from './styled'
 import { z, schema } from '@green-stack/schemas'
 import { Icon, UniversalIconProps } from '@green-stack/components/Icon'
 import { useRouter } from '@green-stack/navigation'
+import { useThemeColor } from '@green-stack/styles'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -14,8 +15,8 @@ export const ButtonProps = schema('ButtonProps', {
     text: z.string().optional().example('Press me'),
     size: z.enum(['sm', 'md', 'lg']).default('md'),
     href: z.string().url().optional().example('https://fullproduct.dev'),
-    className: z.string().optional().example('w-full'),
-    textClassName: z.string().optional().example('text-primary'),
+    className: z.string().optional(),
+    textClassName: z.string().optional(),
     iconLeft: UniversalIconProps.shape.name.optional(),
     iconRight: UniversalIconProps.shape.name.optional().example('ArrowRightFilled'),
     iconSize: z.number().default(16),
@@ -74,7 +75,7 @@ export const Button = <HREF extends KnownRoutes | never = never>(rawProps: Butto
         'relative flex flex-row items-center justify-center rounded-md no-underline',
         'web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
         props.type === 'primary' && 'bg-primary web:hover:opacity-90 active:opacity-90',
-        props.type === 'secondary' && 'bg-secondary-light web:hover:opacity-80 active:opacity-80',
+        props.type === 'secondary' && 'bg-secondary-inverse web:hover:opacity-80 active:opacity-80',
         props.type === 'outline' && 'bg-transparent border border-input web:hover:bg-accent web:hover:text-accent-foreground active:bg-accent',
         props.type === 'danger' && 'bg-danger web:hover:opacity-90 active:opacity-90',
         props.size === 'sm' && 'p-2',
@@ -87,10 +88,10 @@ export const Button = <HREF extends KnownRoutes | never = never>(rawProps: Butto
 
     const textClassNames = cn(
         'no-underline',
-        props.type === 'primary' && 'text-primary-light',
+        props.type === 'primary' && 'text-primary-inverse',
         props.type === 'secondary' && 'text-secondary',
         props.type === 'outline' && 'text-primary',
-        props.type === 'danger' && 'text-primary-light',
+        props.type === 'danger' && 'text-primary-inverse',
         props.size === 'sm' && 'text-sm',
         props.size === 'md' && 'text-base',
         props.size === 'lg' && 'text-lg',
@@ -101,15 +102,22 @@ export const Button = <HREF extends KnownRoutes | never = never>(rawProps: Butto
     )
 
     const iconClassNames = cn(
-        props.type === 'primary' && 'text-primary-light',
-        props.type === 'secondary' && 'text-primary',
+        props.type === 'primary' && 'text-primary-inverse',
+        props.type === 'secondary' && 'text-secondary',
+        props.type === 'outline' && 'text-primary',
+        props.type === 'danger' && 'text-primary-inverse',
         props.disabled && 'text-muted',
     )
 
-    let iconColor = getThemeColor('--primary-light') as string
-    if (props.type === 'secondary') iconColor = getThemeColor('--primary')
-    if (props.type === 'outline') iconColor = getThemeColor('--primary')
-    if (props.disabled) iconColor = getThemeColor('--muted')
+    const colorPrimaryInverse = useThemeColor('--primary-inverse')
+    const colorPrimary = useThemeColor('--primary')
+    const colorMuted = useThemeColor('--muted')
+
+    let iconColor = colorPrimaryInverse as string
+    if (props.type === 'secondary') iconColor = colorPrimary
+    if (props.type === 'outline') iconColor = colorPrimary
+    if (props.type === 'danger') iconColor = colorPrimaryInverse
+    if (props.disabled) iconColor = colorMuted
 
     let iconSize = props.iconSize
     if (props.size === 'sm') iconSize = 12
