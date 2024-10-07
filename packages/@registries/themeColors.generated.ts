@@ -7,8 +7,12 @@ export const themeColors = {
         "--primary-inverse": "hsl(0, 0%, 100%)",
         "--secondary": "hsl(217, 13%, 19%)",
         "--secondary-inverse": "hsl(210, 16%, 96%)",
+        "--link": "hsl(213, 94%, 76%)",
         "--muted": "hsl(220, 8%, 65%)",
+        "--warn": "hsl(24, 94%, 54%)",
         "--danger": "hsl(0, 82%, 66%)",
+        "--info": "hsl(197, 87%, 47%)",
+        "--success": "hsl(145, 67%, 40%)",
         "--ring": "hsl(222, 22%, 15%)",
         "--input": "hsl(216, 12%, 83%)"
     },
@@ -19,8 +23,12 @@ export const themeColors = {
         "--primary-inverse": "hsl(222, 15%, 13%)",
         "--secondary": "hsl(220, 14%, 91%)",
         "--secondary-inverse": "hsl(210, 23%, 26%)",
+        "--link": "hsl(213, 94%, 76%)",
         "--muted": "hsl(220, 8%, 65%)",
+        "--warn": "hsl(24, 94%, 54%)",
         "--danger": "hsl(0, 82%, 66%)",
+        "--info": "hsl(197, 87%, 47%)",
+        "--success": "hsl(145, 67%, 40%)",
         "--ring": "hsl(222, 22%, 15%)",
         "--input": "hsl(216, 12%, 83%)"
     }

@@ -48,16 +48,16 @@ export const H1 = styled(RNText, 'text-primary font-bold text-3xl')
 export const H2 = styled(RNText, 'text-secondary font-bold text-xl')
 export const H3 = styled(RNText, 'text-primary font-bold text-lg')
 
-export const P = styled(RNText, 'text-base')
+export const P = styled(RNText, 'text-primary text-base')
 
 /* --- Fix for Next Link ----------------------------------------------------------------------- */
 
 export const Link = <HREF extends KnownRoutes>(props: UniversalLinkProps<HREF>) => {
-    const StyledLink = styled(UniversalLink, 'text-blue-300 underline') // @ts-ignore
+    const StyledLink = styled(UniversalLink, 'text-link underline') // @ts-ignore
     return <StyledLink {...props} />
 }
 
-export const LinkText = styled(RNText, 'text-blue-300 underline')
+export const LinkText = styled(RNText, 'text-link underline')
 
 export const TextLink = (props: Omit<React.ComponentProps<typeof UniversalLink>, 'className'> & { className?: string }) => {
     const { className, style, children, ...universalLinkProps } = props
