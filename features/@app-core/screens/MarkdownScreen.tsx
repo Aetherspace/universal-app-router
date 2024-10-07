@@ -1,31 +1,39 @@
 import React from 'react'
-import { ScrollView } from 'react-native'
+import { useColorScheme } from 'nativewind'
 import { StatusBar } from 'expo-status-bar'
-import { View } from '../components/styled'
+import { View, ScrollView, getThemeColor } from '../components/styled'
 import MarkdownTheme from '../mdx/MarkdownTheme' // @ts-ignore
 import ReadMe from '../mdx/readme.mdx'
 import BackButton from '../components/BackButton'
 
 /* --- <MarkdownScreen/> --------------------------------------------------------------------------- */
 
-const MarkdownScreen = () => (
-    <ScrollView>
-        <StatusBar style="dark" />
-        <View className="flex flex-col justify-center items-center bg-white">
-            <View className="h-20 ios:h-24 android:h-24" />
-            <View className="relative flex flex-col w-full items-start px-4 max-w-[600px]">
-                <MarkdownTheme>
-                    <ReadMe />
-                </MarkdownTheme>
+const MarkdownScreen = () => {
+    
+    // Theme
+    const scheme = useColorScheme()
+
+    // -- Render --
+
+    return (
+        <ScrollView className="bg-background">
+            <StatusBar style={scheme.colorScheme === 'light' ? 'dark' : 'light'} />
+            <View className="flex flex-col justify-center items-center bg-background">
+                <View className="h-20 ios:h-24 android:h-24" />
+                <View className="relative flex flex-col w-full items-start px-4 max-w-[600px]">
+                    <MarkdownTheme>
+                        <ReadMe />
+                    </MarkdownTheme>
+                </View>
+                <View className="web:h-20" />
             </View>
-            <View className="web:h-20" />
-        </View>
-        <BackButton
-            backLink="/subpages/Universal%20Nav"
-            color="#333333"
-        />
-    </ScrollView>
-)
+            <BackButton
+                backLink="/subpages/Universal%20Nav"
+                color={getThemeColor('--primary')}
+            />
+        </ScrollView>
+    )
+}
 
 /* --- Exports --------------------------------------------------------------------------------- */
 

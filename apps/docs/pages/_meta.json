@@ -20,5 +20,10 @@
     },
     "single-sources-of-truth": {
         "title": "Single Sources of Truth"
-    }
+    },
+    "-- Application Features": {
+        "type": "separator",
+        "title": "Application Features"
+    },
+    "@app-core": "@app/core"
 }

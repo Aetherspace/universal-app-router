@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import { MarkdownImage } from './MarkdownImage'
-import { MDXStyles, MDXComponents } from '@bacons/mdx'
-import { Link, View, Text } from '../components/styled'
+import { MDXComponents } from '@bacons/mdx'
+import { Link, View, Text, H1, H2, H3, P } from '../components/styled'
 import './markdown.theme.css' // Duplicate of the React-Native styles from this file
 
 /* --- Types -------------------------------------------------------------------------------------- */
@@ -16,29 +16,19 @@ type MarkdownThemeProps = {
 const MarkdownTheme = ({ children }: MarkdownThemeProps) => {
   return (
         <View id="markdown-theme" className="flex flex-col flex-grow flex-shrink">
-            <MDXStyles
-                h1={styles.h1}
-                h2={styles.h2}
-                p={styles.p}
-                ul={styles.ul}
-                li={styles.li}
-                blockquote={styles.blockquote}
-                a={styles.link}
-                img={styles.img}
+            <MDXComponents
+                h1={(props) => <H1 className="mb-4" {...props} />}
+                h2={(props) => <H2 className="mb-4" {...props} />}
+                h3={(props) => <H3 className="mb-4" {...props} />}
+                p={(props) => <P className="mb-4 leading-5" {...props} />}
+                ul={(props) => <View className="p-0" {...props} />}
+                li={(props) => <Text className="mb-4" {...props} />}
+                blockquote={(props) => <View className="border-l-4 border-gray-300 text-base pl-4 pt-1 leading-6" {...props} />}
+                a={(props) => <Link className="mt-4 text-base underline text-center max-w-full overflow-hidden" {...props} />}
+                img={(props) => <MarkdownImage {...props} styles={styles.img} />}
             >
-                <MDXComponents
-                    h1={(props) => <Text {...props} style={{ ...styles.h1 }} />}
-                    h2={(props) => <Text {...props} style={{ ...styles.h2 }} />}
-                    p={(props) => <Text {...props} style={{ ...styles.p }} />}
-                    ul={(props) => <View {...props} style={{ ...styles.ul }} />}
-                    li={(props) => <Text {...props} style={{ ...styles.li }} />}
-                    blockquote={(props) => <View {...props} style={{ ...styles.blockquote }} />} // prettier-ignore
-                    a={(props) => <Link {...props} style={{ ...styles.link }} />}
-                    img={(props) => <MarkdownImage {...props} />}
-                >
-                    {children}
-                </MDXComponents>
-            </MDXStyles>
+                {children}
+            </MDXComponents>
         </View>
     )
 }
@@ -82,7 +72,7 @@ const styles = StyleSheet.create({
     link: {
         marginTop: 16,
         fontSize: 16,
-        color: 'blue',
+        color: '#93c5fd',
         textAlign: 'center',
         textDecorationLine: 'underline',
         maxWidth: '100%',

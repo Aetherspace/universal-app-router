@@ -119,7 +119,7 @@ export const H3 = styled(RNText, 'font-bold text-lg text-primary-100')
 Usage:
 
 ```tsx
-import { Image, View, H1, P } from '@app/components/styled'
+import { Image, View, H1, P } from '@app/primitives'
 
 // ⬇⬇⬇
 

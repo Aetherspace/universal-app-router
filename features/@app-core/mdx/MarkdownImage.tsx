@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Dimensions, Image as RNImage, LayoutChangeEvent } from 'react-native'
-import { Image, View } from '@app/components/styled'
+import { Image, View } from '@app/primitives'
 import './markdown.theme.css' // Duplicate of the React-Native styles from this file
 import { UniversalImageProps } from '@green-stack/components/Image.types'
 

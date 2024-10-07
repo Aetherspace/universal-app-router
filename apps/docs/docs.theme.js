@@ -8,7 +8,7 @@ const styles = {
     },
     tagLink: {
         padding: '3px 8px',
-        backgroundColor: '#333333',
+        // backgroundColor: '#333333',
         borderRadius: '4px',
     },
 }
@@ -26,7 +26,7 @@ export default {
         text: <span><strong>FullProduct.dev</strong> is still in <strong>Beta</strong>. 🚧 Official release coming in october ⏳</span>,
     },
     footer: {
-        text: <span>Need a <strong>Full-Product</strong> / Universal App Setup? 🚀 Check out <a href="https://codinsonn.dev" target="_blank" style={{ ...styles.tagLink, fontWeight: 'bold' }}>FullProduct.dev</a> by <a href="https://codinsonn.dev" target="_blank" style={styles.tagLink}>Thorr ⚡️ codinsonn</a></span>
+        text: <span>Need a <strong>Full-Product</strong> / Universal App Setup? 🚀 Check out <a href="https://codinsonn.dev" target="_blank" className="bg-secondary text-secondary-inverse" style={{ ...styles.tagLink, fontWeight: 'bold' }}>FullProduct.dev</a> by <a href="https://codinsonn.dev" target="_blank" className="bg-secondary text-secondary-inverse" style={styles.tagLink}>Thorr ⚡️ codinsonn</a></span>
     },
     navigation: true,
     sidebar: {

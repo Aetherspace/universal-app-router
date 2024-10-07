@@ -214,7 +214,7 @@ export const Button = <HREF extends KnownRoutes | never = never>(rawProps: Butto
                 hitSlop={props.hitSlop}
                 asChild
             >
-                <Pressable className="flex-row">
+                <Pressable className="flex flex-row">
                     {buttonContent}
                 </Pressable>
             </Link>

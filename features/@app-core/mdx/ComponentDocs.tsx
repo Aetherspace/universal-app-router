@@ -1,7 +1,8 @@
-import { useState, createContext, useContext, useMemo, useEffect } from 'react'
+'use client'
+import { useState, createContext, useContext, useEffect, useRef } from 'react'
 import { useTheme } from 'nextra-theme-docs'
 import { z, Meta$Schema } from '@green-stack/schemas'
-import { View, cn } from '@app/components/styled'
+import { Pressable, View, Text, cn } from '@app/primitives'
 import { useFormState } from '@green-stack/forms/useFormState'
 
 /* --- Types ----------------------------------------------------------------------------------- */
@@ -111,6 +112,10 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     const docs = useComponentDocs(props)
     const { previewProps } = docs
 
+    // State
+    const [showCode, setShowCode] = useState(false)
+    const [didCopy, setDidCopy] = useState(false)
+
     // -- Theme --
 
     const theme = useTheme()
@@ -131,12 +136,22 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
         setDidMount(true)
     }, [resolvedTheme])
 
+    // -- Styles --
 
     const viewClassNames = cn(
-        "relative min-w-400 min-h-200 p-12 rounded-xl",
-        didMount && colorScheme === 'light' && 'bg-slate-200',
+        "relative min-w-400 min-h-200 p-12 rounded-xl border border-gray-500",
+        showCode && 'rounded-b-none',
+        didMount && colorScheme === 'light' && 'bg-slate-100',
         didMount && colorScheme === 'dark' && 'bg-zinc-900',
     )
+
+    // -- Code --
+
+    const jsxPropLines = Object.entries(previewProps).map(([key, value]) => {
+        if (typeof value === 'string') return `${key}="${value}"`
+        return `${key}={${JSON.stringify(value)}}`
+    })
+    const jsxCode = `<${docs.componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
 
     // -- Server Rendering --
 
@@ -152,8 +167,33 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     // -- Client Rendering --
 
     return (
-        <View key={viewClassNames} className={viewClassNames}>
-            <Component {...previewProps} />
+        <View>
+            <View className={viewClassNames}>
+                <Component {...previewProps} />
+                <Pressable
+                    className="absolute bottom-0 right-0 p-2 rounded-tl-md border-t border-l border-gray-500"
+                    onPress={() => setShowCode((prev) => !prev)}
+                >
+                    <Text className="text-primary select-none">
+                        {showCode ? 'Hide Code' : 'Show Code'}
+                    </Text>
+                </Pressable>
+            </View>
+            {showCode && (
+                <View className="p-8 border border-t-0 border-gray-500 rounded-t-none rounded-b-xl bg-gray-800">
+                    <pre className="text-xs text-white">
+                        {jsxCode}
+                    </pre>
+                    <Pressable
+                        className="absolute bottom-0 right-0 p-2 rounded-tl-md rounded-br-xl bg-zinc-900 border-t border-l border-gray-500"
+                        onPress={() => { navigator.clipboard.writeText(jsxCode); setDidCopy(true); }}
+                    >
+                        <Text className="text-white select-none">
+                            {didCopy ? 'Copied' : 'Copy Code'}
+                        </Text>
+                    </Pressable>
+                </View>
+            )}
         </View>
     )
 }

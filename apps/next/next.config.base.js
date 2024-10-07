@@ -9,11 +9,11 @@ const mainNextConfig = {
         "expo",
         "expo-constants",
         "expo-modules-core",
-        "react-native-css-interop",
-        "nativewind",
         "@bacons/mdx",
         "@bacons/react-views",
         "@expo/html-elements",
+        "nativewind",
+        "react-native-css-interop",
         // Add more React Native / Expo packages here...
     ],
     pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],

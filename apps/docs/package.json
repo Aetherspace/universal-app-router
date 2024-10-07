@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "next dev -p 4000",
-    "build": "next build",
+    "build": "node -v && next build",
     "start": "next start -p 4000",
     "env:local": "cp .env.example .env.local"
   }
