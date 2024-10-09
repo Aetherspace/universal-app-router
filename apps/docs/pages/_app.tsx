@@ -4,6 +4,7 @@ import { useTheme } from 'nextra-theme-docs'
 import { useColorScheme } from 'nativewind' // @ts-ignore
 import UniversalAppProviders from '@app/screens/UniversalAppProviders'
 import ServerStylesProvider from '@app/next/app/ServerStylesProvider'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ComponentDocsContextManager } from '@app/core/mdx/ComponentDocs'
 import { Image as NextContextImage } from '@green-stack/components/Image.next'
 import { Link as NextContextLink } from '@green-stack/navigation/Link.next'
@@ -53,18 +54,25 @@ export default function App({ Component, pageProps }: AppProps) {
     // -- Render --
 
     return (
-        <UniversalAppProviders
-            contextImage={NextContextImage}
-            contextLink={NextContextLink}
-            contextRouter={nextContextRouter}
-            useContextRouteParams={useNextRouteParams}
-            isNext
+        <SafeAreaProvider
+            initialMetrics={{
+                frame: { x: 0, y: 0, width: 0, height: 0 },
+                insets: { top: 0, right: 0, bottom: 0, left: 0 },
+            }}
         >
-            <ServerStylesProvider>
-                <ComponentDocsContextManager>
-                    <Component {...pageProps} />
-                </ComponentDocsContextManager>
-            </ServerStylesProvider>
-        </UniversalAppProviders>
+            <UniversalAppProviders
+                contextImage={NextContextImage}
+                contextLink={NextContextLink}
+                contextRouter={nextContextRouter}
+                useContextRouteParams={useNextRouteParams}
+                isNext
+            >
+                <ServerStylesProvider>
+                    <ComponentDocsContextManager>
+                        <Component {...pageProps} />
+                    </ComponentDocsContextManager>
+                </ServerStylesProvider>
+            </UniversalAppProviders>
+        </SafeAreaProvider>
     )
 }

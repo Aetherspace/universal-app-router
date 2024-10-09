@@ -1,3 +1,6 @@
 {
-    "components": "components"
+    "components": {
+        "title": "components",
+        "defaultOpen": true
+    }
 }

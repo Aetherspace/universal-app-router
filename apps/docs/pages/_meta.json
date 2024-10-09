@@ -25,5 +25,8 @@
         "type": "separator",
         "title": "Application Features"
     },
-    "@app-core": "@app/core"
+    "@app-core": {
+        "title": "@app/core",
+        "defaultOpen": true
+    }
 }

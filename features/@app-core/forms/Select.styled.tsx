@@ -258,7 +258,7 @@ export const SelectItem = forwardRef<
 
     useEffect(() => {
         const isRegisteredOption = !!selectContext.options?.[value]
-        if (!isRegisteredOption) {
+        if (!isRegisteredOption && value) {
             selectContext.setOptions((prev) => ({ ...prev, [value]: label }))
         }
     }, [value, label])
@@ -398,8 +398,9 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
     // -- Effects --
 
     useEffect(() => {
-        const isValid = value && Object.keys(options || {})?.includes?.(value)
-        if (isValid) onChange(value as T)
+        const isValidOption = value && Object.keys(options || {})?.includes?.(value)
+        if (isValidOption) onChange(value as T)
+        else if (!value && !restProps.required) onChange(undefined as unknown as T)
     }, [value])
 
     // -- Render --
@@ -417,10 +418,11 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
             >
                 <View>
                     <SelectTrigger
-                        key={`select-trigger-${optionsKey}-${!!options?.[value]}`}
+                        key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
                         className={cn('w-full', props.triggerClassName)}
                     >
                         <Text
+                            key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
                             className={cn(
                                 'text-foreground text-sm',
                                 'native:text-lg',
@@ -429,7 +431,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
                             )}
                         >
                             <SP.SelectValue
-                                key={`select-value-${optionsKey}-${!!options?.[value]}`}
+                                key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
                                 className={cn(
                                     'text-primary text-sm',
                                     'native:text-lg',
@@ -440,7 +442,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
                                 asChild={isWeb}
                             >
                                 {isWeb && (
-                                    <Text>
+                                    <Text className={cn(!value && !!placeholder && 'text-muted')}>
                                         {options?.[value] || placeholder}
                                     </Text>
                                 )}

@@ -31,7 +31,7 @@ export default {
     navigation: true,
     sidebar: {
         autoCollapse: true,
-        defaultMenuCollapseLevel: 2,
+        defaultMenuCollapseLevel: 3,
         toggleButton: true,
     },
     useNextSeoProps() {

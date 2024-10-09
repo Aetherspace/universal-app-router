@@ -1,9 +1,16 @@
 'use client'
-import { useState, createContext, useContext, useEffect, useRef } from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import { useTheme } from 'nextra-theme-docs'
 import { z, Meta$Schema } from '@green-stack/schemas'
 import { Pressable, View, Text, cn } from '@app/primitives'
 import { useFormState } from '@green-stack/forms/useFormState'
+import { Button } from '@app/docs/components/Button.docs'
+import { Checkbox } from '@app/docs/components/Checkbox.docs'
+import { TextInput } from '@app/docs/components/TextInput.docs'
+import { Select } from '@app/docs/components/Select.docs'
+import { TextArea } from '@app/docs/components/TextArea.docs'
+import { Switch } from '@app/docs/components/Switch.docs'
+import { NumberStepper } from '@app/docs/components/NumberStepper.docs'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -149,8 +156,9 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 
     const jsxPropLines = Object.entries(previewProps).map(([key, value]) => {
         if (typeof value === 'string') return `${key}="${value}"`
+        if (typeof value === 'undefined') return null
         return `${key}={${JSON.stringify(value)}}`
-    })
+    }).filter(Boolean) as string[]
     const jsxCode = `<${docs.componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
 
     // -- Server Rendering --
@@ -206,19 +214,222 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     const { previewProps, propSchema, propMeta } = docsUtils
 
     // State
+    const [didMount, setDidMount] = useState(false)
     const formState = useFormState(propSchema, { initialValues: previewProps })
+
+    // Theme
+    const theme = useTheme()
+    const resolvedTheme = (theme.resolvedTheme || theme.systemTheme) as 'light' | 'dark'
+
+    // -- Sync --
+
+    useEffect(() => {
+        docsUtils.setPreviewProps(formState.values)
+        setDidMount(true)
+    }, [formState.valuesKey])
 
     // -- Render --
 
     return (
         <View className="relative min-w-400 my-12">
-            <pre>
-                {JSON.stringify({
-                    previewProps,       
-                    formState,
-                    propMeta,
-                }, null, 4)}
-            </pre>
+
+            {/* - Column Headings - */}
+
+            <View className="flex flex-row">
+                <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-4">
+                    <Text className="text-base font-bold text-primary">
+                        Name
+                    </Text>
+                </View>
+                <View className="flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2">
+                    <Text className="text-base font-bold text-primary">
+                        Description
+                    </Text>
+                </View>
+                <View 
+                    className={cn(
+                        'w-1/5 max-w-[150px] items-start px-2',
+                        'hidden lg:flex',
+                    )}
+                >
+                    <Text className="text-base font-bold text-primary">
+                        Default
+                    </Text>
+                </View>
+                <View className="flex w-1/5 min-w-[200px] flex-grow items-start px-2">
+                    <Text className="text-base font-bold text-primary">
+                        Preview
+                    </Text>
+                </View>
+            </View>
+            <View className="h-4" />
+
+            {/* - Props Table - */}
+
+            <View className="flex flex-col rounded-xl border border-gray-500">
+                {Object.entries(propMeta).map(([key, meta], idx) => {
+                    // Flags
+                    const isLastItem = idx === Object.keys(propMeta).length - 1
+                    const isRequired = !meta.isOptional && !meta.isNullable
+                    const isArray = meta.baseType === 'Array' || meta.zodType === 'ZodArray'
+                    const isObject = meta.baseType === 'Object' || meta.zodType === 'ZodObject'
+                    const isJsonInput = isArray || isObject
+                    // Metadata
+                    const defaultValue = meta.defaultValue && JSON.stringify(meta.defaultValue)
+                    const currentValue = formState.values[key]
+                    const description = meta.description
+                    // Determine field and input type
+                    let fieldType = meta.baseType?.toLowerCase() // @ts-ignore
+                    let subType = !isArray ? '' : meta.schema?.baseType?.toLowerCase()
+                    if (meta.zodType === 'ZodEnum') fieldType = 'enum'
+                    if (isArray && subType) fieldType = `[${subType}]`
+                    if (isObject && meta.name) fieldType = meta.name
+                    // Recreate component if theme changes
+                    const inputKey = `${key}-${[resolvedTheme, didMount].filter(Boolean).join('-')}`
+                    // Render table row
+                    return (
+                        <View
+                            className={cn(
+                                'flex flex-row w-full py-4',
+                                !isLastItem && 'border-b border-gray-500',
+                            )}
+                        >
+                            
+                            {/* - Title - */}
+
+                            <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-4">
+                                <Text className="text-xs font-bold text-primary">
+                                    {key}
+                                    {isRequired && (
+                                        <Text className="text-xs text-danger">
+                                            {' *'}
+                                        </Text>
+                                    )}
+                                </Text>
+                            </View>
+
+                            {/* - Description - */}
+
+                            <View className="flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2">
+                                {!!description && (
+                                    <Text className={cn("text-xs text-primary", !!fieldType && 'mb-2')}>
+                                        {description}
+                                    </Text>
+                                )}
+                                {fieldType && (
+                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-inverse text-secondary">
+                                        {`${fieldType}`}
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* - Defaults - */}
+
+                            <View 
+                                className={cn(
+                                    'w-1/5 max-w-[150px] items-start px-2',
+                                    'hidden lg:flex',
+                                )}
+                            >
+                               {defaultValue ? (
+                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-inverse text-secondary">
+                                        {defaultValue}
+                                    </Text>
+                               ) : (
+                                    <Text className="text-xs text-primary">
+                                        -
+                                    </Text>
+                               )}
+                            </View>
+
+                            {/* - Preview Inputs - */}
+
+                            <View className="flex w-1/5 min-w-[200px] flex-grow items-start px-2 pr-4">
+                                
+                                {fieldType === 'boolean' && (
+                                    <Switch
+                                        key={inputKey}
+                                        checked={currentValue}
+                                        onCheckedChange={(value) => formState.setValue(key, value)}
+                                    />
+                                )}
+
+                                {fieldType === 'string' && (
+                                    <TextInput
+                                        key={inputKey}
+                                        {...formState.getTextInputProps(key)}
+                                    />
+                                )}
+
+                                {fieldType === 'number' && (
+                                    <NumberStepper
+                                        key={inputKey}
+                                        {...formState.getInputProps(key)}
+                                        min={meta.minValue}
+                                        max={meta.maxValue}
+                                    />
+                                )}
+
+                                {fieldType === 'enum' && didMount && (
+                                    <Select
+                                        key={inputKey}
+                                        {...formState.getInputProps(key)}
+                                        value={currentValue || undefined}
+                                        required={isRequired}
+                                    >
+                                        {!isRequired && (
+                                            <Select.Option
+                                                key="null" // @ts-ignore
+                                                value={null}
+                                                label="-clear-"
+                                                className="text-muted opacity-50"
+                                                onPress={() => formState.handleChange(key, undefined)}
+                                            />
+                                        )}
+                                        {Object.entries(meta.schema!).map(([value, label]) => (
+                                            <Select.Option
+                                                key={value}
+                                                value={value}
+                                                label={label as unknown as string}
+                                            />
+                                        ))}
+                                    </Select>
+                                )}
+
+                                {isJsonInput && (
+                                    <TextArea
+                                        key={inputKey}
+                                        hasError={formState.hasError(key)}
+                                        defaultValue={JSON.stringify(currentValue, null, 2)}
+                                        onChangeText={(value) => {
+                                            try {
+                                                const parsedValue = value ? JSON.parse(value) : undefined
+                                                formState.setValue(key, parsedValue)
+                                                formState.updateErrors({ [key]: [] })
+                                            } catch (e) {
+                                                formState.updateErrors({
+                                                    [key]: ['Invalid JSON'],
+                                                })
+                                                return e
+                                            }
+                                        }}
+                                    />
+                                )}
+                            </View>
+                        </View>
+                    )
+                })}
+            </View>
         </View>
     )
 }
+
+/* --- <ComponentDocs/> ------------------------------------------------------------------------ */
+
+export const ComponentDocs = (props: ComponentDocsProps) => (
+    <View className="relative min-w-400">
+        <ComponentDocsPreview {...props} />
+        <View className="h-8" />
+        <ComponentDocsPropTable {...props} />
+    </View>
+)
