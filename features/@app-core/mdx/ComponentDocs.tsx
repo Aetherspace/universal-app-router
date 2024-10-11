@@ -1,8 +1,10 @@
 'use client'
-import { useState, createContext, useContext, useEffect } from 'react'
+import { useState, createContext, useContext, useEffect, useMemo } from 'react'
 import { useTheme } from 'nextra-theme-docs'
+import { useRouter } from 'next/router'
+import { createKey, parseUrlParamsObject } from '@green-stack/utils/objectUtils'
 import { z, Meta$Schema } from '@green-stack/schemas'
-import { Pressable, View, Text, cn } from '@app/primitives'
+import { Pressable, View, Text, cn, getThemeColor } from '@app/primitives'
 import { useFormState } from '@green-stack/forms/useFormState'
 import { Button } from '@app/docs/components/Button.docs'
 import { Checkbox } from '@app/docs/components/Checkbox.docs'
@@ -11,6 +13,8 @@ import { Select } from '@app/docs/components/Select.docs'
 import { TextArea } from '@app/docs/components/TextArea.docs'
 import { Switch } from '@app/docs/components/Switch.docs'
 import { NumberStepper } from '@app/docs/components/NumberStepper.docs'
+import { isEmpty } from '@green-stack/utils/commonUtils'
+import { Icon } from '@green-stack/components/Icon'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -21,13 +25,16 @@ export type ComponentDocsProps = {
         propSchema: z.ZodObject<z.ZodRawShape>,
         propMeta: Record<string, Meta$Schema>,
         previewProps: Record<string, any$Unknown>,
+        previewState: {
+            didMount?: boolean,
+            didApplyParams?: boolean,
+            didRegister?: boolean,
+        }
     }
 }
 
 export type ComponentDocsContext = {
-    components: {
-        [key: string]: ComponentDocsProps
-    },
+    components: { [key: string]: ComponentDocsProps },
     setComponentDocs: (key: string, value: ComponentDocsProps) => void,
 }
 
@@ -43,13 +50,22 @@ export const useComponentDocsContext = () => useContext(ComponentDocsContext)
 /* --- useComponentDocs() ---------------------------------------------------------------------- */
 
 export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = false) => {
+    // Nav
+    const router = useRouter()
+    const params = parseUrlParamsObject(router.query)
+
     // Props
     const componentName = props.docsConfig.componentName! || props.component.displayName!
-
+    
     // Context
     const { components, setComponentDocs } = useComponentDocsContext()
     const { component, docsConfig } = components[componentName] || props
-    const { propSchema, propMeta, previewProps } = docsConfig
+    const { propSchema, propMeta, previewProps, previewState } = docsConfig
+    const { didMount, didApplyParams, didRegister } = previewState || {}
+
+    // Flags
+    const hasParams = !isEmpty(params)
+    const isReady = didMount && didRegister && didApplyParams
 
     // -- Handlers --
 
@@ -60,11 +76,33 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
                 ...docsConfig,
                 previewProps: {
                     ...docsConfig.previewProps,
+                    ...params,
                     ...newProps,
+                },
+                previewState: {
+                    ...docsConfig.previewState,
+                    didRegister: true,
+                }
+            },
+        })
+    }
+
+    const setPreviewState = (newState: ComponentDocsProps['docsConfig']['previewState']) => {
+        setComponentDocs(componentName, {
+            component,
+            docsConfig: {
+                ...docsConfig,
+                previewState: {
+                    ...docsConfig.previewState,
+                    ...newState,
                 },
             },
         })
     }
+
+    const setDidApplyParams = (value: boolean) => setTimeout(() => setPreviewState({ didApplyParams: value }), 20)
+
+    const setDidMount = (value: boolean) => setTimeout(() => setPreviewState({ didMount: value }), 10)
 
     // -- Effects --
 
@@ -72,6 +110,12 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
         if (!syncInitialState) return
         const isRegistered = !!components[componentName]
         if (!isRegistered) setComponentDocs(componentName, { component, docsConfig })
+        // Auto render after 1s
+        setTimeout(() => setPreviewState({
+            didMount: true,
+            didApplyParams: true,
+            didRegister: true,
+        }), 1000)
     }, [])
 
     // -- Resources --
@@ -82,15 +126,23 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
         componentName,
         propSchema,
         propMeta,
-        previewProps,
+        previewProps: { ...previewProps, ...params },
+        previewState,
+        router,
+        params,
         setPreviewProps,
+        setDidMount,
+        setDidApplyParams,
+        hasParams,
+        didMount: !!didMount,
+        didApplyParams: !!didApplyParams,
+        isReady,
     }
 }
 
 /* --- <ComponentDocsContextManager/> ---------------------------------------------------------- */
 
 export const ComponentDocsContextManager = ({ children }: { children: React.ReactElement }) => {
-
     // State
     const [components, setComponents] = useState<ComponentDocsContext['components']>({})
 
@@ -116,20 +168,18 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     const { component: Component } = props
 
     // Context
-    const docs = useComponentDocs(props)
-    const { previewProps } = docs
+    const docsUtils = useComponentDocs(props)
+    const { componentName, previewProps, didMount, isReady, setDidMount } = docsUtils
 
     // State
     const [showCode, setShowCode] = useState(false)
     const [didCopy, setDidCopy] = useState(false)
-
+    
     // -- Theme --
-
+    
     const theme = useTheme()
     const resolvedTheme = (theme.resolvedTheme || theme.systemTheme) as 'light' | 'dark'
-
     const [colorScheme, setColorScheme] = useState<'light' | 'dark' | undefined>(resolvedTheme)
-    const [didMount, setDidMount] = useState(false)
 
     useEffect(() => {
         const storedTheme = localStorage.getItem('theme')
@@ -148,7 +198,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     const viewClassNames = cn(
         "relative min-w-400 min-h-200 p-12 rounded-xl border border-gray-500",
         showCode && 'rounded-b-none',
-        didMount && colorScheme === 'light' && 'bg-slate-100',
+        didMount && colorScheme === 'light' && 'bg-background',
         didMount && colorScheme === 'dark' && 'bg-zinc-900',
     )
 
@@ -159,11 +209,12 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
         if (typeof value === 'undefined') return null
         return `${key}={${JSON.stringify(value)}}`
     }).filter(Boolean) as string[]
-    const jsxCode = `<${docs.componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
+
+    const jsxCode = `<${componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
 
     // -- Server Rendering --
 
-    if (!didMount) return (
+    if (!isReady) return (
         <View
             className={cn(
                 viewClassNames,
@@ -211,22 +262,45 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     // Context
     const docsUtils = useComponentDocs(props, true)
-    const { previewProps, propSchema, propMeta } = docsUtils
+    const { previewProps, propSchema, propMeta, router, params, } = docsUtils
+    const { didMount, didApplyParams, isReady, hasParams, setDidApplyParams } = docsUtils
 
+    // Props
+    const defaultProps = props.docsConfig.previewProps
+    const defaultPropsKey = useMemo(() => createKey(defaultProps), [])
+    
     // State
-    const [didMount, setDidMount] = useState(false)
+    const [timesReset, setTimesReset] = useState(0)
     const formState = useFormState(propSchema, { initialValues: previewProps })
-
+    
     // Theme
     const theme = useTheme()
     const resolvedTheme = (theme.resolvedTheme || theme.systemTheme) as 'light' | 'dark'
+    
+    // Flags
+    const isDefaultState = formState.isDefaultState || formState.valuesKey === defaultPropsKey
+
+    // -- Handlers --
+
+    const handleReset = () => {
+        formState.setValues(defaultProps)
+        setTimesReset((prev) => prev + 1)
+    }
 
     // -- Sync --
 
     useEffect(() => {
+        if (!didMount) return
+        const initialState = { ...previewProps, ...params }
+        if (!isReady && hasParams) formState.setValues(initialState)
+        if (!isReady && hasParams) docsUtils.setPreviewProps(initialState)
+        if (!isReady && didMount) setDidApplyParams(true)
+    }, [hasParams, didMount, didApplyParams])
+
+    useEffect(() => {
         docsUtils.setPreviewProps(formState.values)
-        setDidMount(true)
-    }, [formState.valuesKey])
+        if (isReady) router.push({ query: formState.values }, undefined, { shallow: true })
+    }, [formState.valuesKey, hasParams, didMount, isReady])
 
     // -- Render --
 
@@ -256,10 +330,18 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                         Default
                     </Text>
                 </View>
-                <View className="flex w-1/5 min-w-[200px] flex-grow items-start px-2">
+                <View className="flex flex-row w-1/5 min-w-[200px] flex-grow items-center justify-between px-2">
                     <Text className="text-base font-bold text-primary">
                         Preview
                     </Text>
+                    {!isDefaultState && (
+                        <Pressable
+                            className="relative flex items-center py-1 px-3 rounded-md border border-info"
+                            onPress={handleReset}
+                        >
+                            <Icon name="UndoFilled" color={getThemeColor('--info')} size={10} />
+                        </Pressable>
+                    )}
                 </View>
             </View>
             <View className="h-4" />
@@ -285,7 +367,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     if (isArray && subType) fieldType = `[${subType}]`
                     if (isObject && meta.name) fieldType = meta.name
                     // Recreate component if theme changes
-                    const inputKey = `${key}-${[resolvedTheme, didMount].filter(Boolean).join('-')}`
+                    const inputKey = `${key}-${[resolvedTheme, didMount, timesReset].filter(Boolean).join('-')}`
                     // Render table row
                     return (
                         <View
@@ -347,7 +429,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                             <View className="flex w-1/5 min-w-[200px] flex-grow items-start px-2 pr-4">
                                 
-                                {fieldType === 'boolean' && (
+                                {fieldType === 'boolean' && isReady && (
                                     <Switch
                                         key={inputKey}
                                         checked={currentValue}
@@ -355,14 +437,14 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                     />
                                 )}
 
-                                {fieldType === 'string' && (
+                                {fieldType === 'string' && isReady && (
                                     <TextInput
                                         key={inputKey}
                                         {...formState.getTextInputProps(key)}
                                     />
                                 )}
 
-                                {fieldType === 'number' && (
+                                {fieldType === 'number' && isReady && (
                                     <NumberStepper
                                         key={inputKey}
                                         {...formState.getInputProps(key)}
@@ -371,7 +453,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                     />
                                 )}
 
-                                {fieldType === 'enum' && didMount && (
+                                {fieldType === 'enum' && isReady && (
                                     <Select
                                         key={inputKey}
                                         {...formState.getInputProps(key)}
@@ -384,7 +466,6 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                                 value={null}
                                                 label="-clear-"
                                                 className="text-muted opacity-50"
-                                                onPress={() => formState.handleChange(key, undefined)}
                                             />
                                         )}
                                         {Object.entries(meta.schema!).map(([value, label]) => (
@@ -397,7 +478,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                     </Select>
                                 )}
 
-                                {isJsonInput && (
+                                {isJsonInput && isReady && (
                                     <TextArea
                                         key={inputKey}
                                         hasError={formState.hasError(key)}

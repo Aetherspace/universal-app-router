@@ -1,5 +1,6 @@
 import { Button, ButtonProps } from '@app/core/components/Button'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { FileTree } from 'nextra/components'
 
 # Button
 
@@ -11,3 +12,17 @@ import { Button } from '@app/components/Button'
     component={Button}
     docsConfig={ButtonProps.documentationProps('Button')}
 />
+
+### Location
+
+You can find the source of the `Button` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="components" defaultOpen>
+                <FileTree.File name="Button.tsx"  />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>

@@ -34,7 +34,7 @@ export const Select = Object.assign(styled(AppSelect.Select, 'bg-transparent', {
     Option: SelectItem,
     Item: SelectItem,
     Separator: SelectSeparator,
-    Group: AppSelect.Select.SelectGroup,
+    Group: AppSelect.Select.Group,
     Label: SelectLabel,
     Content: SelectContent,
 })
