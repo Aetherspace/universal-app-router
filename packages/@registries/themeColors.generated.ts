@@ -9,7 +9,7 @@ export const themeColors = {
         "--secondary-inverse": "hsl(210, 16%, 96%)",
         "--link": "hsl(213, 94%, 76%)",
         "--muted": "hsl(220, 8%, 65%)",
-        "--warn": "hsl(24,89%, 47%)",
+        "--warn": "hsl(24, 89%, 47%)",
         "--danger": "hsl(0, 78%, 47%)",
         "--info": "hsl(197, 87%, 47%)",
         "--success": "hsl(145, 67%, 40%)",

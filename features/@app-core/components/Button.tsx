@@ -7,7 +7,7 @@ import { z, schema } from '@green-stack/schemas'
 import { Icon, UniversalIconProps } from '@green-stack/components/Icon'
 import { useRouter } from '@green-stack/navigation'
 import { useThemeColor } from '@green-stack/styles'
-import { isWeb } from '../appConfig'
+import { isWeb } from '@app/config'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -26,7 +26,7 @@ export const ButtonProps = schema('ButtonProps', {
     // - Pressable Props -
     hitSlop: z.number().default(10),
     // - Link Props -
-    target: z.enum(['_blank', '_self', '_parent', '_top']).default('_self'),
+    target: z.enum(['_blank', '_self', '_parent', '_top']).default('_self').example('_blank'),
     replace: z.boolean().optional(),
     push: z.boolean().optional(),
 })

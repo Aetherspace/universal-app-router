@@ -289,6 +289,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     // Render table row
                     return (
                         <View
+                            key={`props-table-${key}`}
                             className={cn(
                                 'flex flex-row w-full py-4',
                                 !isLastItem && 'border-b border-gray-500',

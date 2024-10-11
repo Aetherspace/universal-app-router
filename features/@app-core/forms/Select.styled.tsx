@@ -394,13 +394,17 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
     // Vars
     const optionsKey = Object.keys(options).join('-')
     const hasPropOptions = Object.keys(props.options || {}).length > 0
+    const selectValueKey = `${optionsKey}-${!!value}-${!!options?.[value]}`
 
     // -- Effects --
 
     useEffect(() => {
         const isValidOption = value && Object.keys(options || {})?.includes?.(value)
-        if (isValidOption) onChange(value as T)
-        else if (!value && !restProps.required) onChange(undefined as unknown as T)
+        if (isValidOption) {
+            onChange(value as T)
+        } else if (!value && !restProps.required) {
+            onChange(undefined as unknown as T)
+        }
     }, [value])
 
     // -- Render --
@@ -409,7 +413,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
         <SelectContext.Provider value={{ value, setValue, options, setOptions }}>
             <SP.SelectRoot
                 ref={ref}
-                key={`select-${optionsKey}-${!!options?.[value]}`}
+                key={`select-${selectValueKey}`}
                 {...restProps}
                 value={{ value, label: options?.[value] }}
                 className={cn('w-full relative', props.className)}
@@ -418,7 +422,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
             >
                 <View>
                     <SelectTrigger
-                        key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
+                        key={`select-trigger-${selectValueKey}`}
                         className={cn('w-full', props.triggerClassName)}
                     >
                         <Text
@@ -431,7 +435,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
                             )}
                         >
                             <SP.SelectValue
-                                key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
+                                key={`select-value-${selectValueKey}`}
                                 className={cn(
                                     'text-primary text-sm',
                                     'native:text-lg',

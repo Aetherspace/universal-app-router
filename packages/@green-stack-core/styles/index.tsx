@@ -11,7 +11,7 @@ export const styled = <
     COMP extends React.ComponentType<any>,
     REF extends React.ElementRef<COMP>,
     PROPS extends React.ComponentProps<COMP>,
->(Component: COMP, className = '', defaultProps?: Partial<PROPS>) => { 
+>(Component: COMP, className = '', defaultProps?: Partial<PROPS>) => {
     const displayName = [Component.displayName, Component.name].filter(Boolean).join('.')
     const StyledComponent = forwardRef<REF, PROPS & { className?: string }>(
         (props: React.ComponentProps<COMP>, ref) => {
