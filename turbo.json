@@ -18,6 +18,14 @@
             "dependsOn": ["@green-stack/core#build:schema"],
             "cache": false
         },
+        "@app/docs#dev": {
+            "cache": false
+        },
+        "@app/docs#build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "outputs": [".next/**", "!.next/cache/**"],
+            "cache": false
+        },
         "android": {
             "cache": false
         },

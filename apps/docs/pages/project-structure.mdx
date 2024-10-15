@@ -1,0 +1,284 @@
+import { Image } from '@app/primitives'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# Project structure
+
+```shell
+your-universal-app/
+
+ └── /apps/
+     └── /expo/... # Expo workspace (iOS + Android)
+     └── /next/... # Next.js workspace (Web, SSR, API)
+
+ └── /features/... # Portable feature workspaces
+
+     └── /@app-core/...
+     └── /some-other-feature/...
+
+ └── /packages/... # Portable package workspaces
+
+     └── /@green-stack-core/...
+     └── /some-utility-package/...
+```
+
+## Why not just a single workspace?
+
+There's two main reasons why the starterkit is structured this way:
+
+1. Historically, using a monorepo for combining Expo & Next.js was better as you could keep their configs and dependencies separate. Meaning you can configure and upgrade Expo without upgrading Next.js and vice versa. *This still holds true for the most part.*
+
+2. It facilitate architecting for copy-paste. A workspace folder within a monorepo is the ideal unit of work to copy and paste between projects. You define your custom code and the dependencies it needs in a single folder, and can then consume it in another workspace. Colocating the UI / API / models / schemas / utils / constants / resolvers / components / hooks for a single, portable, feature.
+
+## Monorepo workspaces
+
+<h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '24px' }}>
+    Note on terminology
+</h3>
+
+> We tend to mean **"[package workspace](https://vercel.com/docs/vercel-platform/glossary#package)"** when we mention 'workspace', as defined by Vercel in their glossary:
+
+> "A **collection of files and directories** that are **grouped together based on a common purpose**. Types of packages include libraries, applications, services, and development tools."
+
+> "This **modular approach** is essential to monorepos, a repository structure that houses multiple interconnected packages, facilitating streamlined management and development of large-scale projects."
+
+> "In JavaScript, **each 'package workspace' has a `package.json` file at its root**, which contains metadata about the package, including its name, version, and any dependencies."
+
+### Feature workspaces
+
+You'll likely write most of your app code in feature workspaces. These are subfolders of the `/features/` folder.
+
+The main one is called `@app/core`. You could write your entire app in this workspace, but that would defeat the purpose of making your app features modular and portable.
+
+Instead, consider units of work that you'll likely need in other projects. Some good examples may include:
+
+```shell
+your-universal-app/
+
+ └── /features/...
+
+     └── /@app-core/...
+     
+     └── /admin-panel/...
+
+     └── /blog/...
+
+     └── /comment-section/...
+```
+
+Each of these might have specific routes or route-segments, data shapes, components and business logic that's mostly the same across projects.
+
+Think of these as the main sections of your app that eiter would feel like bloating the `@app/core` workspace, or that you'd like to be able to reuse later.
+
+### Package workspaces
+
+Package workspaces are less defined by features and more focused on utility. They're the place to put code that you'd like to consume across feature workspaces. Kind of like an NPM package, but local.
+
+The most common usecase will likely be driver-like behaviour, e.g.
+
+```shell
+your-universal-app/
+
+ └── /packages/...
+     
+     └── /@db-driver/... # <- e.g. main db driver, import as '@db/driver'
+
+     └── /@db-mongoose/... # <- '@db/mongoose' as a driver option
+
+     └── /@storage-driver/... # <- '@storage/driver' (similar)
+
+     └── /emails/...
+
+     └── /stripe-integration/...
+```
+
+### Workspace structure
+
+We recommend sticking to a similar structure for each workspace:
+
+```shell
+features/some-feature
+
+ └── /schemas/... # <- Single sources of truth
+ └── /models/... # <- Reuses schemas
+ └── /resolvers/... # <- Reuses models & schemas
+
+ └── /components/...
+ └── /screens/... # <- Reuses components
+ └── /routes/... # <- Reuses screens
+     └── /api/... # <- Reuses resolvers
+
+ └── /assets/...
+ └── /icons/... # <- e.g. svg components
+ └── /constants/...
+ └── /utils/...
+
+ └── package.json # <- Name the workspace, manage dependencies
+```
+
+There are two main reasons for this recommended structure:
+
+1. ✅ **Group server and client code together** in the same workspace so there's no big split between front and back-end folders. If we did do a front-end back-end split, you'd have to copy-paste multiple files to different destinations, as well as manage feature dependencies in two different places.
+
+2. ✅ It's **predictable**. Anything that's predictable can be used in automation, scripts and generators, which will further speed up your development in the long run.
+
+Aside from `/schemas/`, `/models/`, `/routes/` and `/icons/`, we have no recommendations or automations related to the other folders. The names are just suggestions, and you can rename, add or split as you see fit.
+
+## Turborepo Basics
+
+The tool we use to manage the monorepo is called [Turborepo](https://turbo.build/repo).
+
+It's a wrapper around package manager workspaces (like npm / yarn / pnpm) that adds some extra features.
+
+> Turborepo goes out of its way to get out of your way:
+
+- Does the least amount of work possible
+- Tries to never redo work that's already been done before
+- Caches tasks and results to speed up subsequent runs on your local machine
+
+You can also [share your cache](https://turbo.build/repo/docs/getting-started/existing-monorepo#using-remote-caching-for-local-development) between teams and projects to speed up CI builds.
+
+### Minimum requirements
+
+- [Specifying packages in a monorepo](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo)
+- [A package manager lockfile](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#package-manager-lockfile)
+- [Root `package.json`](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#root-turbojson)
+- [Root `turbo.json`](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#root-turbojson)
+- [`package.json` in each package](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#packagejson-in-each-package)
+
+> All of this is already set up in the starterkit. However, you might want to keep this in mind when creating new feature or package workspaces.
+
+### Configure tasks with `turbo.json`
+
+The root `turbo.json` file is where you'll register the tasks that Turborepo will run. Once you have your tasks defined, you'll be able to run one or more tasks, e.g.
+
+```
+turbo run lint test build workspace#specific-script-name
+```
+
+Which would run the lint, test and then build tasks in all workspaces, as well as run the "`specific-script-name`" task in the "`workspace`" workspace. All in parallel, unless we define otherwise:
+
+https://turbo.build/repo/docs/crafting-your-repository/configuring-tasks
+
+> Have a look at the `turbo.json` in the root of the starterkit to see how we've set up the tasks for this project.
+
+### Speed up development with Turborepo generators
+
+Turborepo comes out of the box with a [code generator system](https://turbo.build/repo/docs/guides/generating-code).
+
+For exmaple, to add a new workspace interactively, we've added a generator:
+
+```shell
+npx turbo gen add-workspace
+# or `npm run gen add-workspace`
+```
+
+`⬇⬇⬇`
+
+```shell
+>>> Modify "project name" using custom generators?
+
+? what type of workspace would you like to generate?
+
+❯ feature 
+  package 
+```
+
+Depending on which other [plugins](TODO) you've merged, there may be other generators available to you.
+
+To check which generators are available:
+
+```shell
+npx turbo gen # interactive list to pick from
+```
+
+`⬇⬇⬇`
+
+```shell
+>>> Modify "project name" using custom generators
+
+? Select generator to run (Use arrow keys)
+
+❯ add-dependencies: Install Expo SDK compatible deps
+  add-workspace: Create new feature or package workspace 
+```
+
+## The registry pattern
+
+Ofcourse, any portable code you write in an isolated workspace is useless if you ultimately can't tie it all together in your apps or core features.
+
+That's where the registry pattern comes in:
+
+1. Collect different exports from separate workspaces
+2. Re-export the most important parts in a single place.
+
+This is done in the `@app/registries` workspace:
+
+```shell
+your-universal-app/
+
+ └── /packages/...
+
+     └── /@green-stack-core/...
+
+         └── /scripts/... # <- Scripts to collect files from workspaces
+
+     └── /@registries/... # ⬇⬇⬇ Collections from other workspaces
+
+         # Drivers - e.g. result of `npm run collect:drivers`
+         └── drivers.config.ts # driver enums & types
+         └── drivers.generated.ts # barrel of drivers
+
+         # Barrel file of DB models - `collect:models`
+         └── models.generated.ts
+         
+         # Turborepo generators - `collect:generators`
+         └── generators.generated.ts
+         
+         # GraphQL resolvers - `collect:resolvers`
+         └── resolvers.generated.ts
+
+         # Next.js route list - `link:routes`
+         └── routeManifest.generated.ts # types for Link component
+
+         # Workspace helpers - `check:workspaces`
+         └── workspaceResolutions.generated.js
+         └── transpiledWorkspaces.generated.js # used in next.config
+```
+
+> The `npm run dev` script will run all the necessary scripts to collect to rebuild these files automatically.
+
+### The glue when designing features for copy-paste
+
+This pattern is what facilitates the copy-paste design of workspaces in this starterkit. It allows you to build a feature in isolation, defining its own routes, UI and logic. Then you use the registry to plug it into your app to make it work, *and* be typesafe.
+
+For example, how our `Link` component knows about all the routes in the app:
+
+```shell
+your-universal-app/
+
+ └── /packages/...
+
+     └── /@registries/...
+
+         # Types for Link component
+         └── routeManifest.generated.ts # list of possible routes
+
+     └── /@green-stack-core/... # ⬇⬇⬇ 
+
+         └── /navigation/...
+             └── /Link.ts # <- Used here to provide editor hints
+```
+
+In the other docs, we'll dive deeper into what each of these registries is used for.
+
+## Further reading
+
+- [Monorepo.tools](https://monorepo.tools)
+- [NPM workspaces docs](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
+- [Turborepo docs](https://turbo.build/repo/docs)

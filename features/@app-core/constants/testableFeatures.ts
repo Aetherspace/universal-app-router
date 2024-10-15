@@ -8,4 +8,8 @@ export const testableFeatures = [
         title: 'Test Forms?',
         link: '/demos/forms'
     },
+    {
+        title: 'Test Markdown?',
+        link: '/demos/markdown'
+    }
 ]

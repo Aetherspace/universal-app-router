@@ -426,6 +426,7 @@ export const createSelectComponent = <T extends string = string>() => Object.ass
                         className={cn('w-full', props.triggerClassName)}
                     >
                         <Text
+                            key={`select-value-${optionsKey}-${!!value}-${!!options?.[value]}`}
                             className={cn(
                                 'text-foreground text-sm',
                                 'native:text-lg',
