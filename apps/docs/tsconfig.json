@@ -15,6 +15,7 @@
     ],
     "compilerOptions": {
         "jsxImportSource": "nativewind",
+        "preserveSymlinks": true,
         "plugins": [{
             "name": "next"
         }]

@@ -509,7 +509,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 /* --- <ComponentDocs/> ------------------------------------------------------------------------ */
 
 export const ComponentDocs = (props: ComponentDocsProps) => (
-    <View className="relative min-w-400">
+    <View className="relative min-w-400 mt-12">
         <ComponentDocsPreview {...props} />
         <View className="h-8" />
         <ComponentDocsPropTable {...props} />

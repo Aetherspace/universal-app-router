@@ -1,4 +1,4 @@
-import { RemoteContent } from 'nextra/data'
+import { RemoteContent } from 'nextra/components'
 import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote'
 import { pluginsConfig } from '../../remote/pluginsConfig'
 
@@ -8,6 +8,7 @@ export async function getStaticProps({ params }) {
     const branchNamePath = pluginsConfig.branches.find(filePath => filePath.replace(/\.mdx?/, '') === pluginBranch)
     const branchName = branchNamePath?.replace(/\.mdx?/, '')?.replace?.('plugins/', '')
     let pageMarkdown = '# 404 | Plugin Not Found\n\nThe page may not exist, or a remote MDX rate limit may have triggered'
+    
     try {
         if (branchName) {
             const githubApiBranchPRsUrl = `https://api.github.com/repos/Aetherspace/universal-app-router/pulls?head=Aetherspace:with/${branchName}`
@@ -25,8 +26,10 @@ export async function getStaticProps({ params }) {
     } catch (error) {
         if (!error) console.error(error)
     }
+
     const dynamicMDX = await buildDynamicMDX(pageMarkdown, { defaultShowCopyCode: true })
     const dynamicMeta = await buildDynamicMeta()
+
     return {
         props: {
             ...dynamicMeta,
@@ -36,11 +39,14 @@ export async function getStaticProps({ params }) {
     }
 }
 
-export const getStaticPaths = () => ({
-  fallback: 'blocking',
-  paths: pluginsConfig.branches.map(filePath => ({
-    params: { pluginBranchSlug: filePath.replace(/\.mdx?$/, '').split('/') }
-  }))
-})
+export const getStaticPaths = () => {
+    const paths = pluginsConfig.branches.map(filePath => ({
+        params: { pluginBranchSlug: filePath.replace(/\.mdx?$/, '').split('/') },
+    }))
+    return {
+        fallback: false,
+        paths
+    }
+}
 
 <RemoteContent />

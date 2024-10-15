@@ -3,7 +3,7 @@ import { useColorScheme } from 'nativewind'
 import { StatusBar } from 'expo-status-bar'
 import { View, ScrollView, getThemeColor } from '../components/styled'
 import MarkdownTheme from '../mdx/MarkdownTheme' // @ts-ignore
-import ReadMe from '../mdx/readme.mdx'
+import ReadMe from '@app/docs/pages/index.mdx'
 import BackButton from '../components/BackButton'
 
 /* --- <MarkdownScreen/> --------------------------------------------------------------------------- */
