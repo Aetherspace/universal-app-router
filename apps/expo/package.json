@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
+    "@bacons/mdx": "~0.2.0",
     "@expo/metro-runtime": "^3.2.3",
     "expo": "^51.0.31",
     "expo-constants": "~16.0.1",

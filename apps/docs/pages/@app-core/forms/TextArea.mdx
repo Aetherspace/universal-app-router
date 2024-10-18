@@ -1,0 +1,29 @@
+
+import { TextArea, getDocumentationProps } from '@app/core/forms/TextArea.styled'
+import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { FileTree } from 'nextra/components'
+
+# TextArea
+
+```tsx
+import { TextArea } from '@app/components/TextArea'
+```
+
+<ComponentDocs
+    component={TextArea}
+    docsConfig={getDocumentationProps}
+/>
+
+### Location
+
+You can find the source of the `TextArea` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="TextArea.styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>

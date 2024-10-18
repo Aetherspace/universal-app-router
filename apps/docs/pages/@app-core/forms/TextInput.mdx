@@ -1,0 +1,29 @@
+
+import { TextInput, getDocumentationProps } from '@app/core/forms/TextInput.styled'
+import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { FileTree } from 'nextra/components'
+
+# TextInput
+
+```tsx
+import { TextInput } from '@app/components/TextInput'
+```
+
+<ComponentDocs
+    component={TextInput}
+    docsConfig={getDocumentationProps}
+/>
+
+### Location
+
+You can find the source of the `TextInput` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="TextInput.styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>

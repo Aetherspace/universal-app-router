@@ -1,0 +1,27 @@
+{
+    "extends": "@app/core/tsconfig",
+    "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        "../../apps/next/next-env.d.ts",
+        "../../packages/@green-stack-core/global.d.ts",
+        "../../features/@app-core/nativewind-env.d.ts",
+        "../../features/@app-core/appConfig.ts",
+        "../../apps/docs/**/*.ts",
+        "../../apps/docs/**/*.tsx",
+        "../../features/**/*.ts",
+        "../../features/**/*.tsx",
+        "../../packages/**/*.ts",
+        "../../packages/**/*.tsx"
+    ],
+    "compilerOptions": {
+        "jsxImportSource": "nativewind",
+        "plugins": [{
+            "name": "next"
+        }]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
