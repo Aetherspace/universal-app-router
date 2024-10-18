@@ -2,8 +2,8 @@
 import { useState, createContext, useContext, useEffect, useMemo } from 'react'
 import { useTheme } from 'nextra-theme-docs'
 import { useRouter } from 'next/router'
-import { createKey, parseUrlParamsObject } from '@green-stack/utils/objectUtils'
-import { z, Meta$Schema } from '@green-stack/schemas'
+import { buildUrlParamsObject, createKey, parseUrlParamsObject } from '@green-stack/utils/objectUtils'
+import { DocumentationProps} from '@green-stack/schemas'
 import { Pressable, View, Text, cn, getThemeColor } from '@app/primitives'
 import { useFormState } from '@green-stack/forms/useFormState'
 import { Button } from '@app/docs/components/Button.docs'
@@ -20,17 +20,7 @@ import { Icon } from '@green-stack/components/Icon'
 
 export type ComponentDocsProps = {
     component: React.ComponentType<any>,
-    docsConfig: {
-        componentName: string,
-        propSchema: z.ZodObject<z.ZodRawShape>,
-        propMeta: Record<string, Meta$Schema>,
-        previewProps: Record<string, any$Unknown>,
-        previewState: {
-            didMount?: boolean,
-            didApplyParams?: boolean,
-            didRegister?: boolean,
-        }
-    }
+    docsConfig: DocumentationProps
 }
 
 export type ComponentDocsContext = {
@@ -59,13 +49,20 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
     
     // Context
     const { components, setComponentDocs } = useComponentDocsContext()
-    const { component, docsConfig } = components[componentName] || props
+    const componentData = components[componentName]
+    const { component, docsConfig } = componentData || props
     const { propSchema, propMeta, previewProps, previewState } = docsConfig
+    const { valueProp = 'value', onChangeProp = 'onChange' } = docsConfig
     const { didMount, didApplyParams, didRegister } = previewState || {}
 
     // Flags
     const hasParams = !isEmpty(params)
     const isReady = didMount && didRegister && didApplyParams
+    const applyParams = hasParams && isReady
+
+    // Vars
+    const currentVal = applyParams ? params[valueProp] : previewProps[valueProp]
+    const valueField = { [valueProp]: currentVal || propMeta[valueProp]?.defaultValue }
 
     // -- Handlers --
 
@@ -74,26 +71,31 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
             component,
             docsConfig: {
                 ...docsConfig,
+                ...componentData?.docsConfig,
                 previewProps: {
                     ...docsConfig.previewProps,
+                    ...componentData?.docsConfig.previewProps,
                     ...params,
                     ...newProps,
                 },
                 previewState: {
                     ...docsConfig.previewState,
+                    ...componentData?.docsConfig?.previewState,
                     didRegister: true,
                 }
             },
         })
     }
 
-    const setPreviewState = (newState: ComponentDocsProps['docsConfig']['previewState']) => {
+    const setPreviewState = (newState: DocumentationProps['previewState']) => {
         setComponentDocs(componentName, {
             component,
             docsConfig: {
                 ...docsConfig,
+                ...componentData?.docsConfig,
                 previewState: {
                     ...docsConfig.previewState,
+                    ...componentData?.docsConfig.previewState,
                     ...newState,
                 },
             },
@@ -126,10 +128,17 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
         componentName,
         propSchema,
         propMeta,
-        previewProps: { ...previewProps, ...params },
+        previewProps: {
+            ...previewProps,
+            ...params,
+            ...valueField,
+        },
         previewState,
+        valueProp,
+        onChangeProp,
         router,
         params,
+        valueField,
         setPreviewProps,
         setDidMount,
         setDidApplyParams,
@@ -196,18 +205,36 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     // -- Styles --
 
     const viewClassNames = cn(
-        "relative min-w-400 min-h-200 p-12 rounded-xl border border-gray-500",
+        'relative min-w-400 min-h-200 p-12 rounded-xl border border-gray-500',
         showCode && 'rounded-b-none',
         didMount && colorScheme === 'light' && 'bg-background',
         didMount && colorScheme === 'dark' && 'bg-zinc-900',
     )
+
+    // -- Handlers --
+
+    const previewPropsWithHandlers = useMemo(() => {
+        const onChange = (value: any$Unknown) => {
+            const newValue = { [docsUtils.valueProp]: isEmpty(value) ? "" : value }
+            const newParams = { ...docsUtils.params, ...newValue }
+            const query = buildUrlParamsObject(newParams)
+            docsUtils.router.push({ query }, undefined, { shallow: true })
+        }
+        return {
+            ...previewProps,
+            [docsUtils.onChangeProp]: onChange,
+        }
+    }, [createKey(previewProps || props.docsConfig.previewProps)])
 
     // -- Code --
 
     const jsxPropLines = Object.entries(previewProps).map(([key, value]) => {
         if (typeof value === 'string') return `${key}="${value}"`
         if (typeof value === 'undefined') return null
-        return `${key}={${JSON.stringify(value)}}`
+        let strValue = JSON.stringify(value)
+        if (Array.isArray(value)) strValue = strValue.replaceAll(',', ', ')
+        if (strValue.length > 42) strValue = JSON.stringify(value, null, 4).split('\n').join('\n    ')
+        return `${key}={${strValue}}`
     }).filter(Boolean) as string[]
 
     const jsxCode = `<${componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
@@ -228,7 +255,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
     return (
         <View>
             <View className={viewClassNames}>
-                <Component {...previewProps} />
+                <Component {...previewPropsWithHandlers} />
                 <Pressable
                     className="absolute bottom-0 right-0 p-2 rounded-tl-md border-t border-l border-gray-500"
                     onPress={() => setShowCode((prev) => !prev)}
@@ -266,25 +293,32 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     const { didMount, didApplyParams, isReady, hasParams, setDidApplyParams } = docsUtils
 
     // Props
-    const defaultProps = props.docsConfig.previewProps
+    const defaultProps = useMemo(() => props.docsConfig.previewProps, [])
     const defaultPropsKey = useMemo(() => createKey(defaultProps), [])
+    useEffect(() => console.log('Default props changed'), [defaultPropsKey])
     
     // State
     const [timesReset, setTimesReset] = useState(0)
-    const formState = useFormState(propSchema, { initialValues: previewProps })
+    const [isResetting, setIsResetting] = useState(false)
+    const initialValues = { ...previewProps, ...params }
+    const syncFromPropsKey = createKey(initialValues)
+    const formState = useFormState(propSchema, { initialValues, syncFromPropsKey })
     
     // Theme
     const theme = useTheme()
     const resolvedTheme = (theme.resolvedTheme || theme.systemTheme) as 'light' | 'dark'
     
     // Flags
-    const isDefaultState = formState.isDefaultState || formState.valuesKey === defaultPropsKey
+    const isDefaultState = formState.valuesKey === defaultPropsKey
+    const showResetButton = !isDefaultState || isResetting
 
     // -- Handlers --
 
     const handleReset = () => {
         formState.setValues(defaultProps)
         setTimesReset((prev) => prev + 1)
+        setIsResetting(true)
+        setTimeout(() => setIsResetting(false), 1500)
     }
 
     // -- Sync --
@@ -299,7 +333,10 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
     useEffect(() => {
         docsUtils.setPreviewProps(formState.values)
-        if (isReady) router.push({ query: formState.values }, undefined, { shallow: true })
+        if (isReady) {
+            const query = buildUrlParamsObject(formState.values)
+            router.push({ query }, undefined, { shallow: true })
+        }
     }, [formState.valuesKey, hasParams, didMount, isReady])
 
     // -- Render --
@@ -334,9 +371,12 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     <Text className="text-base font-bold text-primary">
                         Preview
                     </Text>
-                    {!isDefaultState && (
+                    {showResetButton && (
                         <Pressable
-                            className="relative flex items-center py-1 px-3 rounded-md border border-info"
+                            className={cn(
+                                'relative flex items-center py-1 px-3 rounded-md border border-info',
+                                isResetting && 'animate-pulse',
+                            )}
                             onPress={handleReset}
                         >
                             <Icon name="UndoFilled" color={getThemeColor('--info')} size={10} />
@@ -368,6 +408,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     if (isObject && meta.name) fieldType = meta.name
                     // Recreate component if theme changes
                     const inputKey = `${key}-${[resolvedTheme, didMount, timesReset].filter(Boolean).join('-')}`
+                    const jsonInputKey = Array.isArray(currentValue) ? createKey({ inputKey, currentValue }) : inputKey
                     // Render table row
                     return (
                         <View
@@ -480,7 +521,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                                 {isJsonInput && isReady && (
                                     <TextArea
-                                        key={inputKey}
+                                        key={jsonInputKey}
                                         hasError={formState.hasError(key)}
                                         defaultValue={JSON.stringify(currentValue, null, 2)}
                                         onChangeText={(value) => {

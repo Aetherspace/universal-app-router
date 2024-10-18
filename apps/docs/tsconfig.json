@@ -8,14 +8,15 @@
         "../../packages/@green-stack-core/global.d.ts",
         "../../features/@app-core/nativewind-env.d.ts",
         "../../features/@app-core/appConfig.ts",
-        "../../features/**/*.tsx",
+        "../../apps/docs/**/*.ts",
+        "../../apps/docs/**/*.tsx",
         "../../features/**/*.ts",
-        "../../packages/**/*.tsx",
-        "../../packages/**/*.ts"
+        "../../features/**/*.tsx",
+        "../../packages/**/*.ts",
+        "../../packages/**/*.tsx"
     ],
     "compilerOptions": {
         "jsxImportSource": "nativewind",
-        "preserveSymlinks": true,
         "plugins": [{
             "name": "next"
         }]

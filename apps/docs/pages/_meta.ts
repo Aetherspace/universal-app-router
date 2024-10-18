@@ -1,4 +1,8 @@
 import { meta as pluginsMeta } from './plugins/_meta'
+import { isEmpty } from '@green-stack/utils/commonUtils'
+import { featureMeta, packageMeta } from '@app/registries/workspaceImports.generated'
+
+/* --- Helpers --------------------------------------------------------------------------------- */
 
 const renderPluginItems = (options: any$Todo) => {
     return Object.entries(pluginsMeta).reduce((acc, [key, value]) => ({
@@ -9,6 +13,8 @@ const renderPluginItems = (options: any$Todo) => {
             ...options,
     }}), {})
 }
+
+/* --- Top Level Sidebar ----------------------------------------------------------------------- */
 
 export const meta = {
     '-- Universal Base Starter': {
@@ -42,11 +48,28 @@ export const meta = {
     'single-sources-of-truth': {
         'title': 'Single Sources of Truth',
     },
-    '-- Application Features': {
-        'type': 'separator',
-        'title': 'Application Features',
-    },
-    '@app-core': '@app/core',
+
+    // -- Features --
+
+    ...(!isEmpty(featureMeta) ? {
+        '-- Application Features': {
+            'type': 'separator',
+            'title': 'Application Features',
+        },
+    } : {}),
+
+    ...featureMeta,
+
+    // -- Packages --
+
+    ...(!isEmpty(packageMeta) ? {
+        '-- Packages': {
+            'type': 'separator',
+            'title': 'Packages',
+        },
+    } : {}),
+
+    ...packageMeta,
 }
 
 export default meta
