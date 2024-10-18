@@ -1,28 +1,28 @@
 
-import { Button, getDocumentationProps } from '@app/components/Button'
+import { CheckList, getDocumentationProps } from '@app/core/forms/CheckList.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
 import { FileTree } from 'nextra/components'
 
-# Button
+# CheckList
 
 ```tsx
-import { Button } from '@app/components/Button'
+import { CheckList } from '@app/components/CheckList'
 ```
 
 <ComponentDocs
-    component={Button}
+    component={CheckList}
     docsConfig={getDocumentationProps}
 />
 
 ### Location
 
-You can find the source of the `Button` component in the following location:
+You can find the source of the `CheckList` component in the following location:
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@app-core" defaultOpen>
-            <FileTree.Folder name="components" defaultOpen>
-                <FileTree.File name="Button.tsx" />
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="CheckList.styled.tsx" />
             </FileTree.Folder>
         </FileTree.Folder>
     </FileTree.Folder>

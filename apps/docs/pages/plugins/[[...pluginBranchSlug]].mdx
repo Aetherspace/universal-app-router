@@ -1,4 +1,4 @@
-import { RemoteContent } from 'nextra/components'
+import { RemoteContent, Callout } from 'nextra/components'
 import { buildDynamicMDX, buildDynamicMeta } from 'nextra/remote'
 import { pluginsConfig } from '../../remote/pluginsConfig'
 
@@ -21,13 +21,23 @@ export async function getStaticProps({ params }) {
                 let newLine = line
                 if (line.includes('<img ') && line.includes('">')) newLine = newLine.replace('">', '" />')
                 return acc + newLine + '\n'
-            }, `# ${branchPRTitle} \n\n \`\`\`zsch\ngit merge with/${branchName}\n\`\`\`\n\n`)
+            }, [
+                `# ${branchPRTitle} \n`,
+                `\`\`\`zsch\ngit merge with/${branchName}\n\`\`\`\n`,
+            ].join('\n'))
+            pageMarkdown = [
+                pageMarkdown,
+                `## Disclaimer`,
+                `<Callout type="info" emoji="ℹ️">The \`with/${branchName}\` branch is a **git based plugin** to help test the free version of the 'FullProduct.dev' __Universal App Starterkit__. You can *look at the PR* [#${branchPR.number} - ${branchPRTitle}](${branchPR._links.html.href}) to **inspect the diff** and learn what code changes together to enable this feature... OR you can check it out locally to test / edit in isolation until ready to merge.</Callout>`,
+            ].join('\n')
+                
         }
     } catch (error) {
         if (!error) console.error(error)
     }
 
-    const dynamicMDX = await buildDynamicMDX(pageMarkdown, { defaultShowCopyCode: true })
+    const components = { Callout }
+    const dynamicMDX = await buildDynamicMDX(pageMarkdown, { defaultShowCopyCode: true, components })
     const dynamicMeta = await buildDynamicMeta()
 
     return {
@@ -49,4 +59,4 @@ export const getStaticPaths = () => {
     }
 }
 
-<RemoteContent />
+<RemoteContent components={{ Callout }} />

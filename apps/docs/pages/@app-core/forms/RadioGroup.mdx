@@ -1,28 +1,28 @@
 
-import { Button, getDocumentationProps } from '@app/components/Button'
+import { RadioGroup, getDocumentationProps } from '@app/core/forms/RadioGroup.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
 import { FileTree } from 'nextra/components'
 
-# Button
+# RadioGroup
 
 ```tsx
-import { Button } from '@app/components/Button'
+import { RadioGroup } from '@app/components/RadioGroup'
 ```
 
 <ComponentDocs
-    component={Button}
+    component={RadioGroup}
     docsConfig={getDocumentationProps}
 />
 
 ### Location
 
-You can find the source of the `Button` component in the following location:
+You can find the source of the `RadioGroup` component in the following location:
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@app-core" defaultOpen>
-            <FileTree.Folder name="components" defaultOpen>
-                <FileTree.File name="Button.tsx" />
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="RadioGroup.styled.tsx" />
             </FileTree.Folder>
         </FileTree.Folder>
     </FileTree.Folder>

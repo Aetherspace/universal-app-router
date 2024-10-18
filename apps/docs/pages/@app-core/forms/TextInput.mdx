@@ -1,28 +1,28 @@
 
-import { Button, getDocumentationProps } from '@app/components/Button'
+import { TextInput, getDocumentationProps } from '@app/core/forms/TextInput.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
 import { FileTree } from 'nextra/components'
 
-# Button
+# TextInput
 
 ```tsx
-import { Button } from '@app/components/Button'
+import { TextInput } from '@app/components/TextInput'
 ```
 
 <ComponentDocs
-    component={Button}
+    component={TextInput}
     docsConfig={getDocumentationProps}
 />
 
 ### Location
 
-You can find the source of the `Button` component in the following location:
+You can find the source of the `TextInput` component in the following location:
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@app-core" defaultOpen>
-            <FileTree.Folder name="components" defaultOpen>
-                <FileTree.File name="Button.tsx" />
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="TextInput.styled.tsx" />
             </FileTree.Folder>
         </FileTree.Folder>
     </FileTree.Folder>

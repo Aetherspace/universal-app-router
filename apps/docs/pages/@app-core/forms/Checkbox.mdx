@@ -1,28 +1,28 @@
 
-import { Button, getDocumentationProps } from '@app/components/Button'
+import { Checkbox, getDocumentationProps } from '@app/core/forms/Checkbox.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
 import { FileTree } from 'nextra/components'
 
-# Button
+# Checkbox
 
 ```tsx
-import { Button } from '@app/components/Button'
+import { Checkbox } from '@app/components/Checkbox'
 ```
 
 <ComponentDocs
-    component={Button}
+    component={Checkbox}
     docsConfig={getDocumentationProps}
 />
 
 ### Location
 
-You can find the source of the `Button` component in the following location:
+You can find the source of the `Checkbox` component in the following location:
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@app-core" defaultOpen>
-            <FileTree.Folder name="components" defaultOpen>
-                <FileTree.File name="Button.tsx" />
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="Checkbox.styled.tsx" />
             </FileTree.Folder>
         </FileTree.Folder>
     </FileTree.Folder>
