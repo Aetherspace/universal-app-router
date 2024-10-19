@@ -1,11 +1,12 @@
 // -i- Copied from https://docs.expo.dev/guides/monorepos/#modify-the-metro-config
 const { getDefaultConfig } = require('expo/metro-config')
+const { withNativeWind } = require('nativewind/metro')
 const path = require('path')
 
 // Find the project and workspace directories
 const projectRoot = __dirname
 const workspaceRoot = path.resolve(projectRoot, '../..')
-const config = getDefaultConfig(projectRoot)
+const config = getDefaultConfig(projectRoot, { isCSSEnabled: true })
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot]
@@ -20,4 +21,4 @@ config.resolver.nodeModulesPaths = [
 // config.resolver.disableHierarchicalLookup = true
 
 // Export the modified config
-module.exports = config
+module.exports = withNativeWind(config, { input: '../next/global.css' })
