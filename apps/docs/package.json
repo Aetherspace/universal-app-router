@@ -1,0 +1,21 @@
+{
+  "name": "@app/docs",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.1.4",
+    "@types/mdx": "^2.0.12",
+    "next": "~14.0.4",
+    "nextra": "^3.0.11",
+    "nextra-theme-docs": "^3.0.11"
+  },
+  "scripts": {
+    "dev": "next -p 4000",
+    "build": "node -v && next build",
+    "start": "next start -p 4000",
+    "env:local": "cp .env.example .env.local",
+    "regenerate:docs": "npm -w @green-stack/core run run:script ../../apps/docs/scripts/regenerate-docs.ts"
+  }
+}
