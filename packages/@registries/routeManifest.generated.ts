@@ -2,6 +2,7 @@
 export const routeManifest = {
   ['/demos/forms']: 'FormsScreen',
   ['/demos/images']: 'ImagesScreen',
+  ['/demos/markdown']: 'MarkdownScreen',
   ['/']: 'HomeScreen',
   ['/subpages/[slug]']: 'SlugScreen',
 } as const

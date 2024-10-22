@@ -3,6 +3,7 @@
     "include": [
         "**/*.ts",
         "**/*.tsx",
+        ".next/types/**/*.ts",
         "../../apps/next/next-env.d.ts",
         "../../packages/@green-stack-core/global.d.ts",
         "../../features/@app-core/nativewind-env.d.ts",
@@ -12,7 +13,15 @@
         "../../features/**/*.ts",
         "../../features/**/*.tsx",
         "../../packages/**/*.ts",
-        "../../packages/**/*.tsx",
+        "../../packages/**/*.tsx"
     ],
-    "exclude": ["node_modules"]
+    "compilerOptions": {
+        "jsxImportSource": "nativewind",
+        "plugins": [{
+            "name": "next"
+        }]
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

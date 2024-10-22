@@ -1,0 +1,41 @@
+
+import { RadioGroup, getDocumentationProps } from '@app/core/forms/RadioGroup.styled'
+import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { FileTree, Callout } from 'nextra/components'
+
+# RadioGroup
+
+```typescript copy
+import { RadioGroup } from '@app/components/RadioGroup'
+```
+
+<ComponentDocs
+    component={RadioGroup}
+    docsConfig={getDocumentationProps}
+/>
+
+### Location
+
+You can find the source of the `RadioGroup` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="RadioGroup.styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic component docs were auto-generated with `npm run regenerate-docs`. You can hook into automatic docgen by exporting `getDocumentationProps` from a component file. You'll want to provide example props from the ComponentProps zod schema, e.g:
+</Callout>
+
+```tsx /getDocumentationProps/ /documentationProps/ copy filename="RadioGroup.styled.tsx"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = RadioGroupProps.documentationProps('RadioGroup')
+```

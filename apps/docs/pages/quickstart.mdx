@@ -1,0 +1,869 @@
+import { FileTree } from 'nextra/components'
+import { Image } from '@app/primitives'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# GREEN stack quickstart
+
+> **Welcome to FullProduct.dev!** 🙌  
+> This guide will help set up your Web, iOS and Android app up quickly. It will also introduce you to write-once components that render on all platforms, powered by GraphQL, React-Native, Expo and Next.js
+
+This quickstart covers a few topics:
+
+- **[Using the Starterkit](#up-and-running-in-no-time)** and **[Project Architecture](#monorepo-architecture)**
+- **[The GREEN stack + write once, render anywhere](#the-green-stack)** way of working
+- **[Zod for Single sources of truth](#zod-for-single-sources-of-truth)** - Defining **portable data shapes** for UIs, APIs and beyond
+- **[Universal Data Fetching](#universal-data-fetching)** - Using `react-query` and GraphQL (without the hassle)
+- Git / PR based plugins to **[Pick your own Auth / DB / Mail / Storage / ...](#powerful-results-)**
+
+## Start for Web *+* App Stores with [FullProduct.dev](https://fullproduct.dev) ⚡️
+
+**Fork or generate** a new repo from the [green-stack-starter](https://github.com/Aetherspace/green-stack-starter-demo) repo and **include all branches** to enable plugins later.
+
+Github will generate a copy of the template repo to customize.  
+It comes out of the box with setup for:
+
+- ✅ **Next.js web app** (file based app dir routing, SSR, SSG, ...)
+- ✅ **Expo mobile app** (android & iOS with expo-router and react-native)
+- ✅ **Monorepo setup** + `@app/core` feature workspace to write reusable code for both
+- ✅ Both a **REST & GraphQL API**, with apollo server & next.js API routes
+- ✅ **Generators** and **automation** to generate files, API's & component docs
+- ✅ **Docs** and **recommended way of working** for the starterkit and its features and plugins
+
+> Optionally, have a look at some plugin branches:
+
+- Github actions for automatic mobile deployments
+- Linting and prettifying your code
+- Automatic interactive docs generation for features you develop
+- Email, Authentication, Payments, Storage and more 🙌
+
+### Up and running in no time
+
+**When you're ready to start developing, run `npm install`, followed by:**
+
+```shell copy
+npm run dev
+```
+
+> Check out the web version on [localhost:3000](https://localhost:3000)
+
+[![Screenshot of FullProduct.dev](https://github.com/user-attachments/assets/a2eecfd2-7889-4079-944b-1b5af6cf5ddf)](https://fullproduct.dev)
+
+> To test the Mobile version on iOS or Android, download the [Expo Go](https://expo.dev/go) app on your device.  
+> You may need to run `npm -w @app/expo start` **once** to sign up / in to your expo account.
+
+### Monorepo Architecture
+
+Your main entrypoint will be the `@app/core` package in our monorepo setup:
+
+```shell {8}
+your-project/
+
+ └── /apps/
+     └── /expo/... # <- Expo-Router for iOS & Android
+     └── /next/... # <- Next.js App Router (SSR, SSG, API routes)
+
+ └── /features/...
+     └── /@app-core/... # <- Reusable core features, resolvers, UI and screens
+
+ └── /packages/...
+     └── /@green-stack-core/... # <- Starterkit and Universal App helpers 
+
+```
+
+Since the goal is to keep things as write-once as possible, we don't recommend writing code or features directly in the `@app/expo` or `@app/next` workspaces. Keep them for config and routing only.
+
+If you don't care about keeping code copy-pasteable, you obviously can write it there. Our recommended way of working is to write reusable code in the `/features/` or `/packages/` workspaces (such as `@app/core`) instead.
+
+Following this recommendation will make maximum code reuse for web and mobile easier.
+
+Workspaces in `/packages/` serve a similar purpose to `/features/`, but are more focused on plugins, utils, helpers, drivers and SDKs to enhance writing reusable features.
+
+## The GREEN stack
+
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@green-stack-core">
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="context" />
+            <FileTree.Folder name="generators" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="navigation" />
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="scripts" />
+            <FileTree.Folder name="styles" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+The `@green-stack/core` package helps you bring together:
+
+- ✅ **GraphQL** for a typed contract between client & API
+- ✅ **React-Native** for write-once UI
+- ✅ **Expo** for the best mobile DX and UX + App store deploys
+- ✅ **Next.js** for optimized web-vitals, API routes, SEO and SSR / SSG
+
+Combined with **Typescript, React-Query, Zod** and **graphql.tada** you get a a well rounded tech stack.
+
+`@green-stack/core` has the following aliases to import from:
+
+- `@green-stack/schemas` - Toolkit around Zod schemas so you can use them as single source of truth
+- `@green-stack/styles` - Nativewind helpers like `styled()` to help build universal UI
+- `@green-stack/navigation` - Routing & fetching tools for the Next.js & Expo-Router app routers  
+- `@green-stack/components` - e.g. `<Image/>` component that's optimized for web and mobile
+- `@green-stack/scripts`- Workspace automation, e.g. re-export routes from features in Expo & Next
+- `@green-stack/generators` - Interactive cli tools to easily create routes, screens and API's
+
+### Recommended structure
+
+We strongly recommend **colocating code by feature or domain** instead of a typical front-end / back-end split:
+
+```shell {12, 15, 18, 20, 21, 22}
+your-project/
+
+ └── /features/...
+
+     └── /@app-core/... # <- e.g. Workspace for the "core feature" of your app
+
+         └── /constants/...
+         └── /utils/...
+
+         └── /schemas/... # Zod
+         └── /models/... # DB
+         └── /resolvers/... # Back-End Logic (*)
+
+         └── /components/... # UI
+         └── /hooks/... # Front-End Logic
+         
+         └── /screens/...
+             └── HomeScreen.tsx # 👈 Start here
+
+         └── /routes/... # Auto re-exported to '@app/expo' & '@app/next'
+             └── /api/... # Turn resolvers (*) into API routes & graphql resolvers
+             └── index.tsx # 👈 e.g. uses 'HomeScreen'
+
+         └── package.json # List package deps and define name, e.g. '@app/core'
+
+         └── ... # Other config files like 'tsconfig.json'
+
+     └── /some-other-feature/...
+
+         └── /../...
+
+```
+
+> *Routes can be separated by feature / domain as well. Scripts from `@green-stack/scripts` can handle the automatic re-exporting of (api / page) routes to `@app/expo` and `@app/next` for you. - for example:
+
+```shell copy
+npm run collect:routes
+```
+
+This will eventually help us keep entire features as copy-pasteable between projects as possible. More on that later in the [Core Concepts](TODO) section.
+
+For now, you should start in a screen component like `HomeScreen.tsx`
+
+### Write once, render anywhere
+
+The default UI primitives to use for building Universal Apps are those that react-native comes with. Instead of using `<div>`, `<p>`, `<span>` or `<img>`, you instead use `<View>`, `<Text>` and `<Image>`
+
+```typescript copy
+import { View, Text, Image } from 'react-native'
+// ☝️ Auto-transformed to 'react-native-web' in Next.js
+```
+
+### Universal Styling
+
+Our recommended way of styling cross-platform UI components is to use [Tailwind CSS](https://tailwindcss.com/) through [Nativewind](https://www.nativewind.dev/):
+
+```typescript
+import { View, Text, Image } from 'nativewind'
+// ☝️ Import from 'nativewind' instead
+```
+
+OR import them from your own predefined styled system:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="components" defaultOpen>
+                <FileTree.File name="styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```tsx {12} /styled/ filename="styled.tsx"
+import { Text as RNText } from 'react-native'
+import { styled } from '@green-stack/styles'
+
+// ... other re-exported predefined styles ...
+
+/* --- Typography ------------ */
+
+export const P = styled(RNText, 'text-base')
+export const H1 = styled(RNText, 'font-bold text-2xl text-primary-100')
+export const H2 = styled(RNText, 'font-bold text-xl text-primary-100')
+export const H3 = styled(RNText, 'font-bold text-lg text-primary-100')
+// ☝️ These styles will always be applied unless overridden by the className prop
+
+```
+
+> For convenience, we've already set up an `@app/primitives` alias that points to this file for you.
+
+Usage - e.g. `HomeScreen.tsx`
+
+```typescript {5, 13, 22} /className/
+import { Image, View, H1 } from '@app/primitives'
+
+// ⬇⬇⬇
+
+<View className="px-2 max-w-[100px] items-center rounded-md">
+
+/* Use the 'className' prop like you would with tailwind on the web */
+
+// ⬇⬇⬇
+
+// When rendering on Mobile:
+
+//  'px-2'          -> { paddingLeft: 8, paddingRight: 8 }
+//  'max-w-[100px]' -> { maxWidth: 100 }
+//  'items-center'  -> { alignItems: 'center' }
+//  'rounded-md'    -> { borderRadius: 6 }
+
+// -- vs. --
+
+// When rendering on the server or browser:
+
+//  'px-2'          -> padding-left: 8px; padding-right: 8px;
+//  'max-w-[100px]' -> max-width: 100px;
+//  'items-center'  -> align-items: center;
+//  'rounded-md'    -> border-radius: 6px;
+```
+
+> Check [nativewind.dev](https://nativewind.dev) for a deeper understanding of [Universal Styling](TODO)
+
+## Zod for Single sources of truth
+
+`@green-stack/schemas` will allow you to define any data structure with [zod](https://zod.dev), but then provide helpers to *transform* them into:
+
+- ✅ Types
+- ✅ Input validation
+- ✅ Output and React prop defaults
+- ✅ Form state hooks
+- ✅ Database models (pick your own DB)
+- ✅ GraphQL schema definition language
+- ✅ Component docs
+
+> This means you'll only need to define the shape for all these just once, using zod:
+
+### Writing portable schemas
+
+Try creating a `User` schema for example:
+
+```shell
+@app/core
+ └── /schemas/... # 💡 Keep Zod based single source of truth in '/schemas/'
+```
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="User.schema.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```ts {4, 7, 11} /.min/ /.default/ /.nullish/ /.nullable/ /.optional/ filename="User.schema.ts"
+import { z, schema } from '@green-stack/schemas'
+
+// Define the shape of the user data
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, best to keep the same
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().min(18), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
+    birthdate: z.Date().nullish(), // = same as calling .nullable().optional()
+})
+```
+
+Already, our zod powered schema can act like a **single source of truth** for both **types and validation**:
+
+```ts {15, 16} /z.infer/ /?/ /| null/
+// Extract type from the schema and export it as a type alias
+export type User = z.infer<typeof User>
+
+// ⬇⬇⬇
+
+// {
+//     name: string,
+//     age: number,
+//     isAdmin?: boolean,
+//     birthDate?: Date | null,
+// }
+
+// ⬇⬇⬇
+
+// Usage as a type
+const newUser: User = { ... }
+```
+
+> For *validation*, you can call `.parse()` on the whole User schema:
+
+```ts /parse/1
+// Parsing will auto infer the type if valid
+const newUser = User.parse(someInput)
+
+// You can also parse an individual property by using '.shape' 👇
+
+User.shape.age.parse("Invalid - Not a number")
+// Throws => ZodError: "Expected a number, recieved a string."
+// Luckily, TS will already catch this in your editor ( instant feedback 🙌 )
+```
+
+> Check out [zod.dev](https://zod.dev) and the [Single Sources of Truth](TODO) docs later for a deep of zod's typescript-first schema building abilities.
+
+To highlight the power of schemas, let's look beyond validation and types:
+
+### Build a data resolver (API route + GraphQL) with zod
+
+```shell
+@app/core
+ └── /resolvers/... # <- Write reusable back-end logic in '/resolvers/' folders
+```
+
+Let's link an Input schema and Output schema to some business logic:
+
+```ts {3, 4, 11, 12} filename="healthCheck.resolver.ts"
+/* -- Schemas ------------ */
+
+// Input validation
+export const HealthCheckInput = schema('HealthCheckInput', {
+
+    echo: z.string()
+        .default('Hello World!')
+        .describe("Will ne echo'd back in the response"), // Docs
+})
+
+// Output definition
+export const HealthCheckOutput = schema('HealthCheckOutput', {
+
+    echo: HealthCheckInput.shape.echo, // 1 of many ways to reuse defs
+
+    alive: z.boolean().default(true),
+    kicking: z.boolean().default(true),
+})
+```
+
+To be able to reuse these on the front-end later, you'll want to combine them as a "bridge":
+
+```ts {5, 10, 14} /inputSchema/ /outputSchema/ filename="healthCheck.bridge.ts"
+import { createDataBridge } from '@green-stack/schemas/createDataBridge' 
+
+/* -- Bridge ------------- */
+
+export const healthCheckBridge = createDataBridge({
+    // Assign schemas
+    inputSchema: HealthCheckInput,
+    outputSchema: HealthCheckOutput,
+
+    // GraphQL config
+    resolverName: 'healthCheck',
+    resolverArgsName: 'HealthCheckInput',
+
+    // API route config
+    apiPath: '/api/health',
+    allowedMethods: ['GRAPHQL', 'GET'],
+})
+```
+
+Think of a **"Databridge"** as a literal *bridge between the front and back-end*.
+
+It's a metadata object you can use from either side to provide / transform into:
+
+- ✅ Input and output **types + validation + defaults**
+- ✅ GraphQL **schema definitions** in `schema.graphql`
+- ✅ The query string to call our GraphQL API with
+
+> It's not necessarily recommended in this specific case, but a clean split filewise coud look like this:
+
+<FileTree>
+    <FileTree.Folder name="@app-core" defaultOpen>
+        <FileTree.Folder name="schemas" defaultOpen>
+            <FileTree.File name="HealthCheckInput.ts" />
+            <FileTree.File name="HealthCheckOutput.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="healthCheck.bridge.ts" />
+            <FileTree.File name="healthCheck.resolver.ts" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+> This might make more sense if you know you'll be reusing these data shapes (e.g. 'User', 'Post') outside of the context of the resolver.
+
+For now, let's just connect the bridge to our actual server-side business logic:
+
+```ts {2, 6, 18, 19, 29} /healthCheckBridge/ filename="healthCheck.resolver.ts"
+import { createResolver } from '@green-stack/schemas/createResolver'
+import { healthCheckBridge } from './healthCheck.bridge.ts'
+
+/** --- healthCheck() ---- */
+/** -i- Check the health status of the server. */
+export const healthCheck = createResolver(async ({
+    args,
+    context, // <- Request context (from middleware)
+    parseArgs, // <- Input validator (from 'inputSchema')
+    withDefaults, // <- Response helper (from 'outputSchema')
+}) => {
+    
+    // Auto typed input:
+    const { echo } = args
+
+    // -- OR --
+
+    // Validate input, infer types and apply defaults
+    const { echo } = parseArgs(args)
+
+    // -- ... --
+
+    // Add business logic
+    // - e.g. log out the request 'context'?
+
+    // -- Respond --
+
+    // Typecheck response and apply defaults from bridge's outputSchema
+    return withDefaults({
+        echo,
+        alive: true,
+        // 'kicking' will be defaulted to true automatically by zod
+    })
+
+}, healthCheckBridge)
+// ☝️ Provide the bridge as the 2nd argument to:
+// - infer the types
+// - enable the parseArgs() and withDefaults() helpers
+```
+
+The resulting `healthCheck()` function can be used as just another async function anywhere in your back-end.
+
+The difference with a regular function, since the logic is now bundled together with its DataBridge / input + output metadata, is that we can easily transform it into an API route:
+
+### Creating API routes from Resolvers
+
+```shell
+@app/core
+ └── /resolvers/...
+ └── /routes/...
+     └── /api/... # <- Define API routes at this level
+```
+
+`/api/health/route.ts` ➡️ We recommend workspaces follow Next.js API route conventions. This is so our scripts can automatically re-export them to the `@app/next` workspace later.
+
+You can create a new API route by exporting a `GET` or `POST` handler assigned to a `createNextRouteHandler()` wrapping your "bridged resolver" function:
+
+```ts /createNextRouteHandler/1,3 /healthCheck/4 filename="features / @app-core / routes / api / health / route.ts"
+import { healthCheck } from '@app/resolvers/healthCheck.resolver'
+import { createNextRouteHandler } from '@green-stack/schemas/createNextRouteHandler'
+
+/* --- Routes ------------ */
+
+export const GET = createNextRouteHandler(healthCheck)
+// Automatically extracts (☝️) args from url & search params
+// based on the zod 'inputSchema'
+
+// If you want to support e.g. POST (👇), same deal (checks body as well)
+export const POST = createNextRouteHandler(healthCheck)
+```
+
+What `createNextRouteHandler()` does under the hood is extract the input from the request context, validate it, call the resolver function with the args (and e.g. token / session data) and return the output from your resolver with defaults applied.
+
+> 💡 Be sure to check [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) later for a deeper understanding of supported exports (like `GET` or `POST`) and their options. You might also want to expand the [Next.js Middleware](https://nextjs.org/docs/pages/building-your-application/routing/middleware) or **add auth checks in your business logic** to prevent unauthorized access. We have a few **auth plugins** that can help you with this.
+
+If you've restarted your dev server or ran `npm run collect:routes`, test your API at [/api/health](http://localhost:3000/api/health)
+
+### Attaching a Resolver to GraphQL
+
+API routes are fine, but we think GraphQL is even better, **if you don't have to deal with the hassle of managing it.** So we made it quite easy to enable GraphQL for your resolvers. The flow is quite similar.
+
+*In the same file*, add the following:
+
+```ts {3, 11} filename="features / @app-core / routes / api / health / route.ts"
+import { healthCheck } from '@app/resolvers/healthCheck.resolver'
+import { createNextRouteHandler } from '@green-stack/schemas/createNextRouteHandler'
+import { createGraphResolver } from '@green-stack/schemas/createGraphResolver'
+
+/* --- Routes ------------ */
+
+// exports of `GET` / `POST` / `PUT` / ...
+
+/* --- GraphQL ----------- */
+
+export const graphResolver = createGraphResolver(healthCheck)
+// Automatically extracts input (☝️) from graphql request context
+```
+
+After exporting `graphResolver` here, restart the dev server or run `npm run build:schema` manually.
+
+You can then check out your GraphQL API playground at [/api/graphql](http://localhost:3000/api/graphql)
+
+![Apollo Server GraphQL Playground Preview](https://github.com/Aetherspace/universal-app-router/assets/5967956/3b6b1d98-1228-44a4-aaa0-968664a027c3)
+
+> Check [Resolvers and API's](TODO) later for a deeper understanding of how this all works under the hood.
+
+## Universal Routes + Data Fetching
+
+To fetch the right amount of data with GraphQL, we'll need to specify the right query for it.
+
+Thanks to `graphql.tada`, we can write queries with hints. The args and results are also automatically typed based on the GraphQL schema the startkit automatically extracts for you:
+
+<FileTree>
+    <FileTree.Folder name="@app-core" defaultOpen>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="healthCheck.resolver.ts" />
+            <FileTree.File name="healthCheck.bridge.ts" />
+            <FileTree.File name="healthCheck.query.ts ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```ts {2, 4, 19, 29} /healthCheckQuery/ filename="features / @app-core / resolvers / healthCheck.query.ts"
+import { ResultOf, VariablesOf } from 'gql.tada'
+// ☝️ Type helpers that interface with the GraphQL schema
+import { graphql } from '../graphql/graphql'
+// ☝️ Custom graphql.tada query builder that integrates with our types
+
+/* --- Query ----------------------- */
+
+// VSCode will help suggest or autocomplete thanks to our schema definitions
+export const healthCheckQuery = graphql(`
+  query healthCheck ($healthCheckArgs: HealthCheckInput) {
+    healthCheck(args: $healthCheckArgs) {
+      echo
+      alive
+      kicking
+    }
+  }
+`)
+
+// ⬇⬇⬇ automatically typed as ⬇⬇⬇
+
+// TadaDocumentNode<{
+//     healthCheck: {
+//         echo: string | null;
+//         alive: boolean | null;
+//         kicking: boolean | null;
+//     };
+// }>
+
+// ⬇⬇⬇ can be turned into reusable types ⬇⬇⬇
+
+/* --- Types ----------------------- */
+
+export type HealthCheckQueryInput = VariablesOf<typeof healthCheckQuery>
+
+export type HealthCheckQueryOutput = ResultOf<typeof healthCheckQuery>
+```
+
+> Check out [graphql.tada](https://graphql.tada) later to how to write and use GraphQL queries with typescript.
+
+You might think this is a lot of work for a simple query. However, you don't necessarily have to write these queries out yourself. Once we reuse our **`DataBridge`**, it can scaffold out the query for us:
+
+```ts {7, 8} /bridgedFetcher/1,3 /healthCheckBridge/2 filename="features / @app-core / resolvers / healthCheck.query.ts"
+import { healthCheckBridge } from './healthCheck.bridge'
+import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher'
+// ☝️ Helper to automatically create a fetcher from a DataBridge
+
+/* --- healthCheckFetcher() -------- */
+
+// Use the bridge to automatically create the fetcher function
+export const healthCheckFetcher = bridgedFetcher({
+
+    ...healthCheckBridge,
+    // ☝️ Uses the bridge to create the query and input + output types for you
+
+    // OPTIONALLY override the default query
+    graphqlQuery: healthCheckQuery,
+    // ☝️ If you only need specific fields, and want the response type to match that
+})
+```
+
+> Same file, same results, but a lot easier, right?
+
+To recap, `bridgedFetcher()` will automatically create the fetcher function from a DataBridge:
+
+- ✅ **Creates the query string**. No more manual typing, **just pass the databridge**.
+- ✅ You **can override the default query** by passing a custom `graphqlQuery`
+- ✅ **Auto infers input and output types** for the function from either the bridge or custom query
+- ✅ Resulting **fetcher function** *can be used on server, browser and mobile with `react-query`*
+
+> You've officially skipped a lot of the complexity of working with GraphQL 🙌
+
+### Fetching initial Data in Screens
+
+![Graph showing the Unversal Route Screen component using a fetcher with React-Query to retrieve the props for a RouteComponent before rendering on Web, iOS and Android](https://github.com/user-attachments/assets/d64fbf93-4a35-433e-91c7-10d6bdf1a0ab)
+
+There are 3 environments to consider when providing dynamic data to your screens:
+
+- **Server-side rendering (SSR)** using the **[executable schema](https://the-guild.dev/graphql/tools/docs/generate-schema)**
+- **Client-side rendering (CSR)** in the browser (**hydration** or fetch)
+- **Mobile App** client in Expo (fetch only)
+
+To fetch data the same way in all three, we've written two helpers:
+- `createQueryBridge()` - Build **instructions for data-fetching with `react-query`**
+- `<UniversalRouteScreen/>` - Component that **uses the bridge to fetch data** in each environment
+
+Here's how we'd build the queryBridge in the 'Home' route we set up at the start:
+
+### 1. Start with component & bridge in `/screens/` folder
+
+Think of a "`QueryBridge`" as a bridge between the route component and the data-fetching logic. It's a way to fetch data for a route, based on the route's parameters.
+
+The closest thing you could compare it to is next.js's `getServerSideProps`. Except it also works to fetch data on your Native App, not just during Web SSR or CSR:
+
+<FileTree>
+    <FileTree.Folder name="@app-core" defaultOpen>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="healthCheck.resolver.ts" />
+            <FileTree.File name="healthCheck.bridge.ts" />
+            <FileTree.File name="healthCheck.query.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="screens" defaultOpen>
+            <FileTree.File name="HomeScreen.tsx ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```tsx {2, 7, 24, 30} /createQueryBridge/ /routeDataFetcher/ /serverHealth/1,3 filename="HomeScreen.tsx"
+import { createQueryBridge } from '@green-stack/navigation'
+import { healthCheckFetcher } from '@app/resolvers/healthCheck.resolver'
+import type { HydratedRouteProps } from '@green-stack/navigation'
+
+/* --- Data Fetching --------------- */
+
+export const queryBridge = createQueryBridge({
+  
+    // 1. Transform the route params into things useable by react-query
+    routeParamsToQueryKey: (routeParams) => ['healthCheck', routeParams.echo],
+    routeParamsToQueryInput: (routeParams) => ({ healthCheckArgs: { echo: routeParams.echo } }),
+
+    // 2. Provide the fetcher function to be used by react-query
+    routeDataFetcher: healthCheckFetcher,
+
+    // 3. Transform fetcher output to props after react-query was called
+    fetcherDataToProps: (fetcherData) => ({ serverHealth: fetcherData?.healthCheck }),
+})
+
+// ⬇⬇⬇ Extract types ⬇⬇⬇
+
+/* --- Types ----------------------- */
+
+type HomeScreenProps = HydratedRouteProps<typeof queryBridge>
+
+// ⬇⬇⬇ Use fetcher data in screen component ⬇⬇⬇
+
+/* --- <HomeScreen/> --------------- */
+
+const HomeScreen = (props: HomeScreenProps) => {
+
+    // Query results from 'fetcherDataToProps()' will be added to it
+    const { serverHealth } = props
+    // ☝️ Typed as {
+    //      serverHealth: {
+    //          echo: string,
+    //          alive?: boolean,
+    //          kicking?: boolean,
+    //      }
+    //  }
+
+    // -- Render --
+
+    return (...)
+}
+```
+
+### 2. Use bridge & component in workspace `/routes/` folder
+
+```shell
+@app/core
+ └── /screens/...
+     └── HomeScreen.ts # <- Where we've defined the data-fetching logic *and* UI
+ └── /routes/...
+     └── index.ts # <- Where we'll combine the bridge & UI component
+```
+
+Time to bring it all together by turning the HomeScreen into an actual route we can visit:
+
+<FileTree>
+    <FileTree.Folder name="@app-core" defaultOpen>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="healthCheck.resolver.ts" />
+            <FileTree.File name="healthCheck.bridge.ts" />
+            <FileTree.File name="healthCheck.query.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="screens" defaultOpen>
+            <FileTree.File name="HomeScreen.tsx" />
+        </FileTree.Folder>
+        <FileTree.Folder name="routes" defaultOpen>
+            <FileTree.File name="index.tsx ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+This is where `UniversalRouteScreen` comes in to **execute each step** op the `queryBridge` **in sequence** until we get to the final props to be provided to the screen.
+
+```tsx {2, 7} /queryBridge/3 /HomeScreen/2 filename="features / @app-core / routes / index.tsx" 
+import { HomeScreen, queryBridge } from '@app/screens/HomeScreen'
+import { UniversalRouteScreen } from '@app/navigation'
+
+/* --- /subpages/[slug] ----------- */
+
+export default (props) => (
+    <UniversalRouteScreen
+        {...props}
+
+        queryBridge={queryBridge}
+        // 👆 Pass the bridge as instruction for react-query to get the final props
+
+        routeScreen={HomeScreen}
+        // 👆 Screen component, provided with final props on mobile + server + browser
+    />
+)
+```
+
+In the same `/routes/index.tsx` file, you can add the [Next.js routing config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)
+
+```tsx {} filename="features / @app-core / routes / index.tsx" 
+// -i- Export any other next.js routing config here
+export const dynamic = 'auto'
+export const dynamicParams = true
+export const revalidate = false
+export const fetchCache = 'auto'
+export const runtime = 'nodejs'
+export const preferredRegion = 'auto'
+export const maxDuration = 5
+```
+
+> 💡 Check Next.js [route segment config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) later to understand the options you can set here.
+
+We'll be re-exporting this route segment config in the next step. We'll keep it in the same file as the main route component for colocation and enabling `@green-stack/scripts` to automatically re-export it.
+
+### 3. Reexport route file in Expo & Next.js app routers
+
+> This step happens automatically in the `npm run dev` script, but you could do it manually.
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.File name="index.tsx ← iOS + Android" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.File name="page.tsx ← Web SSR / SSG" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="resolvers">
+                <FileTree.File name="healthCheck.resolver.ts" />
+                <FileTree.File name="healthCheck.bridge.ts" />
+                <FileTree.File name="healthCheck.query.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="HomeScreen.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.File name="index.tsx → Exported Universal Route" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+`app/index.tsx` in `@app/expo` workspace
+
+```typescript filename="apps / expo / app / index.tsx"
+import HomeRoute from '@app/routes/index'
+
+export default HomeRoute
+```
+
+`app/page.tsx` in `@app/next` workspace
+
+```typescript filename="apps / next / app / page.tsx"
+import HomeRoute from '@app/routes/index'
+
+export default HomeRoute
+
+// Re-export the route segment configs here as well
+```
+
+> Check [Universal Routing](TODO) docs later for a deeper understanding of how this all works under the hood.
+
+---
+
+## Powerful Results 💪
+
+Following these instructions has provided us with a **bunch of value** in **little time**:
+
+- **Hybrid UI** component that is **styled with tailwind**, but **actually native on iOS and Android**
+- Hybrid UI component that is **optimized for SEO, media queries and Web-Vitals** on Web
+- **Universal data-fetching** logic that **works on server, browser and mobile**
+---
+- 🤝 A **single source of truth** for all our props, args, responses, types, defaults and validation
+---
+- A **Back-end resolver** function we can call from other data resolvers or API routes
+- A **GraphQL API** powered by Apollo-Server, with **automatically inferred type definitions**
+- A **Next.js powered API** that we could expose to **third parties to integrate** with us
+
+---
+
+### Next steps and plugins 🚀
+
+Now that you know how to build write-once cross-platform apps, why not dive into the [Core Concepts](/core-concepts) section next? It will give you a deeper understanding of how to get the most out of this starterkit.
+
+In the future, you can expand the basic setup with **ready to merge [git based plugins](TODO)**, so you can **pick and choose the rest of your stack**:
+
+- ✅ Database: [Supabase](TODO) / [Prisma](TODO) / [Drizzle](TODO) / [Mongoose](TODO) / ...?
+- ✅ Authentication: [Clerk](TODO) / [Kinde](TODO) / [Supabase](TODO) / custom?
+- ✅ Payments: [Stripe](TODO) / [Lemonsqueezy](TODO) / other?
+- ✅ Email: `react-email` + [Resend](TODO) / [Mailgun](TODO) / ...?
+- ✅ Storage: [UploadThing](TODO) / [Supabase](TODO) / ...?
+- ✅ UI kit: [Tamagui](TODO) / [Gluestack](TODO) / ...?
+
+If none of these options work for you, feel free to add what you're familiar with.
+
+Our core is the GREEN stack and we make absolutely no assumptions about the rest of your stack.
+
+> We will provide plugins with [zod based drivers](TODO) for the most popular options (listed above). Drivers and plugins are entirely optional and can be completely ignored if you don't need them.
+
+So, merge what you're familiar with, or check out the individual PR's to test and learn how they differ before making a decision.
+
+### Automatic Docgen, maybe?
+
+One plugin we recommend to everyone, is the `with/automagic-docs` plugin branch. It will enable pairing your [zod schemas](TODO) / [Single sources of Truth](TODO) with components, resolvers and API routes to automatically generate interactive docs for them. (Like Storybook, but in Next.js)
+
+This way:
+- Your docs grow with your project.
+- You'll easily onboard new people so they don't reinvent the wheel.
+- You ease technical handovers in case of acquisition or passing on the project.
+
+Just like the other [Core concepts](/core-concepts) and plugins, the documentation plugin is also Designed for Copy-paste.
+
+> Check the pages under "Application Features" in the sidebar for some examples of this plugin in action.
+
+We wish you the best on your _Full-Product, Universal App_ journey! 🎉

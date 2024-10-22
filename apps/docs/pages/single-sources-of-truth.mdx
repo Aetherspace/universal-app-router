@@ -1,0 +1,610 @@
+import { Image } from '@app/primitives'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# Schemas as Single Sources of Truth
+
+```ts
+import { z, schema } from '@green-stack/schemas'
+```
+
+In the [Project Structure](/project-structure) docs, we talked about how predictable patterns in how you architect your folders and files can help you move faster through automating the repetitive parts.
+
+This guide dives into how [zod](https://zod.dev) based schemas can help you gain even more speed through a **predictable way of defining your data shapes** when paired with tooling built around it:
+
+A core feature of Aetherspace as a starter template is taking what works and making it better. This is why we invented `schema()` is a tiny wrapper around zod's `z.object()`. You can use it to define your datastructures just once for the entire monorepo.
+
+> `zod` is a schema validation library built with Typescript in mind. By extending it with `schema()`, we can leverage its powerful features to create single sources of truth for GraphQL, API handlers, Database Models and Automatic Docs as well.
+
+## Why Single Sources of Truth?
+
+Think about all the code related to the shape of data in your app:
+
+- Typescript types
+- Form & data validation
+- GraphQL definitions
+- Database models
+- Documentation
+- ...
+
+### The problem
+
+Generally speaking, you never want to define your datastructures more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
+
+If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
+
+### The solution
+
+By leveraging `schema()` to build out the shape of our data just once, we enable our structure definitions to create other definitions for (e.g.) GraphQL and others from them. Essentially meaning we can avoid ever declaring it multiple times.
+
+This is a huge win for maintainability and developer experience, as it avoids the need to keep these sources of truth in sync for all your component props, database models or function args / responses.
+
+## Usage
+
+Let's have a look at how `zod` and `schema()` definitions translate to Typescript types: 👇
+
+### Defining Primitives
+
+```typescript
+const someString = z.string() // -> string
+const someNumber = z.number() // -> number
+const someBoolean = z.boolean() // -> boolean
+const someDate = z.date() // -> Date
+```
+
+### Defining Objects
+
+```shell
+some-workspace
+ 
+ └── /schemas/... # <- Single sources of truth
+     └── User.ts # <- e.g. User schema
+```
+
+`User.ts`
+
+```typescript
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, best to keep the same
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().min(18), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
+    birthdate: z.Date().nullish(), // = same as calling .nullable().optional()
+})
+```
+
+### Extracting Types
+
+```ts
+// Extract type from the schema and export it as a type alias
+export type User = z.infer<typeof User>
+```
+
+`⬇⬇⬇`
+
+```ts
+// {
+//     name: string,
+//     age: number,
+//     isAdmin?: boolean,
+//     birthDate?: Date | null,
+// }
+```
+
+## Validation
+
+```ts
+// You can call .parse() on the whole User schema...
+
+const newUser = User.parse(someInput) // <- Auto infers 'User' type if valid
+
+// ...or on its idividual properties by using '.shape' 👇
+
+User.shape.age.parse("Invalid - Not a number")
+// Throws => ZodError: "Expected a number, recieved a string."
+// Luckily, TS will already catch this in your editor ( instant feedback 🙌 )
+```
+
+> Validation errors:
+
+```ts
+try {
+
+    // Will fail validation
+    const someNumber = z.number().parse("Not a number")
+
+} catch (error) { // ⬇⬇⬇
+
+    /* Throws 'ZodError' with a .issues array:
+        [{
+            code: 'invalid_type',
+            expected: 'number',
+            received: 'string',
+            path: [],
+            message: 'Expected number, received string',
+        }]
+    */
+
+}
+```
+
+### Custom Errors
+
+You can provide custom error messages by passing the `message` prop:
+
+```ts
+const NumberValue = z.number({ message: 'Please provide a number' })
+// Throws => ZodError: [{ message: "Please provide a number", ... })
+```
+
+You can provide custom error messages for specific validations:
+
+```ts
+const MinimumValue = z.number().min(10, { message: 'Value must be at least 10' })
+// Throws => ZodError: [{ message: "Value must be at least 10", ... })
+
+const MaximumValue = z.number().max(100, { message: 'Value must be at most 100' })
+// Throws => ZodError: [{ message: "Value must be at most 100", ... })
+```
+
+## Advanced Types
+
+```ts
+const Task = schema('Task', {
+
+    // Enums
+    status: z.enum(['draft', 'published', 'archived']),
+
+    // Arrays
+    tags: z.array(z.string()),
+
+    // Tuples
+    someTuple: z.tuple([z.string(), z.number()]),
+
+})
+```
+
+`type Task = z.infer<typeof Task>`
+
+```ts
+// {
+//     status: 'draft' | 'published' | 'archived',
+//     tags: string[],
+//     someTuple: [string, number],
+// }
+```
+
+> Anything you can define the shape of in Typescript, you can define in Zod:
+
+> Check [zod.dev](https://zod.dev) for the full list of what you can define with zod.
+
+### Reusing and extending schemas
+
+You can add new fields through `.extendSchema()`
+
+```ts
+// Extend the User schema
+const AdminUser = User.extendSchema('AdminUser', {
+    isAdmin: z.boolean().default(true),
+})
+```
+
+`type AdminUser = z.infer<typeof AdminUser>`
+
+```ts
+// {
+//     name: string,
+//     age: number,
+//     birthDate?: Date | null,
+//
+//     isAdmin?: boolean, // <- New field added
+// }
+```
+
+We do need to provide a new name for the extended schema, so there's no conflict with the original one when we port it to other formats.
+
+### `.pickSchema()`
+
+Similarly, you can create a new schema by picking specific props from another:
+
+```ts
+const PublicUser = User.pickSchema('PublicUser', {
+    name: true,
+    age: true,
+})
+```
+
+`type PublicUser = z.infer<typeof PublicUser>`
+
+```ts
+// {
+//     name: string,
+//     age: number,
+// }
+```
+
+### `.omitSchema()`
+
+The reverse is also possible through omitting certain fields.
+
+```ts
+const PublicUser = User.omitSchema('PublicUser', {
+    birthDate: true, // <- Will be missing in the new schema
+})
+```
+
+`type PublicUser = z.infer<typeof PublicUser>`
+
+```ts
+// {
+//     name: string,
+//     age: number,
+// }
+```
+
+### Nesting and Collections
+
+Sometimes you need to represent a collection of a specific data shape:
+
+```ts
+const Team = schema('Team', {
+    members: z.array(User), // <- Pass the 'User' schema to z.array()
+    teamName: z.string(),
+})
+```
+
+`type Team = z.infer<typeof Team>`
+
+```ts
+// {
+//     teamName: string,
+//     members: {
+//         name: string,
+//         age: number,
+//         birthDate?: Date | null,
+//     }[]
+// }
+
+// ⬇⬇⬇ Which is in essense:
+
+// {
+//     teamName: string,
+//     members: User[]
+// }
+```
+
+### Defaults and optionality
+
+```ts
+// Define a schema with optional and nullable fields
+const User = schema('...', {
+
+    name: z.string().optional(), // <- Allow undefined
+    age: z.number().nullable(), // <- Allow null
+    birthData: z.date().nullish(), // <- Allow both
+
+    // Use .default() to make optional in args,
+    // but provide a default value when it IS undefined
+    isAdmin: z.boolean().default(false), // <- false
+})
+```
+
+## Transforming to other formats
+
+### Schema introspection
+
+```ts
+User.introspect()
+
+// ⬇⬇⬇ Lists the JSON representation of your data shape
+
+{
+    "name": "User",
+    "zodType": "ZodObject", // <- Zod class it was built with, e.g. z.object()
+    "baseType": "Object", // <- e.g. "Array" / "Boolean" / "String" / ...
+    "schema": {
+
+        // ☝️ Nested configs will be listed under "schema", e.g. object props
+        "name": {
+            "zodType": "ZodString",
+            "baseType": "String",
+            "isOptional": false, // in case of .optional() or .default()
+        },
+
+        "age": { zodType: "ZodNumber", baseType: "Number", ... },
+        "birthDate": { zodType: "ZodDate", baseType: "Date", ... }
+
+    }
+}
+```
+
+A **deep introspection API** is what allows us to transform these zod definitions to other formats.
+
+Essentially, introspection is what enables schemas to serve as the **Single Sources of Truth for all data shapes**, making them quite portable.
+
+### Introspection metadata
+
+This is the entire list of possible metadata you can extract with `.introspect()` from a single schema field:
+
+```ts
+type Metadata<S> = {
+
+    // Essentials
+    name?: string,
+    zodType: ZOD_TYPE,
+    baseType: BASE_TYPE,
+
+    // Optionality and defaults
+    isOptional?: boolean,
+    isNullable?: boolean,
+    defaultValue?: any$Unknown,
+
+    // Documentation
+    exampleValue?: any$Unknown,
+    description?: string,
+    minLength?: number,
+    maxLength?: number,
+    exactLength?: number,
+    minValue?: number,
+    maxValue?: number,
+
+    // Flags
+    isInt?: boolean,
+    isBase64?: boolean,
+    isEmail?: boolean,
+    isURL?: boolean,
+    isUUID?: boolean,
+    isDate?: boolean,
+    isDatetime?: boolean,
+    isTime?: boolean,
+    isIP?: boolean,
+
+    // Literals, e.g. z.literal()
+    literalValue?: any$Unknown,
+    literalType?: 'string' | 'boolean' | 'number',
+    literalBase?: BASE_TYPE,
+
+    // e.g. Nested schema field(s) to represent:
+    // - object properties
+    // - array elements
+    // - tuple elements
+    schema?: S,
+
+    // The actual Zod object, only included when
+    // calling with .introspect(true)
+    zodStruct?: z.ZodType & { ... },
+
+    // compatibility with other systems like databases & drivers
+    isID?: boolean,
+    isIndex?: boolean,
+    isUnique?: boolean,
+    isSparse?: boolean,
+}
+```
+
+> Building your own tools that hook into the introspection result?  
+
+> You can use this metadata type to help provide type-safety:
+
+```ts
+import { Metadata } from '@green-stack/schemas'
+```
+
+### Documenting with Schemas
+
+A good example of how these schemas can be transformed through the introspection result is in the [automatic docs](TODO) plugin:
+
+```shell
+git merge with/automatic-docs
+```
+
+There's two ways schemas are used to create docs:
+
+1. **GraphQL schema comments** provide hints in the GraphQL playground - at `/api/graphql`
+2. **MDX component docs** generated from the prop schema, with interactive controls
+
+> No. 1 already works without any plugin when using our recommended way to do GraphQL
+
+> No. 2 will happen automatically when running `npm run dev` after merging the plugin.
+
+For the best documentation experience, you'll want to add some important metadata:
+
+`UserProfile.tsx`
+
+```ts
+const UserProfileProps = schema('UserProfileProps', {
+
+    // Add a description to the field
+    name: z.string().describe('The name of the user'),
+
+    // Provide an example value
+    age: z.number().example(25),
+
+    // Add a description and example value
+    birthDate: z
+        .date()
+        .describe('User birthdate')
+        .example('1996-12-19'),
+
+    // Default values can be used as examples as well
+    isAdmin: z.boolean().default(false),
+})
+
+// Type alias
+type UserProfileProps = z.infer<typeof UserProfileProps>
+
+/* --- <UserProfile> --- */
+
+export const UserProfile = (props: UserProfileProps) => {
+    // ...
+}
+```
+
+The final step to link this schema to the component so it gets picked up by the docs is exporting the introspection result from the same file as the component:
+
+```shell
+some-workspace
+ 
+ └── /Components/...
+     └── UserProfile.tsx # <- export `getDocumentationProps`
+```
+
+`UserProfile.tsx`
+
+```typescript
+// ...
+
+/* --- Docs --- */
+
+export const getDocumentationProps = UserProfileProps.introspect()
+```
+
+Think of `getDocumentationProps` as a way to mark the component as documentable. It's a convention that the docs plugin will look for when generating the MDX docs.
+
+The end result will look like a Storybook-esque documentation page for your component, with:
+
+- ✅ Component name & import path
+- ✅ Live preview of the component
+- ✅ Props table with types, descriptions, examples, defaults
+- ✅ Copyable component code for current prop settings
+- ✅ Interactive controls to update both live preview and code
+
+### Other plugins and zod integrations
+
+**Out of the box:**
+
+- `npm run build:schema` - Builds your `schema.graphql` from zod schemas
+- `bridgedFetcher()` - Data fetcher that auto-scaffolds GraphQL query from zod
+- `useFormState()` - Form state hook to provide typed form state and validation utils
+- `createSchemaModel()` - Creates `mock` model until merging any DB driver plugin 👇
+
+**Interactive DB driver plugins:**
+
+- `with/mongoose` - zod to mongoose
+- `with/supabase` - zod to supabase
+- `with/prisma` - zod to prisma
+- `with/drizzle` - zod to drizzle
+- `with/airtable` - zod to airtable
+
+**API plugins:**
+
+- `with/trpc` - Pair zod Data Bridges with resolvers to create tRPC handlers
+
+> Note that these plugins are only available in the paid version of the starterkit.
+
+## Schema generator
+
+Like with all elements of our recommended way of working, there is a turborepo generator to help you create a schema in a specific workspace:
+
+```shell
+npm run gen add-schema
+```
+
+`⬇⬇⬇`
+
+This will prompt you for a target workspace and name:
+
+```shell
+>>> Modify "your-project" using custom generators
+
+? Where would you like to add this schema? 
+❯ features/app-core # -- importable from: '@app/core' 
+  features/cv-page # -- importable from: 'cv-page' 
+  features/links-page # -- importable from: 'links-page'
+```
+
+`⬇⬇⬇`
+
+```shell
+>>> Modify "your-project" using custom generators
+
+? Where would you like to add this schema? # @app/core
+? What is the schema name? # SomeData
+? Optional description? # ... lorem ipsum, dolor ...
+? Optional examples: Add common field definitions? # id, title
+? Generate an integration for this schema? # form, dbModel
+
+>>> Changes made:
+  • /features/@app-core/schemas/SomeData.ts # (add)
+  • /features/@app-core/schemas/index.ts # (append-last-line)
+
+>>> Success!
+```
+
+`⬇⬇⬇`
+
+```shell
+@app-core
+ 
+ └── /schemas/...
+     └── SomeData.schema.ts
+```
+
+Though if you chose to also generate an integration, it might look like this instead:
+
+```shell
+@app-core
+
+ └── /schemas/...
+     └── SomeData.schema.ts 
+
+ └── /hooks/...
+     └── useSomeData.ts # <- Form state hook using `useFormState()`
+
+ └── /models/...
+     └── SomeData.ts # <- `@db/driver` model using `createSchemaModel()`
+```
+
+> Pretty powerful, right?
+
+## Using `z.union` and `z.tuple`
+
+Since GraphQL and other systems might not natively support unions or tuples, it could be best to avoid them. We allow you to define them, but tranformations to other formats is considered experimental and potentially not type-safe.
+
+You can always use `z.array` and `z.object` to represent the same data shapes.
+
+e.g. instead of:
+
+```ts
+const someUnionField = z.union([z.string(), z.number()])
+// TS: string | number
+
+const someTupleField = z.tuple([z.string(), z.number()])
+// TS: [string, number]
+```
+
+you might try this instead:
+
+```ts
+const someSchema = schema('SomeSchema', {
+
+    // Unions
+    someUnionFieldSt: z.string(), // TS: string
+    someUnionFieldNum: z.number(), // TS: number
+
+    // Tuples
+    someTupleField: schema('SomeTupleField', {
+        stringValue: z.string(), // TS: string
+        numberValue: z.number(), // TS: number
+    })
+})
+```
+
+... which will work in GraphQL and other formats as well.
+
+We've done our best to hack in experimental tuple and union support where possible though. *The choice is yours.*
+
+## Further reading
+
+- [Zod's official docs](https://zod.dev) - zod.dev
+- [The Joy of Single Sources of Truth](https://dev.to/codinsonn/the-joy-of-single-sources-of-truth-277o) - Article
+- [Data Bridges for fetching](TODO) - Starterkit Docs
