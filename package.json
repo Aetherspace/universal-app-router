@@ -43,6 +43,7 @@
     "add:dependencies": "npx turbo gen add-dependencies",
     "add:workspace": "npx turbo gen add-workspace",
     "env:local": "npx turbo run env:local",
+    "regenerate:docs": "npx turbo run @app/docs#regenerate:docs",
     "gen": "npx turbo gen",
     "turbo:login": "npx turbo login",
     "turbo:link": "npx turbo link",

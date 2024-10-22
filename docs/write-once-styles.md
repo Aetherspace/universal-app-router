@@ -2,19 +2,19 @@
 
 The default UI primitives to use for building Universal Apps are those that react-native comes with. Instead of using `<div>`, `<p>`, `<span>` or `<img>`, you instead use `<View>`, `<Text>` and `<Image>`
 
-```tsx
+```typescript
 import { View, Text, Image } from 'react-native'
 // ☝️ Auto-transformed to 'react-native-web' in Next.js
 ```
 
 However, you'll likely want to introduce tailwind-style `className` support through [Nativewind](https://www.nativewind.dev/):
 
-```tsx
+```typescript
 import { View, Text, Image } from 'nativewind'
 // ☝️ Import from 'nativewind' instead
 ```
 
-```tsx
+```typescript
 <View className="px-2 max-w-[100px] items-center rounded-md">
 
 /* Use the 'className' prop like you would with tailwind on the web */
@@ -44,7 +44,7 @@ import { View, Text, Image } from 'nativewind'
 
 If you're doing SSR with responsive-design, this becomes real handy to apply media-queries:
 
-```tsx
+```typescript
 <Text className"text-base lg:text-lg">
 
 // Will apply the classes from a mobile-first perspective:
@@ -77,7 +77,7 @@ Some primitives like the `Image` component have optimized versions for each envi
 
 To automatically use the right in the context that it's rendered, we've provided our own universal `Image` component:
 
-```tsx
+```typescript
 import { Image } from '@green-stack/components/Image'
 ```
 
@@ -85,7 +85,7 @@ Which, ofcourse, you might wish to wrap with Nativewind to provide class names t
 
 `styled.tsx`
 
-```tsx
+```typescript
 import { Image as UniversalImage } from '@green-stack/components/Image'
 // ☝️ Import the universal Image component
 import { styled } from 'nativewind'
@@ -100,7 +100,7 @@ You could also create other fixed styles for e.g. headings using this same metho
 
 `styled.tsx`
 
-```tsx
+```typescript
 import { Text as RNText } from 'react-native'
 import { styled } from 'nativewind'
 
@@ -118,7 +118,7 @@ export const H3 = styled(RNText, 'font-bold text-lg text-primary-100')
 
 Usage:
 
-```tsx
+```typescript
 import { Image, View, H1, P } from '@app/primitives'
 
 // ⬇⬇⬇

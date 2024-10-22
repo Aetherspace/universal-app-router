@@ -18,11 +18,15 @@
             "dependsOn": ["@green-stack/core#build:schema"],
             "cache": false
         },
+        "@app/docs#regenerate:docs": {
+            "cache": false
+        },
         "@app/docs#dev": {
+            "dependsOn": ["@app/docs#regenerate:docs"],
             "cache": false
         },
         "@app/docs#build": {
-            "dependsOn": ["@green-stack/core#build:schema"],
+            "dependsOn": ["@green-stack/core#build:schema", "@app/docs#regenerate:docs"],
             "outputs": [".next/**", "!.next/cache/**"],
             "cache": false
         },

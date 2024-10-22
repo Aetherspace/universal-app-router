@@ -50,7 +50,7 @@ Let's have a look at how `zod` and `schema()` definitions translate to Typescrip
 
 ### Defining Primitives
 
-```tsx
+```typescript
 const someString = z.string() // -> string
 const someNumber = z.number() // -> number
 const someBoolean = z.boolean() // -> boolean
@@ -68,7 +68,7 @@ some-workspace
 
 `User.ts`
 
-```tsx
+```typescript
 export const User = schema('User', {
     // Requires a name value (☝️) to port to other formats later, best to keep the same
 
@@ -460,7 +460,7 @@ some-workspace
 
 `UserProfile.tsx`
 
-```tsx
+```typescript
 // ...
 
 /* --- Docs --- */

@@ -1,11 +1,11 @@
 
 import { TextInput, getDocumentationProps } from '@app/core/forms/TextInput.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
-import { FileTree } from 'nextra/components'
+import { FileTree, Callout } from 'nextra/components'
 
 # TextInput
 
-```tsx
+```typescript copy
 import { TextInput } from '@app/components/TextInput'
 ```
 
@@ -27,3 +27,15 @@ You can find the source of the `TextInput` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic component docs were auto-generated with `npm run regenerate-docs`. You can hook into automatic docgen by exporting `getDocumentationProps` from a component file. You'll want to provide example props from the ComponentProps zod schema, e.g:
+</Callout>
+
+```tsx /getDocumentationProps/ /documentationProps/ copy filename="TextInput.styled.tsx"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = TextInputProps.documentationProps('TextInput')
+```

@@ -214,14 +214,14 @@ Typically, drivers are class based. However, we've found a different way of prov
 
 The key is defining drivers as workspace packages:
 
-```tsx
+```typescript
 // Instead of using specific imports from a package...
 import { signIn } from '@clerk/clerk-expo'
 ```
 
 `⬇⬇⬇`
 
-```tsx
+```typescript
 // You can (optionally) import and use a familiar API from a driver workspace:
 import { signIn } from '@auth/driver'
 

@@ -1,11 +1,11 @@
 
 import { Switch, getDocumentationProps } from '@app/core/forms/Switch.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
-import { FileTree } from 'nextra/components'
+import { FileTree, Callout } from 'nextra/components'
 
 # Switch
 
-```tsx
+```typescript copy
 import { Switch } from '@app/components/Switch'
 ```
 
@@ -27,3 +27,15 @@ You can find the source of the `Switch` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic component docs were auto-generated with `npm run regenerate-docs`. You can hook into automatic docgen by exporting `getDocumentationProps` from a component file. You'll want to provide example props from the ComponentProps zod schema, e.g:
+</Callout>
+
+```tsx /getDocumentationProps/ /documentationProps/ copy filename="Switch.styled.tsx"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = SwitchProps.documentationProps('Switch')
+```

@@ -38,11 +38,11 @@ const renderFileTree = (rootPath: string) => {
 const componentDocsTemplate = (v: ComponentDocsData) => `
 import { ${v.componentName}, getDocumentationProps } from '${v.importPath}'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
-import { FileTree } from 'nextra/components'
+import { FileTree, Callout } from 'nextra/components'
 
 # ${v.componentName}
 
-\`\`\`tsx
+\`\`\`typescript copy
 import { ${v.componentName} } from '@app/components/${v.componentName}'
 \`\`\`
 
@@ -56,6 +56,22 @@ import { ${v.componentName} } from '@app/components/${v.componentName}'
 You can find the source of the \`${v.componentName}\` component in the following location:
 
 ${renderFileTree(v.rootPath)}
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+${[
+    `These dynamic component docs were auto-generated with \`npm run regenerate-docs\`. `,
+    `You can hook into automatic docgen by exporting \`getDocumentationProps\` from a component file. `,
+    `You'll want to provide example props from the ComponentProps zod schema, e.g:`
+].join('')}
+</Callout>
+
+\`\`\`tsx /getDocumentationProps/ /documentationProps/ copy filename="${v.rootPath.split('/').pop()}"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = ${v.componentName}Props.documentationProps('${v.componentName}')
+\`\`\`
 `
 
 /* --- regenerate-docs ------------------------------------------------------------------------- */
@@ -99,7 +115,7 @@ const regenerateDocs = async () => {
             // Read the component file contents
             const fileContent = fs.readFileSync(componentPath, 'utf-8')
             // Filter out components not hooking into getDocumentationProps()
-            if (!fileContent.includes('.documentationProps(')) return acc
+            if (!fileContent.includes('.documentationProps')) return acc
             if (!fileContent.includes('export const getDocumentationProps')) return acc
             if (fileContent.includes('// export const getDocumentationProps')) return acc
             // Figure out component workspace from filename

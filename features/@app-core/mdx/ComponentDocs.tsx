@@ -6,8 +6,6 @@ import { buildUrlParamsObject, createKey, parseUrlParamsObject } from '@green-st
 import { DocumentationProps} from '@green-stack/schemas'
 import { Pressable, View, Text, cn, getThemeColor } from '@app/primitives'
 import { useFormState } from '@green-stack/forms/useFormState'
-import { Button } from '@app/docs/components/Button.docs'
-import { Checkbox } from '@app/docs/components/Checkbox.docs'
 import { TextInput } from '@app/docs/components/TextInput.docs'
 import { Select } from '@app/docs/components/Select.docs'
 import { TextArea } from '@app/docs/components/TextArea.docs'
@@ -15,6 +13,7 @@ import { Switch } from '@app/docs/components/Switch.docs'
 import { NumberStepper } from '@app/docs/components/NumberStepper.docs'
 import { isEmpty } from '@green-stack/utils/commonUtils'
 import { Icon } from '@green-stack/components/Icon'
+import { CodeBlock } from './CodeBlock'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -266,19 +265,20 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
                 </Pressable>
             </View>
             {showCode && (
-                <View className="p-8 border border-t-0 border-gray-500 rounded-t-none rounded-b-xl bg-gray-800">
-                    <pre className="text-xs text-white">
-                        {jsxCode}
-                    </pre>
+                <CodeBlock
+                    code={jsxCode}
+                    lang="jsx"
+                    className="p-8 border border-t-0 border-gray-500 rounded-t-none rounded-b-xl mt-[-24px]"
+                >
                     <Pressable
-                        className="absolute bottom-0 right-0 p-2 rounded-tl-md rounded-br-xl bg-zinc-900 border-t border-l border-gray-500"
+                        className="absolute bottom-0 right-0 mb-[1px] mr-[1px] p-2 rounded-tl-md rounded-br-xl bg-zinc-900 border-t border-l border-gray-500"
                         onPress={() => { navigator.clipboard.writeText(jsxCode); setDidCopy(true); }}
                     >
                         <Text className="text-white select-none">
                             {didCopy ? 'Copied' : 'Copy Code'}
                         </Text>
                     </Pressable>
-                </View>
+                </CodeBlock>
             )}
         </View>
     )
