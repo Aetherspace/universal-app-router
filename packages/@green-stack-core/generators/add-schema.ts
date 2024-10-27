@@ -1,8 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { PlopTypes } from '@turbo/gen'
-import { parseWorkspaces, validateNonEmptyNoSpaces, getWorkspaceOptions, createDivider } from '../scripts/helpers/scriptUtils'
-import { execSync } from 'child_process'
-import fs from 'fs'
+import { validateNonEmptyNoSpaces, getWorkspaceOptions, createDivider } from '../scripts/helpers/scriptUtils'
 
 /* --- Disclaimer ------------------------------------------------------------------------------ */
 
@@ -10,8 +8,6 @@ import fs from 'fs'
 // https://turbo.build/repo/docs/core-concepts/monorepos/code-generation
 
 /* --- Constants ------------------------------------------------------------------------------- */
-
-const { workspacePackages } = parseWorkspaces('./')
 
 const workspaceOptions = getWorkspaceOptions('')
 
@@ -102,7 +98,7 @@ export const registerSchemaGenerator = (plop: PlopTypes.NodePlopAPI) => {
         
             if (commonFields.includes('id')) {
                 descriptions.push(`id: \`the unique identifier for this ${schemaName}\`,`)
-                schemaFields.push(`id: z.string().id().describe(d.id),`)
+                schemaFields.push(`id: z.string().uuid().describe(d.id),`)
             }
         
             if (commonFields.includes('slug')) {
