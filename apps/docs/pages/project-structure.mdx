@@ -1,4 +1,5 @@
 import { Image } from '@app/primitives'
+import { FileTree } from 'nextra/components'
 
 <Image
     src={require('@app/assets/green-stack-logo.png')}
@@ -120,6 +121,124 @@ features/some-feature
 
  └── package.json # <- Name the workspace, manage dependencies
 ```
+
+Each folder that follows this structure should have its own `package.json` file to define the package name and dependencies. This way, you can easily copy-paste a feature or domain from one project to another, and NPM will have it work out of the box.
+
+Here's what this might look like in the full project.  
+Don't hesitate to open the `/apps/`, `/features/` or `/packages/` folders:
+
+<FileTree>
+    <FileTree.Folder name="apps">
+        <FileTree.Folder name="expo">
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.Folder name="posts/...  ← Reuses routes from /features/ in Expo" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next">
+            <FileTree.Folder name="app" defaultOpen>                
+                <FileTree.Folder name="posts/...  ← Reuses routes from /features/ in Next" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature">
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="Post.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="models" defaultOpen>
+                <FileTree.File name="posts.model.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="resolvers" defaultOpen>
+                <FileTree.File name="createPost.bridge.ts" />
+                <FileTree.File name="createPost.resolver.ts" />
+                <FileTree.File name="createPost.query.ts" />
+                <FileTree.File name="posts.fetcher.ts" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="hooks">
+                <FileTree.File name="usePostsQuery.ts" />
+                <FileTree.File name="usePostsForm.ts" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="components">
+                <FileTree.File name="PostHeader.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="PostDetailScreen.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api" defaultOpen>
+                    <FileTree.Folder name="posts  ← e.g. /api/posts/">
+                        <FileTree.File name="/create/route.ts" />
+                        <FileTree.File name="/read/[slug]/route.ts" />
+                        <FileTree.File name="/update/[slug]/route.ts" />
+                        <FileTree.File name="/delete/[slug]/route.ts" />
+                    </FileTree.Folder>
+                </FileTree.Folder>
+                <FileTree.Folder name="posts" defaultOpen>
+                    <FileTree.Folder name="[slug]  ← e.g. /posts/123/">
+                        <FileTree.File name="index.ts   ← reuses 'PostDetailScreen'" />
+                    </FileTree.Folder>
+                    <FileTree.File name="index.ts" />
+                </FileTree.Folder>
+            </FileTree.Folder>
+            <FileTree.Folder name="icons">
+                <FileTree.File name="AddPostIcon.tsx" />
+                <FileTree.File name="EditPostIcon.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="utils">
+                <FileTree.File name="formatPostSlug.ts" />
+            </FileTree.Folder>
+            <FileTree.File name="package.json  ← e.g. '@app/user-posts'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="...">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="models" />
+            <FileTree.Folder name="resolvers" />
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="screens" />
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api" />
+            </FileTree.Folder>
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@some-domain">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="providers" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@domain/driver'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@some-plugin">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@db/supabase'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="...">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
 
 There are two main reasons for this recommended structure:
 

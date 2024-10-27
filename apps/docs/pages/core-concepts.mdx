@@ -1,3 +1,4 @@
+import { FileTree } from 'nextra/components'
 import { Image } from '@app/primitives'
 
 <Image
@@ -11,42 +12,50 @@ import { Image } from '@app/primitives'
 
 Unlike most boilerplates, this starterkit is not just a collection of tools and libraries. It's a way of working that's been designed to be both scalable and portable from the start.
 
-This document will cover the core concepts that make this starterkit unique:
+This document will cover the **core concepts that make this starterkit unique**:
 
-- [Universal, from the start](#universal-from-the-start)
-- [Evergreen with the GREEN stack](##the-green-stack)
-- [Single Sources of Truth](#single-sources-of-truth)
-- [Design for copy-paste](#design-features-for-copy-paste)
+- **[Universal, from the start](#universal-from-the-start)**
+- **[Evergreen with the GREEN stack](#the-green-stack)**
+- **[Single Sources of Truth](#single-sources-of-truth)**
+- **[Design for copy-paste](#design-features-for-copy-paste)**
 
 ## Universal, from the start
 
-It's a lot harder to add a mobile app later, than it is to build for both web and the app stores from the start.
+It's a lot harder to add a mobile app later, than to build for web and app stores from the start.
 
-There used to be good reasons not to do this, e.g. build a quick web MVP to validate with first. Luckily, in Next.js web-apps, as well as your Expo iOS and Android apps, using `react-native` for the UI layer will keep your code write-once for the most part.
+Luckily, in Next.js web-apps, as well as iOS and Android apps with Expo, using `react-native` for the UI layer will keep your code mostly write-once.
 
-There's no extra time wasted writing your features twice or more, as about 90% of react-native styles translate well into web. All it takes is to start with react-native's `View` / `Text` / `Image` primitives which will get transformed to HTML dom nodes on web.
+No extra time wasted writing features twice or more, as 90% of react-native styles translate well to web. All it takes is to start with react-native's `View` / `Text` / `Image` primitives. They'll get transformed to HTML dom nodes on web.
 
-### Build for how users use apps
+### Build for how users prefer apps
 
-Aside from the technical aspect, let's think about our users for a second. Think about your own behaviour when interacting with software.
+Think about your users for a second. Now think about your own behaviour when interacting with software.
 
-You likely prefer using your smartphone for some apps over the desktop or web version. Then again, when you're at your desk in an office with your laptop already open, it's comes in handy to just type in a url and continue from there.
+You likely prefer your phone for some apps. But when you're at your desk in an office, it comes in handy to just type a url and continue from there.
 
-Depending on the context, all potential users will have this preference for either web or mobile. But that no longer matters, because when building for all of those preferences at no extra cost, everyone is supported.
+Depending on the context, your potential users will also have a preference for web or mobile. That no longer matters when you build for all devices and platforms at no extra cost. Everyone is supported.
 
 ### Capture on web, convert on mobile
 
-For startups and indie-hackers, this can be a huge competitive advantage. When you do market research and see comments on a competitor's social media asking for an Android of Web version, you can swoop in while they'll likely have to hire an entire other team to build these mobile apps first. Not to mention that with SEO you could show up where you users are already searching for your solution and get some nice organic traffic going. Customer acquisition costs when it comes to paid ads is often cheaper for web than mobile.
+For startups and ambitious founders, building a Universal App can be a huge **competitive advantage**.
 
-With this in mind, why not show a quick interactive demo of the app right on your landingpage to tease them. Hopefully the urge to finish what's been started kicks in and they'll sign up for web first. Those who prefer mobile can install the app there. Meaning your app icon is now listed on your customers phone, taking up valuable screen real estate. On top, you'll have a stronger notification system available to retarget them and keep them engaged. This is why, in the e-commerce space, mobile often drives more sales than web does.
+When you do market research and see comments on a competitor's social media asking for an Android / iOS / Web version, you can swoop right in. Meanwhile the competition likely still has to hire an entire other team to rebuild the app for whatever platform they're missing. Being available on each platform also **inspires trust**, and trust is a major key to all sales.
+
+With SEO you could even **show up where users are already searching** for a solution. It's essentially **free organic traffic**. Customer acquisition costs when it comes to paid ads is also cheaper for web than mobile ads.
+
+Why not show a **quick interactive demo** of the app right on your landing page? The urge to finish what's been started might kick in, making it more likely they sign up web-first, and join those who prefer mobile later in finding and installing the app from the App Store.
+
+On mobile, your **app icon** is now listed on their phone, taking up valuable screen real estate. A **daily reminder your brand exists**. Mobile also provides stronger notification systems to retarget users and keep them engaged. This is why, in the e-commerce space, *mobile often drives more sales and conversions* than web does.
 
 ### Universal (Deep)links
 
-Lastly, think about linkability. Expo-router is the first ever url based routing system for mobile. Deeplinking happens automatically. When people want to share anything from the app or the web version, the links will just work. They'll open the correct page or app screen. This will happen whether they've installed the app or not. This might allow hardcore users to become ambassadors of your project simply by them sharing your links.
+Our shared digital experience thrives on links. Expo-router is the *first ever url based routing system for mobile*. Deeplinking, where you set up your mobile app to **open the right screen for specific URLs**, happens automatically in Expo-router. When people share anything from the app or the web version, the links will just work. Whether they've installed the app or not.
+
+Once users learn they can just share links, it turns existing users into ambassadors.
 
 ### More with less
 
-Even if you're just freelancing or working as a digital product studio, being able to deliver the same app on multiple platforms can just give you the advantage you need over your competitors. Either that, or you could charge a premium for the same amount of work. Your choice.
+Even if you're just freelancing or working as a digital product studio, you'll be able to deliver the same app on multiple platforms. This can give you the advantage you need to win more clients. Or you could charge a premium for the same amount of work.
 
 > "Web vs. Native is dead. Web **and** Native is the future."  
 > - Evan Bacon, expo-router maintainer  
@@ -55,11 +64,11 @@ Even if you're just freelancing or working as a digital product studio, being ab
 
 ### Take what works, make it better
 
-The best way to get both really good and really fast at what you do, is to keep using the same tools for a longer period of time. That means not reinventing the wheel for every new project you start. You want it to be evergreen.
+The best way to get really good and really fast at what you do, is to keep using the same tools for a longer period of time. That means not reinventing the wheel. For every new project. Again. And again. You want your way of working to be evergreen.
 
 ### Expo + Next.js for best DX / UX
 
-When building Universal Apps, the stack you choose should optimize for each device and platform you're trying to target. This is the main reason why this starterkit, tech stack and way of working focuses entirely on Next.js and Expo.
+When building Universal Apps, the stack you choose should optimize for each device and platform you're trying to target. This is the main reason why this starterkit / tech stack / way of working focuses entirely on Next.js and Expo.
 
 These two meta frameworks are simply best in class when it comes to DX and UX optimizations for their target platforms. NextJS does all it can to set you up for success when it comes to essential SEO things like web-vitals.
 
@@ -69,36 +78,40 @@ Expo has made starting, building, testing, deploying, submitting and updating re
 
 The dream of React has always been "write-once, use anywhere". For now, react-native and react-native-web gets us 90% of the way there. In the future, things like react-strict-dom will likely bump that number up higher. Until then, pairing react-native with Nativewind or a full-blown universal styling system like Tamagui seems like the way to go.
 
-### Universal Data Fetching, with GraphQL
+### Universal Data Fetching with GraphQL
 
-GraphQL's ability to query data from the server, browser and mobile puts in the unique position to service all three platforms. Paired with react-query for optimizing the caching of fetches, and graphql.tada for automatically inferring types from the schema & query definitions, integrated with a universal router, and you have a really great universal initial data fetching solution that's type-safe end to end.
+GraphQL's ability to **query data from the server, browser and mobile** puts it in the unique position to service all three platforms. Paired with `react-query` for optimizing the caching of queries, and graphql.tada for auto inferring types from the schema + query definitions, integrated with a universal router, and you have a great universal initial data fetching solution. Type-safe end to end.
 
-This doesn't mean you only have GraphQL at your disposal. Resolvers in the GREEN stack are quite flexible. They're designed so that porting them to tRPC (through a plugin) and/or Next.js API routes is quick and easy to do. From experience, we're convinded GraphQL works best when used in an RPC manner instead of a REST-like graph you can explore each domain of your data with. Resolvers should typically be created in function of the UI they need data for.
+*This doesn't mean you only have GraphQL at your disposal.* Resolvers in the GREEN stack are quite flexible. Designed so that porting them to `tRPC` (through a plugin) and/or Next.js API routes is quick and easy to do. From experience, we're convinded GraphQL works best when used in an RPC manner. Instead of a REST-like graph you can explore each domain of your data with, resolvers should typically be created in function of the UI they need data for.
 
-> Think of things like `getDashboardData()` vs. having to call (e.g.) 3 separate `Orders()`, `Products()`, `Transactions()` type resolvers to achieve the same thing.
+> To illustrate RPC-style queries in your mind, think of `getDashboardData()` vs. having to call 3 separate `Orders()`, `Products()`, `Transactions()` type resolvers to achieve the same thing.
 
-When used in this manner, which is very similar to tRPC actually, it remains the best for initial data-fetching. Things like mutating data on the other hand might be better served as a tRPC call or API route POST / PUT / DELETE request.
+When used in this manner, quite similar to tRPC, it remains the best for initial data-fetching. Though mutating data might be better served as a tRPC call or API route POST / PUT / DELETE request.
 
-Overall, the starterkit provides a way of working that can limit the amount of footguns and automate a bunch of the hard stuff when it comes to GraphQL.
+To avoid footguns, the starterkit provides a way of working that can automate a bunch of the hard stuff when it comes to doing GraphQL, or data resolvers in general, right.
 
-This includes things like:
-- auto-generating the entire schema from Zod definitions
-- auto-generating fetcher functions and react-query hooks from Zod definitions
+**This includes things like:**
+- auto-generating the entire **schema from Zod definitions**
+- auto-generating fetcher functions and **`react-query` hooks** from Zod definitions
 - keeping schema definitions a 1 on 1 match with your RPC / "command-like" resolver functions
-- universal `graphqlRequest()` util that auto infers types from Zod input & output schemas
+- universal `graphqlRequest()` util that **auto infers types** from Zod input & output schemas
 - ... or using graphql.tada for type inferrence when only requesting specific fields. 
 
 ### Tech that's here to stay.
 
-To bring it all together, you could say the GREEN stack stands for GraphQL, Expo, React-Native, Next.js.
+To bring it all together, you could say the GREEN stack stands for:
+- ✅ GraphQL
+- ✅ React-Native
+- ✅ Expo
+- ✅ Next.js.
 
-> If you're wondering about the second "E", that's because Expo, with it's drive to bring react-native to web as well, is doing double the lifting.  
+You could say the second "E" is in there because Expo, with it's drive to bring react-native to web, is doing double the lifting.  
 
 > ...but in reality, the main goal of this stack is simply to stay 'Evergreen'
 
-These core technologies and the ecosystems around them create a stack that's both full-featured and flexible where needs be. They, and other essentials like Typescript, Tailwind and Zod, have gained enough popularity, adoption, frequent funding and community support they're very likely to be around for a long time.
+These core technologies and the ecosystems around them create a stack that's full-featured and flexible where need be. Other included essentials like **Typescript, Tailwind and Zod**, have gained enough popularity, adoption, frequent funding and community support they're likely to be around for a long time.
 
-It's a stack you can stick with and evolve with to perfect your craft the longer you use it.
+It's a stack you can stick, evolve and perfect your craft with.
 
 ## Single Sources of Truth
 
@@ -107,21 +120,21 @@ Think of all the places you may need to (re)define the shape of data.
 - ✅ Types
 - ✅ Validation
 - ✅ DB models
-- ✅ Api inputs & outputs
+- ✅ API inputs & outputs
 - ✅ Form state
 - ✅ Documentation
 - ✅ Mock & test data
 - ✅ GraphQL schema defs
 
-Quite an extensive list. Yet this is all describing the same data.
+Quite an extensive list for what is **essentially describing the same data**.
 
-Ideally, you could define the shape of your data just once, and have it be transformed to these other formats where necessary.
+Ideally, you could define the shape of your data just once, and have it be transformed to these other formats where necessary:
 
-### Toolbelt around Zod schemas
+### A strong toolkit around Zod schemas
 
 Schema validation libraries like zod are actually uniquely positioned to serve as the base of transforming to other formats. Zod even has the design goal to be as compatible with Typescript as possible. There's almost nothing you can define in TS that you can't with Zod. Which is why you can infer super accurate types from your Zod schemas.
 
-With the hardest 2 of 8 total possible data (re)definition scenario's tackled, this starterkit comes with utils that helps convert Zod schemas to the others mentioned above:
+With the hardest 2 of 8 data definition scenario's tackled, the starterkit comes with utils that help convert Zod schemas to the others mentioned above:
 
 - [createSchemaModel()](TODO) - Create a DB model from  Zod schema
 - [createDataBridge()](TODO) - Combines zod input & output schemas for type-safe API bridges
@@ -132,43 +145,46 @@ With the hardest 2 of 8 total possible data (re)definition scenario's tackled, t
 - [bridgedFetcher()](TODO) - Transform a zod bridge into a typed GraphQL fetcher
 - [getDocumentationProps()](TODO) - Combine zod prop defs with a React component for autogenerated docs
 
-### Generators - skip repetitive code
+### Zod for Automatic docs
 
-This zod-based way of working, combined with the predictability of file-system based routing, can lead to some huge time saved when you automate the repetitive parts.
+Writing documentation is essential, *but often requires time teams feel they don't have.*
 
-### Documentation Drives Adoption
+Yet you'll eventually need them. Especially if you want others to build on top of your work:
 
-Writing documentation is essential, but often requires time teams feel they don't have.
+> "**Documentation Drives Adoption**" - Storybook
 
-Yet you'll eventually need them.
+Once it's time to scale up the team, you'll definitely want them. Ideally, you can onboard new devs rather quickly so they can add value sooner. Good docs reduce how much mentoring new people need from your senior developers.
 
-Imagine being a few months or years down the road. The MVP released with success and it's now time to scale up the team to build all these features your users are requesting. Ideally, you can onboard these new devs rather quickly so they can start adding value sooner, and not require as much mentoring from senior developers.
+*However*, as a new or scaling startup, both docs and onboarding are not necessarily the thing you want to "lose" time on. Which is why, at least at the start:
 
-When you’re a startup or scaling, both docs and onboarding are not necessarily the thing you’d want to "lose" time on early on. Which is why, at least at the start:
+> "**Sometimes, the best docs are the ones you don't have to write yourself.**"  
+> -- Founders that value their time
 
-> The best docs are the ones you don't have to write yourself.
+This is where `MDX` and **Zod schemas as single sources of truth** are a great match. Using the Starterkit's `with/automatic-docgen` plugin, your components and API's will document themselves.
 
-This is where MDX and using Zod schemas as single sources of truth are a great match. Using the Starterkit's `with/automatic-docgen` plugin, your components and API's will document themselves.
+How? By reading the example & default values of a component's Zod prop schema and generating an `MDX` file from it. The file will then render the component and provide a table with prop names, descriptions, nullability and interactive controls you can preview the different props with.
 
-How? By reading the example & default values of you component's Zod schema and generating an MDX file. This file will then render the component and provide a table with prop names, descriptions, nullability and interactive controls you can preview the different props with.
+Check out a live example for the [Button](/@app-core/components/Button) component in action:
 
-> Think of it like Storybook, but automated and built into your workflow.
+[![DocgenExample](https://github.com/user-attachments/assets/1ed43e31-6e02-49fa-a438-6475be00495b)](/@app-core/components/Button)
 
-More about this pattern in the [Single Sources of Truth](TODO) and [Automations](TODO) docs.
+> You can think of it like a component Storybook where you could build components in isolation on the docs page. Except these docs automatically grow with your project as a result of your way of working.
+
+More about this pattern in the [Single Sources of Truth](/single-sources-of-truth) and [Automations](TODO) docs.
 
 ## Design features for copy-paste
 
-What tools like Tailwind and Shad-CN have done for copy-pasting components, we aim to replicate for entire features.
+What tools like Tailwind and Shad-CN enabled for copy-pasting components, we aim to replicate for entire features and domains.
 
 That includes the UI, hooks, logic, resolvers, API's, zod schemas, db models, fetchers, utils and more.
 
 ### Portable Workspace Folder Structure
 
-The large majority of project structures don't lean themseves to copy-pasting a single folder between projects in order to reuse a feature.
+While individual utils, components and styles can be quite easy to reuse across projects these days, entire features are harder to port from one project to another. It's because most project structures don't lean themselves to copy-pasting a single folder between projects in order to reuse a feature.
 
-This often stems from grouping on the wrong level, such as a front-end vs. back-end split.
+*This often stems from grouping on the wrong level, **such as a front-end vs. back-end split.***
 
-It does become possible once you start grouping code together on the feature level, as a reusable workspace:
+It does become possible once you start grouping code together on the feature or domain level, as a reusable workspace:
 
 ```shell
 features/@some-feature
@@ -188,9 +204,127 @@ features/@some-feature
  └── /utils/...
 ```
 
+Each folder that follows this structure should have its own `package.json` file to define the package name and dependencies. This way, you can easily copy-paste a feature or domain from one project to another, and NPM will have it work out of the box.
+
+Here's what this might look like in the full project.  
+Don't hesitate to open the `/apps/`, `/features/` or `/packages/` folders:
+
+<FileTree>
+    <FileTree.Folder name="apps">
+        <FileTree.Folder name="expo">
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.Folder name="posts/...  ← Reuses routes from /features/ in Expo" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next">
+            <FileTree.Folder name="app" defaultOpen>                
+                <FileTree.Folder name="posts/...  ← Reuses routes from /features/ in Next" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature">
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="Post.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="models" defaultOpen>
+                <FileTree.File name="posts.model.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="resolvers" defaultOpen>
+                <FileTree.File name="createPost.bridge.ts" />
+                <FileTree.File name="createPost.resolver.ts" />
+                <FileTree.File name="createPost.query.ts" />
+                <FileTree.File name="posts.fetcher.ts" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="hooks">
+                <FileTree.File name="usePostsQuery.ts" />
+                <FileTree.File name="usePostsForm.ts" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="components">
+                <FileTree.File name="PostHeader.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="PostDetailScreen.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api" defaultOpen>
+                    <FileTree.Folder name="posts  ← e.g. /api/posts/">
+                        <FileTree.File name="/create/route.ts" />
+                        <FileTree.File name="/read/[slug]/route.ts" />
+                        <FileTree.File name="/update/[slug]/route.ts" />
+                        <FileTree.File name="/delete/[slug]/route.ts" />
+                    </FileTree.Folder>
+                </FileTree.Folder>
+                <FileTree.Folder name="posts" defaultOpen>
+                    <FileTree.Folder name="[slug]  ← e.g. /posts/123/">
+                        <FileTree.File name="index.ts   ← reuses 'PostDetailScreen'" />
+                    </FileTree.Folder>
+                    <FileTree.File name="index.ts" />
+                </FileTree.Folder>
+            </FileTree.Folder>
+            <FileTree.Folder name="icons">
+                <FileTree.File name="AddPostIcon.tsx" />
+                <FileTree.File name="EditPostIcon.tsx" />
+                <FileTree.File name="..." />
+            </FileTree.Folder>
+            <FileTree.Folder name="utils">
+                <FileTree.File name="formatPostSlug.ts" />
+            </FileTree.Folder>
+            <FileTree.File name="package.json  ← e.g. '@app/user-posts'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="...">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="models" />
+            <FileTree.Folder name="resolvers" />
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="screens" />
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api" />
+            </FileTree.Folder>
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@some-domain">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="providers" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@domain/driver'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@some-plugin">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@db/supabase'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="...">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
 ### Git based plugins you can learn from
 
-> "The best way to learn a new codebase is in the Pull Requests." - Theo Browne, @t3dotgg
+> **"The best way to learn a new codebase is in the Pull Requests."** - Theo Browne, @t3dotgg
 
 [![Screenshot of list of Plugin Branches](https://github.com/user-attachments/assets/f2d4d836-c2ad-4249-bc53-de2ab7d5aac1)](https://github.com/Aetherspace/universal-app-router/pulls)
 
@@ -208,31 +342,73 @@ Finally, PR based plugins solve common issues with other templates:
 
 ### Workspace Drivers - Pick your own DB / Auth / Mail / ...
 
-Drivers are a way to abstract away the specific implementation of a feature, like a database or authentication system. This allows you to switch between different implementations without changing the rest of your code.
+Drivers are a way to abstract away the specific implementation of e.g. your specific database, storage or authentication system. This allows you to switch between different implementations without changing the rest of your code.
 
-Typically, drivers are class based. However, we've found a different way of providing a familiar interface, while still providing a familiar way of working.
+**Typically, drivers are class based**, *and often back-end only*. However, we've found a different way of providing a familiar interface, while still providing a familiar way of working that works across front and back-end lines.
 
-The key is defining drivers as workspace packages:
+The key is **defining drivers as workspace packages**:
 
-```typescript
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@auth-driver">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="models" />
+            <FileTree.Folder name="resolvers" />
+            <FileTree.Folder name="hooks" />
+            <FileTree.Folder name="providers" />
+            <FileTree.Folder name="components" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@auth/driver'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@db-driver">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@db/driver'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@db-airtable">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@db/airtable'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@db-mongo">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@db/mongo'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="...">
+            <FileTree.Folder name="schemas" />
+            <FileTree.Folder name="drivers" />
+            <FileTree.Folder name="constants" />
+            <FileTree.Folder name="utils" />
+            <FileTree.File name="package.json  ← e.g. '@domain/driver'" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```typescript {1}
 // Instead of using specific imports from a package...
 import { signIn } from '@clerk/clerk-expo'
 ```
 
 `⬇⬇⬇`
 
-```typescript
+```typescript {1, 4} /@auth/ /driver/2
 // You can (optionally) import and use a familiar API from a driver workspace:
 import { signIn } from '@auth/driver'
 
 // OR, when mixing solutions, import from multiple drivers:
-import { users } from '@db/mongoose'
-import { settings } from '@db/airtable'
+import { users } from '@db/mongoose' // <- e.g. User data saved in mongo
+import { settings } from '@db/airtable' // <- e.g. Configuration saved in Airtable
 ```
 
-`appConfig.ts`
+You can have multiple drivers merged, *or "installed"*, but you should pick the main one in `appConfig.ts`:
 
-```ts
+```ts {3} filename="features / @app-core / appConfig.ts"
 export const appConfig = {
 
     // Here's how you'd set the main driver to be used:
@@ -245,16 +421,51 @@ export const appConfig = {
 } as const
 ```
 
-> This type of driver use is fully optional, just like most of the suggested ways of working.
+Combining multiple drivers for the same solution can be a good idea if e.g.:
+- Specific types of data lend themselves better to a different provider
+- You're migrating from one provider to another
 
-> However, you might find it difficult to keep features and workspaces as easily copy-pasteable without these kinds of abstractions.
+However, if you do, you should always pick a main one to make sure e.g. `@db/driver` corresponds to the main solution used.
 
-Drivers and plugins within the Starterkit's way of working have been designed to:
-- Use Zod for validating familiar API across implementations/options
-- Use Zod for providing both types and schemas for said plugin
-- Help keep features as copy-pasteable as possible
+> **Drivers are fully optional, just like most of the suggested ways of working.**  
+> You won't experience any issues if you don't use them.
 
-## Start scalable, without the effort
+> However, you might find it more difficult to keep features / domains / workspaces easily copy-pasteable without using these kinds of abstractions.
+
+Drivers and plugins within the starterkit's Way of Working have been designed to:
+- Use `Zod` for validating **familiar API across implementations/options**
+- Use `Zod` for providing both **types and schemas for said plugin**
+- Help keep features **as copy-pasteable as possible**
+
+## Maximizing time saved
+
+> The difference between a cash-grab boilerplate and a value providing starterkits lies in how far it goes to save you time:
+
+**Boilerplates typically only provide a better starting point.** That might save you weeks of setup, sure, but afterwards they rarely do much for you. They're also not always aimed at experienced developers, so if you do want types and scalable architecture, you might end up still changing a bunch / wasting time.
+
+There are **more ways to save time as a developer** though. To recap our core concepts:
+
+- *Starting universally*, building mostly write-once for each platform saves time later on and retains your ability to do **fast iterations while also serving way more users**.
+- Keeping features **copy-pasteable and portable between projects**.
+- *Recommended way of working* that also saves time. By encouraging you to define data shapes once, transform them to other formats where necessary, and providing a toolkit around them.
+- Generators to quickly *scaffold out new schemas, models, resolvers, forms, fetchers, components, hooks, screens, routes from CLI.*
+
+### Generators to skip repetitive code
+
+This zod-based way of working, combined with the predictability of file-system based routing, can lead to some huge time saved when you automate the repetitive parts.
+
+The starterkit comes with a number of generators that can help you skip the repetitive boilerplate code and manual linking of files and objects when creating new features:
+
+- `npx turbo gen add-dependencies` - Add Expo SDK compatible dependencies to a workspaces
+- `npx turbo gen add-workspace` - Add a new feature or package workspace folder to the project
+- `npx turbo gen add-schema` - Add a new Zod schema to serve as single source of truth
+- `npx turbo gen add-model` - Add a new DB model to the project based on a Zod schema
+- `npx turbo gen add-resolver` - GraphQL resolver *and* API route based on Zod input and output
+- `npx turbo gen add-form` - Create form hooks for a specific schema in your workspaces
+- `npx turbo gen add-route` - New universal route + screen, and integrate with a resolver
+- `npx turbo gen add-domain` - Kinda `add-workspace` on steroids, full domain with all the above
+
+### Start scalable, without the effort
 
 With these core-concepts combined, we believe we can provide Typescript and React devs with a really powerful way of working that is at all times:
 
@@ -264,6 +475,6 @@ With these core-concepts combined, we believe we can provide Typescript and Reac
 - Helping you easily onboard and scale up the team
 - A huge time-saver at both the start and during the project
 
-All without having to spend the time figuring all that out yourself.
+All without having to spend the time figuring it all out yourself.
 
 If you're ready to dive deeper into these topics, check out the rest of the docs.
