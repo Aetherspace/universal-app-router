@@ -109,6 +109,7 @@ const regenerateDocs = async () => {
 
         // Keep track of metadata
         const workspaceMeta = { features: {}, packages: {} } as Record<string, Record<string, string>>
+        const metaFilesTree = {} as Record<string, Record<string, string>>
 
         // Build component docs tree
         const componentDocsTree = filteredComponentPaths.reduce((acc, componentPath) => {
@@ -141,6 +142,11 @@ const regenerateDocs = async () => {
             const mdxInnerFilePath = innerFilePath.replace(componentFileName, mdxFileName)
             const mdxFilePath = `../../apps/docs/pages/${workspaceFolder}${mdxInnerFilePath}` 
             const mdxFileFolder = mdxFilePath.split('/').slice(0, -1).join('/')
+            // Add to meta files tree
+            metaFilesTree[mdxFileFolder] = {
+                ...metaFilesTree[mdxFileFolder],
+                [componentName]: componentName,
+            }
             // Build MDX file
             const mdxContent = componentDocsTemplate({
                 componentName,
@@ -173,6 +179,17 @@ const regenerateDocs = async () => {
         await Promise.all(Object.values(componentDocsTree).map(async (v: ComponentDocsData) => {
             fs.mkdirSync(v.mdxFileFolder, { recursive: true })
             fs.writeFileSync(v.mdxFilePath, v.mdxContent, { flag: 'w' })
+            return Promise.resolve(true)
+        }))
+
+        // Write out meta files
+        await Promise.all(Object.entries(metaFilesTree).map(async ([folderPath, componentNames]) => {
+            const metaFileEntries = Object.keys(componentNames).map((componentName) => {
+                return `    ${componentName}: '${componentName}',`
+            })
+            const metaFileContent = `\nexport default {\n${metaFileEntries.join('\n')}\n}\n`
+            const metaFilePath = `${folderPath}/_meta.ts`
+            fs.writeFileSync(metaFilePath, metaFileContent, { flag: 'w' })
             return Promise.resolve(true)
         }))
 
