@@ -1,0 +1,244 @@
+import { FileTree, Steps } from 'nextra/components'
+import { Image } from '@app/primitives'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# Configuring your Universal App
+
+```ts copy
+import { appConfig } from '@app/config'
+```
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.File name="appConfig.ts" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+This doc will cover the basic of configuring your app:
+
+- [App Context Flags](#app-context-flags)
+- [Environment Variables](#managing-environment-variables)
+- [Managing Dependencies](#managing-dependencies)
+- [Mobile App specific config](#managing-expo-config)
+- [Web / next.js specific config](#managing-nextjs-config)
+
+## App Context Flags
+
+A good reason to use `@app/config` is for context flags.
+
+Your universal app can run in different environments like iOS, a web browser, Android, the server, etc.
+
+Sometimes you want to debug, test or show something only in a specific environment.
+
+For example:
+
+```ts
+import { appConfig } from '@app/config'
+
+// Platform flags
+if (appConfig.isWeb) console.log('Running in the browser')
+if (appConfig.isMobile) console.log('Running on a mobile device')
+
+// Runtime flags
+if (appConfig.isServer) console.log('Running on the server')
+
+// Framework flags
+if (appConfig.isExpo) console.log('Running app with Expo')
+if (appConfig.isNext) console.log('Running app with Next.js')
+
+// Debug flags
+if (appConfig.isExpoWebLocal) console.log('Running locally on web with Expo')
+if (appConfig.isNextWebLocal) console.log('Running locally on web with Next.js')
+```
+
+## Managing environment variables
+
+### Local env vars
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.File name=".env.example" />
+            <FileTree.File name=".env.local ←" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.File name=".env.example" />
+            <FileTree.File name=".env.local ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+Local environment variables can be managed in each app's `.env.local` file.
+
+The `.env.example` files can be copied into `.env.local` using the following command:
+
+```shell
+npm run env:local
+```
+
+- Use `NEXT_PUBLIC_` to expose your environment variable in your next.js front-end
+- Use `EXPO_PUBLIC_` to expose your environment variable in your expo front-end
+
+We suggest that for each environment variable you add in these `.env.local` files, you also add an entry in `appConfig.ts`. For example:
+
+```ts {6, 7} filename="appConfig.ts"
+export const appConfig = {
+    // ...
+
+    // - Secrets -
+
+    // Don't use NEXT_PUBLIC_ / EXPO_PUBLIC_ prefixes here to make sure these are undefined client-side
+    appSecret: process.env.APP_SECRET,
+
+    // ...
+}
+```
+
+### Env vars in Next.js
+
+For development, staging & production environments, check the next.js docs:  
+https://nextjs.org/docs/app/building-your-application/configuring/environment-variables
+
+> Note that you should treat environment variables as if they could be inlined in your bundle during builds & deployments
+> This means dynamically retrieving environment variables from e.g. `process.env[someKey]` might not work
+> It also means that you should never prefix with `NEXT_PUBLIC_` for sensitive / private keys
+
+#### Managing secrets
+
+App secrets that should only be available server-side should:
+-  not be prefixed with `NEXT_PUBLIC_` (this omits then from the client-side)
+-  not be included in Expo's `.env.local` file (all expo env vars are public and included in bundle by default)
+
+### Env vars in Expo
+
+For development, staging & production environments, check the expo docs:  
+https://docs.expo.dev/guides/environment-variables/
+
+> Note that Expo will inline environment variables in your bundle during builds & deployments
+> This means dynamically retrieving environment variables from e.g. `process.env[someKey]` will not work
+> It also means that you should never include sensitive / private keys 
+
+### Defining endpoints
+
+Your most important environment variables are likely your API endpoints:
+
+```shell filename=".env.local"
+## --- General --------------------------------------------------------------------------------- */
+## -i- Env vars that should always be present & the same locally, independent of the simulated environment
+## --------------------------------------------------------------------------------------------- */
+  
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_GRAPH_URL=http://localhost:3000/api/graphql
+```
+
+> Which you can then consolidate in your `appConfig.ts`
+
+```ts filename="appConfig.ts"
+export const appConfig = {
+    // ...
+
+    // - Server URLs -
+
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL || process.env.EXPO_PUBLIC_BASE_URL,
+    backendURL: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL,
+    apiURL: process.env.NEXT_PUBLIC_API_URL || process.env.EXPO_PUBLIC_API_URL,
+    graphURL: process.env.NEXT_PUBLIC_GRAPH_URL || process.env.EXPO_PUBLIC_GRAPH_URL,
+
+    // ...
+}
+```
+
+> For the examples above, we've already set these up for local use.
+
+## Feature and Domain config
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.File name="@app-core / package.json" />
+        <FileTree.File name="@some-feature / package.json ←" />
+    </FileTree.Folder>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.File name="@green-stack-core / package.json" />
+        <FileTree.File name="@some-domain / package.json ←" />
+    </FileTree.Folder>
+</FileTree>
+
+As stated in our [project structure](/project-structure) docs, workspaces should define their own `package.json` file.
+
+That means that each feature or package workspace can have its own dependencies.
+
+> This helps keep things modular, portable and colocated so features remain copy-pasteable.
+
+### Expo SDK compatible packages
+
+For your Expo mobile app, it's important to install packages that are compatible with your current Expo SDK.
+
+However, using Expo's own `expo install` command will only install packages in the expo app workspace, which we don't want.
+
+To help with this, we've created a script that will install SDK compatible packages in the correct workspace:
+
+```shell copy
+npm run add:dependencies
+```
+
+This will ask you where you'd like to install the package:
+
+```shell {5}
+>>> Modify "your-project-name" using custom generators
+
+? Which workspace should we install the Expo SDK compatible versions in? (Use arrow keys)
+  @db/driver 
+❯ @green-stack/core 
+  @app/registries 
+  @app/core
+```
+
+You can then specify one or multiple packages to have their SDK compatible versions installed.
+
+## Managing Expo config
+
+Check the Expo docs for configuring your mobile app with Expo:
+
+- https://docs.expo.dev/workflow/configuration/
+- https://docs.expo.dev/eas/json/
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.File name="app.json ←" />
+            <FileTree.File name="babel.config.js" />
+            <FileTree.File name="metro.config.js" />
+            <FileTree.File name="package.json" />
+            <FileTree.File name="tsconfig.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+## Managing Next.js config
+
+Check the Next.js docs for configuring your web app with Next.js:
+
+- https://nextjs.org/docs/app/building-your-application/configuring
+- https://nextjs.org/docs/app/api-reference/next-config-js
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.File name="babel.config.js" />
+            <FileTree.File name="next.config.base.cjs ←" />
+            <FileTree.File name="next.config.js" />
+            <FileTree.File name="package.json" />
+            <FileTree.File name="tsconfig.json" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>

@@ -1,0 +1,792 @@
+import { FileTree, Steps } from 'nextra/components'
+import { Image } from '@app/primitives'
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+/>
+
+# Universal Data Fetching
+
+**This doc covers our recommended way to set up data-fetching in a way that:**
+- ✅ Remains portable across different projects
+- ✅ Reuses as much code between the front and back-end as possible
+- ✅ Building a single source of truth for your APIs and using them in the front-end
+- ✅ Uses `react-query` to execute the actual data-fetching logic on the server, browser, iOS and Android
+
+We suggest defining your data-fetching logic in the same place as the screen component requiring that data:
+
+```shell {4, 6}
+features/@some-feature
+
+ └── /resolvers/... # <- Defines portable data bridges
+ └── /screens/... # <- Reuses data bridges on front-end
+      └── PostDetailScreen.tsx
+ └── /routes/... # <- Reuses screens that have data-fetching logic
+     └── posts /[slug]/ index.tsx # <- Reuses e.g. 'PostDetailScreen.tsx'
+```
+
+This workspace based structure will help keep your features acopy-pasteable and portable across different projects by avoiding a front-end vs. back-end split.
+
+For an example of what this might look like in an actual project, check the example below. Don't hesitate to click open some of the folders to get a better idea of how portable routes with data-fetching are structured:
+
+<FileTree>
+    <FileTree.Folder name="apps">
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Expo" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Next" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features">
+        <FileTree.Folder name="@some-feature" defaultOpen>
+            <FileTree.Folder name="schemas">
+                <FileTree.File name="Post.schema.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="resolvers" defaultOpen>
+                <FileTree.File name="getPost.bridge.ts" />
+                <FileTree.File name="getPost.query.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="PostDetailScreen.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="posts / [slug] /" defaultOpen>
+                    <FileTree.File name="index.ts   ← reuses 'PostDetailScreen'" />
+                </FileTree.Folder>
+            </FileTree.Folder>
+        </FileTree.Folder>
+        <FileTree.Folder name="@other-feature">
+            <FileTree.Folder name="resolvers / ..." />
+            <FileTree.Folder name="screens / ..." />
+            <FileTree.Folder name="routes / ..." />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+> The recommended and easiest way to create a new route in a workspace is to use the Route Generator:
+
+## Using the Route Generator
+
+```shell
+npm run add:route
+```
+
+> The turborepo route generator will ask you some questions, like which resolver you'd like to fetch data from, and will generate the empty screens and routes folders in the workspace of your choico with data fetching already set up:
+
+```shell {6, 9}
+>>> Modify "your-project-name" using custom generators
+
+? Where would you like to add this new route? # -> features/@app-core
+? What should the screen component be called? # -> NewRouteScreen
+? What url do you want this route on? # -> "/examples/[slug]"
+? Would you like to fetch initial data for this route from a resolver?
+
+  getPost() resolver  --  from: '@app/some-feature' 
+❯ getExample() resolver  --  from: '@app/other-feature' 
+  getData()  --  from: '@app/other-feature'
+  No, this screen doesn't need to fetch data to work
+  No, I'll figure out data-fetching myself # (editable dummy example)
+```
+
+> The list of available resolvers is based on the data bridges available in each workspace's `/resolvers/` folder.
+
+Pick the last option if you want to create a new bridge and resolver alongside the route and screen.
+
+In which case the generated boilerplate might look like this:
+
+```shell {4, 5} /(if chosen)/
+>>> Changes made:
+  • /features/@app-core/resolvers/newResolver.bridge.ts # ← New bridge (if chosen)
+  • /features/@app-core/resolvers/newResolver.query.ts # ← New graphql fetcher (if chosen)
+  • /features/@app-core/screens/NewRouteScreen.tsx # ← New screen with fetch config
+  • /features/@app-core/routes/examples/[slug]/index.tsx # (add)
+
+>>> Success!
+```
+
+To explain what the generator does for you, have a look at the recommended steps to add data fetching manually:
+
+## Manually set up Data Fetching
+
+![Graph showing the Unversal Route Screen component using a fetcher with React-Query to retrieve the props for a RouteComponent before rendering on Web, iOS and Android](https://github.com/user-attachments/assets/d64fbf93-4a35-433e-91c7-10d6bdf1a0ab)
+
+There are 3 environments to consider when providing dynamic data to your screens:
+
+- **Server-side rendering (SSR)** using the **[executable schema](https://the-guild.dev/graphql/tools/docs/generate-schema)**
+- **Client-side rendering (CSR)** in the browser (**hydration** or fetch)
+- **Mobile App** client in Expo (fetch only)
+
+To fetch data the same way in all three, we've written two helpers:
+- `createQueryBridge()` - Build **instructions for data-fetching with `react-query`** (step 3)
+- `<UniversalRouteScreen/>` - Component that **uses the bridge to fetch data** in each environment (step 4)
+
+This is not the only way to do data-fetching, but our recommended way to do so:
+
+<Steps>
+
+### Start with a Data Bridge
+
+> If you already set up a [DataBridge](/data-resolvers#start-from-a-databridge) while [building your resolver](/data-resolvers), you can skip to the next step.
+
+<FileTree>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas">
+            <FileTree.File name="Post.schema.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="getPost.bridge.ts ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+<details>
+<summary>What is a Data Bridge?</summary>
+
+---
+
+Schemas serve as the single source of truth for your data shape. But what about API shape?
+
+You can combine input and output schemas into a `bridge` file to serve as the single source of truth for your API resolver. You can use `createDataBridge` to ensure all the required fields are present:
+
+```ts {14, 17} /createDataBridge/1,3 filename="getPost.bridge.ts"
+import { Post } from '../schemas/Post.schema'
+import { createDataBridge } from '@green-stack/schemas/createDataBridge'
+import { schema } from '@green-stack/schemas'
+
+/* -- Schemas ------------ */
+
+// You can create, reuse or edit schemas here, e.g.
+export const GetPostArgs = schema('GetPostArgs', {
+    slug: z.string(),
+})
+
+/* -- Bridge ------------- */
+
+export const getPostBridge = createDataBridge({
+    // Assign schemas
+    inputSchema: GetPostArgs,
+    outputSchema: Post,
+
+    // GraphQL config
+    resolverName: 'getPost',
+    resolverArgsName: 'PostInput',
+
+    // API route config
+    apiPath: '/api/posts/[slug]',
+    allowedMethods: ['GET', 'GRAPHQL'],
+})
+```
+
+Think of a **"Databridge"** as a literal *bridge between the front and back-end*.
+
+It's a metadata object you can use from either side to provide / transform into:
+
+- ✅ Input and output **types + validation + defaults**
+- ✅ GraphQL **schema definitions** in `schema.graphql`
+- ✅ The query string to call our GraphQL API with
+
+*There's two reasons we suggest you define this "DataBridge" in a separate file*:
+
+- 1. **Reusability**: If kept separate from business logic, you can reuse it in both front and back-end code.
+- 2. **Consistency**: Predicatable patterns make it easier to build automations and generators around them.
+
+> For this reason, we suggest you add `.bridge.ts` to your bridge filenames.
+
+</details>
+
+### Build a fetcher function
+
+> We suggest you use `GraphQL` for building your data-fetching function.
+
+*It's not the only way you could do it*, but our Bridge + GraphQL fetcher helpers will ensure your query:
+
+- ✅ can **execute on the server, browser, iOS and Android** (better for universal routes)
+- ✅ can **automatically build the query string** from input and output **schemas in the bridge**
+- ✅ is **auto typed** *when using the bridge to provide the query automagically*
+- ✅ **supports custom queries** that are also auto typed, with `graphql.tada` (as an alternative)
+
+<FileTree>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas">
+            <FileTree.File name="Post.schema.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="getPost.bridge.ts" />
+            <FileTree.File name="getPost.resolver.ts" />
+            <FileTree.File name="getPost.query.ts ←" />
+        </FileTree.Folder>
+        <FileTree.Folder name="routes">
+            <FileTree.Folder name="api / posts / [slug]" defaultOpen>
+                <FileTree.File name="route.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+The easiest way to create a fetcher is to use the `bridgedFetcher()` helper:
+
+```ts {3} /bridgedFetcher/3 filename="getPost.query.ts"
+import { getPostBridge } from './getPost.bridge'
+// ☝️ Reuse your data bridge
+import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher'
+// ☝️ Universal graphql fetcher that can be used in any JS environment
+
+/* --- getPostFetcher() --------- */
+
+export const getPostFetcher = bridgedFetcher(getPostBridge)
+```
+
+This will automatically build the query string with all relevant fields from the bridge.
+
+<details>
+<summary>How to use custom queries?</summary>
+
+---
+
+To write a custom query with only certain fields, you can use our `graphql()` helper *with* `bridgedFetcher()`:
+
+```ts {3, 11, 21, 31, 41} filename="getPost.query.ts"
+import { ResultOf, VariablesOf } from 'gql.tada'
+// ☝️ Type helpers that interface with the GraphQL schema
+import { graphql } from '../graphql/graphql'
+// ☝️ Custom graphql.tada query builder that integrates with our types
+import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher'
+// ☝️ Universal graphql fetcher that can be used in any JS environment
+
+/* --- Query ----------------------- */
+
+// VSCode and GraphQL.tada will help suggest or autocomplete thanks to our schema definitions
+export const getPostQuery = graphql(`
+  query getPost ($getPostArgs: GetPostInput) {
+    getPost(args: $getPostArgs) {
+      slug
+      title
+      body
+    }
+  }
+`)
+
+// ⬇⬇⬇ automatically typed as ⬇⬇⬇
+
+// TadaDocumentNode<{
+//     getPost(args: { slug: string }): {
+//         slug: string | null;
+//         title: boolean | null;
+//         body: boolean | null;
+//     };
+// }>
+
+// ⬇⬇⬇ can be turned into reusable types ⬇⬇⬇
+
+/* --- Types ----------------------- */
+
+export type GetPostQueryInput = VariablesOf<typeof getPostQuery>
+
+export type GetPostQueryOutput = ResultOf<typeof getPostQuery>
+
+/* --- getPostFetcher() --------- */
+
+export const getPostFetcher = bridgedFetcher({
+  ...getPostBridge, // <- Reuse your data bridge ...
+  graphqlQuery: getPostQuery, // <- ... BUT, use our custom query
+})
+```
+
+</details>
+
+> Whether you use a custom query or not, you now have a GraphQL powered fetcher that:
+
+- ✅ Uses the executable graphql schema serverside
+- ✅ Can be used in the browser or mobile using fetch
+
+### Define data-fetching steps in `/screens/`
+
+> You'll be using your fetcher in `createQueryBridge()` in one of our universal screen components:
+
+<FileTree>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas">
+            <FileTree.File name="Post.schema.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="resolvers" defaultOpen>
+            <FileTree.File name="getPost.bridge.ts" />
+            <FileTree.File name="getPost.resolver.ts" />
+            <FileTree.File name="getPost.query.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="screens" defaultOpen>
+            <FileTree.File name="PostDetailScreen.tsx ←" />
+        </FileTree.Folder>
+        <FileTree.Folder name="routes">
+            <FileTree.Folder name="api / posts / [slug]" defaultOpen>
+                <FileTree.File name="route.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+What `createQueryBridge()` does is provide a set of instructions to:
+
+- ✅ Transform url params into query variables for our fetcher function
+- ✅ Fetch data using our custom graphql fetcher and `react-query` 
+- ✅ Map the fetched data to props for our screen Component
+
+> We define these steps here so we can reuse this query bridge to extract types for our screen props:
+
+```tsx {2, 7, 24, 30} /createQueryBridge/ /routeDataFetcher/ /postData/1,3 filename="PostDetailScreen.tsx"
+import { createQueryBridge } from '@green-stack/navigation'
+import { getPostFetcher } from '@app/some-feature/getPost.query'
+import type { HydratedRouteProps } from '@green-stack/navigation'
+
+/* --- Data Fetching --------------- */
+
+export const queryBridge = createQueryBridge({
+  
+    // 1. Transform the route params into things useable by react-query (e.g. 'slug')
+    routeParamsToQueryKey: (routeParams) => ['getPost', routeParams.slug],
+    routeParamsToQueryInput: (routeParams) => ({ getPostArgs: { slug: routeParams.slug } }),
+
+    // 2. Provide the fetcher function to be used by react-query
+    routeDataFetcher: getPostFetcher,
+
+    // 3. Transform fetcher output to props after react-query was called
+    fetcherDataToProps: (fetcherData) => ({ postData: fetcherData?.getPost }),
+})
+
+// ⬇⬇⬇ Extract types ⬇⬇⬇
+
+/* --- Types ----------------------- */
+
+type PostDetailScreenProps = HydratedRouteProps<typeof queryBridge>
+
+// ⬇⬇⬇ Use fetcher data in screen component ⬇⬇⬇
+
+/* --- <PostDetailScreen/> --------------- */
+
+const PostDetailScreen = (props: PostDetailScreenProps) => {
+
+    // Query results from 'fetcherDataToProps()' will be added to it
+    const { postData } = props
+    // ☝️ Typed as {
+    //      postData: {
+    //          slug: string,
+    //          title: string,
+    //          body: string,
+    //      }
+    //  }
+
+    // -- Render --
+
+    return (...)
+}
+```
+
+### Use the bridge and screen in `/routes/`
+
+> We now have the individual parts of our data-fetching, all that's left is to bring it all together in a route:
+
+<FileTree>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas">
+            <FileTree.File name="Post.schema.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="resolvers">
+            <FileTree.File name="getPost.bridge.ts" />
+            <FileTree.File name="getPost.resolver.ts" />
+            <FileTree.File name="getPost.query.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="screens" defaultOpen>
+            <FileTree.File name="PostDetailScreen.tsx" />
+        </FileTree.Folder>
+        <FileTree.Folder name="routes" defaultOpen>
+            <FileTree.Folder name="api / ..." />
+            <FileTree.Folder name="posts / [slug] /" defaultOpen>
+                <FileTree.File name="index.tsx ←" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+This is where `UniversalRouteScreen` comes in to **execute each step** op the `queryBridge` **in sequence** until we get to the final props to be provided to the screen.
+
+```tsx {2, 7} /queryBridge/3 /PostDetailScreen/2 filename="features / @some-feature / routes / index.tsx" 
+import { PostDetailScreen, queryBridge } from '@app/screens/PostDetailScreen'
+import { UniversalRouteScreen } from '@app/navigation'
+
+/* --- /posts/[slug] ----------- */
+
+export default (props) => (
+    <UniversalRouteScreen
+        {...props}
+
+        queryBridge={queryBridge}
+        // 👆 Pass the bridge as instruction for react-query to get the final props
+
+        routeScreen={PostDetailScreen}
+        // 👆 Screen component, provided with final props on mobile + server + browser
+    />
+)
+```
+
+In the same `/routes/index.tsx` file, you can add the [Next.js routing config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)
+
+```tsx {} filename="features / @app-core / routes / index.tsx" 
+// -i- Export any other next.js routing config here
+export const dynamic = 'auto'
+export const dynamicParams = true
+export const revalidate = false
+export const fetchCache = 'auto'
+export const runtime = 'nodejs'
+export const preferredRegion = 'auto'
+export const maxDuration = 5
+```
+
+> 💡 Check Next.js [route segment config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) later to understand the options you can set here.
+
+We'll be re-exporting this route segment config in the next step. We'll keep it in the same file as the main route component for colocation and enabling `@green-stack/scripts` to automatically re-export it.
+
+### Re-export the route in your apps
+
+```shell
+npm run link:routes
+```
+
+This will re-export the route from your workspace to your Expo and Next.js apps:
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app / posts / [slug] / index.tsx  ←" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.Folder name="app / posts / [slug] / page.tsx  ← " />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature">
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="Post.schema.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="resolvers" defaultOpen>
+                <FileTree.File name="getPost.bridge.ts" />
+                <FileTree.File name="getPost.resolver.ts" />
+                <FileTree.File name="getPost.query.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="PostDetailScreen.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api / ..." />
+                <FileTree.File name="posts / [slug] / index.tsx  ← " defaultOpen />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+> You could do this manually as well, but... why would you?
+
+</Steps>
+
+This concludes our recommended flow for manually setting up data-fetching for routes.
+
+> **However, you might want to fetch data at the component level**, or even mutate / update data instead. For that, we recommend using `react-query` directly in your components:
+
+## Using `react-query`
+
+[react-query](https://tanstack.com/query/latest) is a library that helps you manage your data-fetching logic in a way that's easy to use and understand. It provides tools to fetch, cache, and update data in an efficient and flexible way.
+
+It's built around the concept of **queries** and **mutations**:
+
+- **Queries** are used to fetch data from an API
+- **Mutations** are used to send data to an API
+
+> Queries are the most common use case, and the one we've been focusing on here.
+
+### `UniversalRouteScreen`
+
+For example, the **UniversalRouteScreen wrapper** *uses react-query to fetch data* for a route:
+- **serverside**, during server side rendering (SSR)
+- **in the browser**, during client side rendering (CSR)
+- **in the mobile app**, fetching from the client
+
+<details>
+<summary>How do our universal routes fetch initial data with react-query?</summary>
+
+---
+
+Here's a quick look at how `UniversalRouteScreen` uses `react-query` to fetch data:
+
+```tsx {13, 25, 49} filename="UniversalRouteScreen.tsx"
+// Props
+const { queryBridge, routeScreen: RouteScreen, ...screenProps } = props
+
+// Extract the fetching steps from our queryBridge
+const { routeParamsToQueryKey, routeParamsToQueryInput, routeDataFetcher } = queryBridge
+const fetcherDataToProps = queryBridge.fetcherDataToProps
+
+// Combine all possible route params to serve as query input
+const { params: routeParams, searchParams } = props
+const nextRouterParams = useRouteParams(props)
+const queryParams = { ...routeParams, ...searchParams, ...nextRouterParams }
+
+// -- Query --
+
+const queryClient = useQueryClient()
+const queryKey = routeParamsToQueryKey(queryParams) // -> e.g. ['getPost', 'some-slug']
+const queryInput = routeParamsToQueryInput(queryParams) // -> e.g. { getPostArgs: { slug: 'some-slug' } }
+
+const queryConfig = {
+    queryKey,
+    queryFn: async () => routeDataFetcher(queryInput), // <- Uses our fetcher
+    initialData: queryBridge.initialData, // <- Optional initial data
+}
+
+// -- Browser & Mobile --
+
+if (isBrowser || isMobile) {
+
+    // Execute the query as a hook
+    const { data: fetcherData } = useQuery({
+        ...queryConfig, // <- See above, includes our 'queryFn' / fetcher
+        initialData: {
+            ...queryConfig.initialData,
+            ...hydrationData, // <- Only on browser (empty on mobile)
+        },
+        refetchOnMount: shouldRefetchOnMount,
+    })
+
+    const routeDataProps = fetcherDataToProps(fetcherData as any)
+
+    // Render in browser:
+    return (
+        <HydrationBoundary state={...}>
+            <RouteScreen {...routeDataProps} {...screenProps} /* ... */ />
+        </HydrationBoundary>
+    )
+}
+
+// -- Server --
+
+if (isServer) {
+    const fetcherData = use(queryClient.fetchQuery(queryConfig)) 
+    const routeDataProps = fetcherDataToProps(fetcherData)
+    const dehydratedState = dehydrate(queryClient)
+
+    // Render on server:
+    return (
+        <HydrationBoundary state={dehydratedState}>
+            <RouteScreen {...routeDataProps} {...screenProps} /* ... */ />
+        </HydrationBoundary>
+    )
+}
+```
+
+> A lot of this is pseudo code though, if you really want to know the exact internals, check out the `UniversalRouteScreen.(web).tsx` files
+
+</details>
+
+### Fetch data with `queryFn`
+
+You'll need to define a function to tell react-query how to fetch data. This function is responsible for fetching from a server, database, or any other source. It does not have to be an actual API call, but usually, it will be.
+
+> Your `queryFn` must:
+
+- Return a promise that resolves the data.
+- Throw an error if the data cannot be fetched.
+
+<details>
+<summary>Example</summary>
+  
+
+```tsx {2, 14} /queryFn/2 filename="getPost.fetcher.ts"
+// Define a fetcher function
+const fetchProjects = async () => {
+
+    // e.g. fetch data from an API
+    const response = await fetch('/api/projects')
+
+    // Check if the response is ok, throw error if not
+    if (!response.ok) throw new Error('Network response was not ok')
+
+    // Return the data
+    return response.json()
+}
+
+// Use your `queryFn` with react-query
+const data = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
+```
+
+</details>
+
+### `queryKey` best practices
+
+> At its core, **TanStack Query manages query caching for you based on query keys**. Query keys **have to be an Array** at the top level, and can be as simple as an Array with a single string, or as complex as an array of many strings and nested objects. As long as the query key is serializable, and unique to the query's data, you can use it!  
+>  
+> -- React Query Docs
+
+The simplest form of a key is an array with constants values. For example:
+
+```tsx
+// A list of todos
+useQuery({ queryKey: ['todos'], ... })
+
+// Something else, whatever!
+useQuery({ queryKey: ['something', 'special'], ... })
+```
+
+Often, your `queryFn` will take some input, like a `slug` or `id`, and you'll want to refetch the query when that input changes. In this case, you can use the input as part of the query key:
+
+```tsx
+// An individual todo
+useQuery({ queryKey: ['todo', 5], ... })
+
+// An individual todo in a "preview" format
+useQuery({ queryKey: ['todo', 5, { preview: true }], ...})
+
+// A list of todos that are "done"
+useQuery({ queryKey: ['todos', { type: 'done' }], ... })
+```
+
+### Invalidating + refetching queries
+
+**Invalidating queries** in React Query **means telling the library to refetch data**, which is necessary when the underlying data may have changed. React Query offers several ways to invalidate queries, such as directly through the queryClient or as a side effect of mutations.
+
+```tsx
+// Invalidate every query with a key that starts with `todos`
+queryClient.invalidateQueries({ queryKey: ['todos'] })
+
+// Invalidate a specific query
+queryClient.invalidateQueries({ queryKey: ['todo', 5] })
+```
+
+A common practice is to **refetch queries after updating data**. This can be done by using the `onSuccess` callback of a mutation:
+
+```tsx {4}
+const mutation = useMutation(createTodo, {
+    ...,
+    // Refetch the query with key ['todos'] after the mutation succeeds
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+```
+
+### Update data with `useMutation`
+
+**Mutations** are used to send data to an API. They are similar to queries, but instead of fetching data, they send data to the server. React Query provides a `useMutation` hook to handle mutations.
+
+```tsx {3, 9}
+const mutation = useMutation(createTodo, {
+    // The mutation function
+    mutationFn: (newTodo) => fetch('/api/todos', { method: 'POST', body: JSON.stringify(newTodo) }),
+    // Invalidate the 'todos' query after the mutation succeeds
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+
+// Call the mutation function
+mutation.mutate({ title: 'New todo' }) // <- Data will be passed as the `newTodo` arg
+```
+
+### Workspace recommendations
+
+Like our resolvers and data-bridges, we think it's best to define your custom and/or third-party data-fetching logic in files on the workspace level.
+
+> This will help **keep your feature folders clean, focused, portable and reusable across different projects**:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature" defaultOpen>
+            <FileTree.Folder name="schemas">
+                <FileTree.File name="Post.schema.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="resolvers">
+                <FileTree.File name="getPost.bridge.ts" />
+                <FileTree.File name="getPost.resolver.ts" />
+                <FileTree.File name="getPost.query.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="hooks" defaultOpen>
+                <FileTree.File name="useGetPostQuery.ts ←" />
+                <FileTree.File name="useUpdatePostMutation.ts ←" />
+            </FileTree.Folder>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="useUpdatePostForm.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="screens">
+                <FileTree.File name="PostDetailScreen.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes">
+                <FileTree.Folder name="api / ..." />
+                <FileTree.File name="posts / [slug] / index.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+        <FileTree.Folder name="@other-feature">
+            <FileTree.Folder name="resolvers / ..." />
+            <FileTree.Folder name="screens / ..." />
+            <FileTree.Folder name="routes / ..." />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+## GraphQL vs. API routes
+
+We recommend you use GraphQL for your data-fetching logic, as it provides a more flexible and efficient way to fetch data in each environment.
+
+We do recommend using API routes instead when mutating / updating data. Though here too, GraphQL can be used if you prefer.
+
+### Why GraphQL for data-fetching?
+
+> As mentioned before, the 'G' in GREEN-stack stands for GraphQL. But why do we recommend it?
+
+GraphQL may look complex, but when simplified, you can get all of the benefits without said complexity:
+
+- **Type safety**: Your input and output types are automatically validated and inferred.
+- **Self-documenting**: Your API is automatically documented in `schema.graphql`.
+
+> If you don't need to worry much about the complexity of setting up and using GraphQL, it's similar to using tRPC.
+
+---
+
+It's important to note that there are some common footguns to avoid when using GraphQL:
+
+<details>
+<summary>Why avoid a traversible graph?</summary>
+<span className="h-8" />
+
+> If you don't know yet, the default way to use GraphQL is to expose many different domains as a graph.
+
+Think of a graph based API as each data type being a node, and each relationship between them being an edge. Without limits you could infinitely traverse this graph. Such as a `User` having `Post` nodes, which in themselves have related `Reply` data, which have related `User` data again. You could query all of that in one go.
+
+That might *sound* great, but it can lead to problems like:
+- **Performance**: If not limited, a single query could request so much data it puts a severe strain on your server.
+- **Scraping**: If you allow deep nesting, people can easily scrape your entire database.
+
+> Instead of exposing your entire database as a graph, we recommend you use GraphQL in a more functional "Remote Procedure Call" (RPC) style.
+
+Only when actually offering GraphQL as a public API to third party users to integrate with you, do we recommend a graph / domain style GraphQL API.
+</details>
+
+<details>
+<summary>Why RPC-style GraphQL?</summary>
+<span className="h-8" />
+
+If you're not building a public API, you should shape your resolvers in function of your front-end screens instead of your domain or database collections. This way, you can fetch all the data required for one screen in one go, without having to call multiple resolvers or endpoints.
+
+> To illustrate RPC-style queries in your mind, think of `getDashboardData()` vs. having to call 3 separate `Orders()`, `Products()`, `Transactions()` type resolvers to achieve the same thing.
+
+When used in this manner, quite similar to tRPC, it remains the best for initial data-fetching. Though mutating data might be better served as a tRPC call or API route POST / PUT / DELETE request.
+
+We think GraphQL is great for fetching data, but not always the best for updating data. Especially when you need to handle complex forms and file uploads.
+
+You might therefore want to handle mutations of data in a more traditional REST-ful way, using tRPC or just plain old API routes.
+</details>
+
+## Further reading
+
+From our own docs:
+- [Single Sources of Truth](/single-sources-of-truth)
+- [Data Resolvers](/data-resolvers)
+
+Relevant external docs:
+- [React Query](https://tanstack.com/query/latest/)
+- [GraphQL](https://graphql.org/learn/)

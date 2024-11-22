@@ -18,7 +18,7 @@ This quickstart covers a few topics:
 - **[Using the Starterkit](#up-and-running-in-no-time)** and **[Project Architecture](#monorepo-architecture)**
 - **[The GREEN stack + write once, render anywhere](#the-green-stack)** way of working
 - **[Zod for Single sources of truth](#zod-for-single-sources-of-truth)** - Defining **portable data shapes** for UIs, APIs and beyond
-- **[Universal Data Fetching](#universal-data-fetching)** - Using `react-query` and GraphQL (without the hassle)
+- **[Universal Data Fetching](#universal-routes--data-fetching)** - Using `react-query` and GraphQL (without the hassle)
 - Git / PR based plugins to **[Pick your own Auth / DB / Mail / Storage / ...](#powerful-results-)**
 
 ## Start for Web *+* App Stores with [FullProduct.dev](https://fullproduct.dev) ⚡️
@@ -165,7 +165,7 @@ your-project/
 npm run collect:routes
 ```
 
-This will eventually help us keep entire features as copy-pasteable between projects as possible. More on that later in the [Core Concepts](TODO) section.
+This will eventually help us keep entire features as copy-pasteable between projects as possible. More on that later in the [Core Concepts](/core-concepts) section.
 
 For now, you should start in a screen component like `HomeScreen.tsx`
 
@@ -247,7 +247,7 @@ import { Image, View, H1 } from '@app/primitives'
 //  'rounded-md'    -> border-radius: 6px;
 ```
 
-> Check [nativewind.dev](https://nativewind.dev) for a deeper understanding of [Universal Styling](TODO)
+> Check [nativewind.dev](https://nativewind.dev) for a deeper understanding of [Universal Styling](/write-once-styles)
 
 ## Zod for Single sources of truth
 
@@ -333,7 +333,7 @@ User.shape.age.parse("Invalid - Not a number")
 // Luckily, TS will already catch this in your editor ( instant feedback 🙌 )
 ```
 
-> Check out [zod.dev](https://zod.dev) and the [Single Sources of Truth](TODO) docs later for a deep of zod's typescript-first schema building abilities.
+> Check out [zod.dev](https://zod.dev) and the [Single Sources of Truth](/single-sources-of-truth) docs later for a deep of zod's typescript-first schema building abilities.
 
 To highlight the power of schemas, let's look beyond validation and types:
 
@@ -521,7 +521,7 @@ You can then check out your GraphQL API playground at [/api/graphql](http://loca
 
 ![Apollo Server GraphQL Playground Preview](https://github.com/Aetherspace/universal-app-router/assets/5967956/3b6b1d98-1228-44a4-aaa0-968664a027c3)
 
-> Check [Resolvers and API's](TODO) later for a deeper understanding of how this all works under the hood.
+> Check [Resolvers and API's](/data-resolvers) later for a deeper understanding of how this all works under the hood.
 
 ## Universal Routes + Data Fetching
 
@@ -812,7 +812,7 @@ export default HomeRoute
 // Re-export the route segment configs here as well
 ```
 
-> Check [Universal Routing](TODO) docs later for a deeper understanding of how this all works under the hood.
+> Check [Universal Routing](/universal-routing) docs later for a deeper understanding of how this all works under the hood.
 
 ---
 
@@ -855,7 +855,7 @@ So, merge what you're familiar with, or check out the individual PR's to test an
 
 ### Automatic Docgen, maybe?
 
-One plugin we recommend to everyone, is the `with/automagic-docs` plugin branch. It will enable pairing your [zod schemas](TODO) / [Single sources of Truth](TODO) with components, resolvers and API routes to automatically generate interactive docs for them. (Like Storybook, but in Next.js)
+One plugin we recommend to everyone, is the `with/automagic-docs` plugin branch. It will enable pairing your [zod schemas](/single-sources-of-truth) / [Single sources of Truth](/single-sources-of-truth) with components, resolvers and API routes to automatically generate interactive docs for them. (Like Storybook, but in Next.js)
 
 This way:
 - Your docs grow with your project.

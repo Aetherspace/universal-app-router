@@ -10,7 +10,7 @@ import { FileTree } from 'nextra/components'
 
 # Schemas as Single Sources of Truth
 
-```ts
+```ts copy
 import { z, schema } from '@green-stack/schemas'
 ```
 
@@ -453,7 +453,7 @@ There's two ways schemas are used to create docs:
 1. **GraphQL schema comments** provide hints in the GraphQL playground - at `/api/graphql`
 2. **MDX component docs** generated from the prop schema, with interactive controls
 
-> No. 1 already works without any plugin when using our [recommended way to do GraphQL](TODO)
+> No. 1 already works without any plugin when using our [recommended way to do GraphQL](/data-resolvers)
 
 > No. 2 happens automatically when running `npm run dev` after merging the docs plugin. ([see demo](/@app-core/components/Button))
 
@@ -666,6 +666,9 @@ We've done our best to hack in experimental tuple and union support where possib
 
 ## Further reading
 
+From our own docs:
+- [Data Bridges for fetching](/data-resolvers#start-from-a-databridge) - Starterkit Docs
+
+Relevant external resources:
 - [Zod's official docs](https://zod.dev) - zod.dev
 - [The Joy of Single Sources of Truth](https://dev.to/codinsonn/the-joy-of-single-sources-of-truth-277o) - Article
-- [Data Bridges for fetching](TODO) - Starterkit Docs

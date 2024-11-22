@@ -32,9 +32,9 @@ your-universal-app/
 
 There's two main reasons why the starterkit is structured this way:
 
-1. Historically, using a monorepo for combining Expo & Next.js was better as you could keep their configs and dependencies separate. Meaning you can configure and upgrade Expo without upgrading Next.js and vice versa. *This still holds true for the most part.*
+1. Historically, using a monorepo for combining Expo & Next.js was better as you could **keep their configs and dependencies separate**. Meaning you can configure and upgrade Expo without upgrading Next.js and vice versa. *This still holds true for the most part.*
 
-2. It facilitate architecting for copy-paste. A workspace folder within a monorepo is the ideal unit of work to copy and paste between projects. You define your custom code and the dependencies it needs in a single folder, and can then consume it in another workspace. Colocating the UI / API / models / schemas / utils / constants / resolvers / components / hooks for a single, portable, feature.
+2. It facilitates **architecting for copy-paste**. A workspace folder within a monorepo is the ideal unit of work to copy and paste between projects. You define your custom code and the dependencies it needs in a single folder, and can then consume it in another workspace. Colocating the UI / API / models / schemas / utils / constants / resolvers / components / hooks for a single, portable, feature.
 
 ## Monorepo workspaces
 
@@ -246,7 +246,7 @@ There are two main reasons for this recommended structure:
 
 2. ✅ It's **predictable**. Anything that's predictable can be used in automation, scripts and generators, which will further speed up your development in the long run.
 
-Aside from `/schemas/`, `/models/`, `/routes/` and `/icons/`, we have no recommendations or automations related to the other folders. The names are just suggestions, and you can rename, add or split as you see fit.
+Aside from `/schemas/`, `/models/`, `/resolvers/`, `/routes/` and `/icons/`, we have no automations related to the other folders. The names are just suggestions, and you can rename, add or split as you see fit.
 
 ## Turborepo Basics
 
@@ -315,8 +315,6 @@ To check which generators are available:
 ```shell
 npx turbo gen # interactive list to pick from
 ```
-
-`⬇⬇⬇`
 
 ```shell
 >>> Modify "project name" using custom generators

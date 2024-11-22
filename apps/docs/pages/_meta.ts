@@ -17,44 +17,81 @@ const renderPluginItems = (options: any$Todo) => {
 /* --- Top Level Sidebar ----------------------------------------------------------------------- */
 
 export const meta = {
+
     '-- Universal Base Starter': {
         'type': 'separator',
         'title': 'Universal Base Starter',
     },
+
     'index': 'Introduction',
+
+    // -- Plugins --
+
     '-- Plugin Branches': {
         'type': 'separator',
         'title': 'Plugin Branches',
     },
+
     ...renderPluginItems({ display: false }),
+
     'plugins': {
         title: 'Plugin Branches',
         type: 'folder',
         items: renderPluginItems({ display: true }),
     },
+
+    // -- FullProduct.dev ⚡️ --
+
     '-- FullProduct.dev ⚡️': {
         'type': 'separator',
-        'title': 'FullProduct.dev ⚡️ Upgrade',
+        'title': '- FullProduct.dev ⚡️ Upgrade -',
     },
-    'quickstart': {
-        'title': 'Quickstart',
+
+    'quickstart': 'Quickstart',
+    'core-concepts': 'Core Concepts',
+    'project-structure': 'Project Structure',
+    'single-sources-of-truth': 'Single Sources of Truth',
+
+    // -- Building your app --
+
+    '-- Building universal apps': {
+        'type': 'separator',
+        'title': 'Building universal apps',
     },
-    'core-concepts': {
-        'title': 'Core Concepts',
+
+    'universal-routing': 'Cross-Platform Routing',
+    'write-once-styles': 'Styling Universal UI',
+    'data-resolvers': 'Flexible Resolvers and API\'s',
+    'data-fetching': 'Universal Data Fetching',
+    'app-config': 'App Config',
+
+    // -- Portability --
+
+    '-- Portability': {
+        'type': 'separator',
+        'title': 'Portability',
     },
-    'project-structure': {
-        'title': 'Project Structure',
+
+    'maximum-code-reuse': 'Maximize Code Reuse',
+    'workspace-drivers': 'Workspace Drivers',
+
+    // -- Saving Time --
+
+    '-- Saving Time': {
+        'type': 'separator',
+        'title': 'Saving Time',
     },
-    'single-sources-of-truth': {
-        'title': 'Single Sources of Truth',
-    },
+
+    'automations': 'Scripts and Automations',
+    'generators': 'Code Generators',
+    'git-based-plugins': 'Git based Plugins',
 
     // -- Features --
 
     ...(!isEmpty(featureMeta) ? {
-        '-- Application Features': {
+        '-- App Features': {
             'type': 'separator',
-            'title': 'Application Features',
+            'title': 'App Features',
         },
     } : {}),
 
