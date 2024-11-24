@@ -63,28 +63,29 @@ export const meta = {
     'write-once-styles': 'Styling Universal UI',
     'data-resolvers': 'Flexible Resolvers and API\'s',
     'data-fetching': 'Universal Data Fetching',
+    'form-management': 'Form Management',
     'app-config': 'App Config',
 
     // -- Portability --
 
-    '-- Portability': {
-        'type': 'separator',
-        'title': 'Portability',
-    },
+    // '-- Portability': {
+    //     'type': 'separator',
+    //     'title': 'Portability',
+    // },
 
-    'maximum-code-reuse': 'Maximize Code Reuse',
-    'workspace-drivers': 'Workspace Drivers',
+    // 'maximum-code-reuse': 'Maximize Code Reuse',
+    // 'workspace-drivers': 'Workspace Drivers',
 
     // -- Saving Time --
 
-    '-- Saving Time': {
-        'type': 'separator',
-        'title': 'Saving Time',
-    },
+    // '-- Saving Time': {
+    //     'type': 'separator',
+    //     'title': 'Saving Time',
+    // },
 
-    'automations': 'Scripts and Automations',
-    'generators': 'Code Generators',
-    'git-based-plugins': 'Git based Plugins',
+    // 'automations': 'Scripts and Automations',
+    // 'generators': 'Code Generators',
+    // 'git-based-plugins': 'Git based Plugins',
 
     // -- Features --
 
