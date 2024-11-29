@@ -43,7 +43,7 @@ import { FileTree, Callout } from 'nextra/components'
 # ${v.componentName}
 
 \`\`\`typescript copy
-import { ${v.componentName} } from '@app/components/${v.componentName}'
+import { ${v.componentName} } from '${v.importPath}'
 \`\`\`
 
 <ComponentDocs

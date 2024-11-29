@@ -64,7 +64,15 @@ export const meta = {
     'data-resolvers': 'Flexible Resolvers and API\'s',
     'data-fetching': 'Universal Data Fetching',
     'form-management': 'Form Management',
-    'app-config': 'App Config',
+
+    // -- Guides --
+
+    '-- Guides': {
+        'type': 'separator',
+        'title': 'Guides',
+    },
+
+    'app-config': 'Env Vars + App Config',
 
     // -- Portability --
 

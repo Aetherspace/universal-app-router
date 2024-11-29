@@ -214,9 +214,11 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 
     const previewPropsWithHandlers = useMemo(() => {
         const onChange = (value: any$Unknown) => {
-            const newValue = { [docsUtils.valueProp]: isEmpty(value) ? "" : value }
-            const newParams = { ...docsUtils.params, ...newValue }
+            const newValue = isEmpty(value) ? "" : value
+            const newValueObj = { [docsUtils.valueProp]: newValue }
+            const newParams = { ...docsUtils.params, ...newValueObj }
             const query = buildUrlParamsObject(newParams)
+            // if (!newValue) delete query[docsUtils.valueProp]
             docsUtils.router.push({ query }, undefined, { shallow: true })
         }
         return {
@@ -227,14 +229,19 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 
     // -- Code --
 
-    const jsxPropLines = Object.entries(previewProps).map(([key, value]) => {
+    const filteredPropLines = Object.entries(previewProps).map(([key, value]) => {
+        const isValue = ['checked', 'value'].includes(key)
         if (typeof value === 'string') return `${key}="${value}"`
         if (typeof value === 'undefined') return null
         let strValue = JSON.stringify(value)
         if (Array.isArray(value)) strValue = strValue.replaceAll(',', ', ')
         if (strValue.length > 42) strValue = JSON.stringify(value, null, 4).split('\n').join('\n    ')
+        if (!isValue && strValue === 'false') return null
+        if (!isValue && strValue === 'true') return `${key}`
         return `${key}={${strValue}}`
     }).filter(Boolean) as string[]
+    
+    const jsxPropLines = filteredPropLines.sort((a, b) => a.includes('=') && !b.includes('=') ? -1 : 1)
 
     const jsxCode = `<${componentName}\n    ${jsxPropLines.join('\n    ')}\n/>`
 
@@ -342,17 +349,28 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     // -- Render --
 
     return (
-        <View className="relative min-w-400 my-12">
+        <View className="relative md:min-w-400 my-12">
 
             {/* - Column Headings - */}
 
             <View className="flex flex-row">
-                <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-4">
+
+                {/* - Hidden on larger screens - */}
+
+                <View className="flex md:hidden w-4/5 md:max-w-[150px] items-start px-2 pl-4">
+                    <Text className="text-base font-bold text-primary">
+                        Component Props
+                    </Text>
+                </View>
+
+                {/* - Hidden on small screens - */}
+
+                <View className="hidden md:flex w-1/5 max-w-[150px] items-start px-2 pl-4">
                     <Text className="text-base font-bold text-primary">
                         Name
                     </Text>
                 </View>
-                <View className="flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2">
+                <View className="hidden md:flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2">
                     <Text className="text-base font-bold text-primary">
                         Description
                     </Text>
@@ -361,14 +379,18 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     className={cn(
                         'w-1/5 max-w-[150px] items-start px-2',
                         'hidden lg:flex',
+                        'invisble md:visible',
                     )}
                 >
                     <Text className="text-base font-bold text-primary">
                         Default
                     </Text>
                 </View>
-                <View className="flex flex-row w-1/5 min-w-[200px] flex-grow items-center justify-between px-2">
-                    <Text className="text-base font-bold text-primary">
+
+                {/* - Reset props - */}
+
+                <View className="flex flex-row w-1/5 md:min-w-[200px] flex-grow items-center justify-between px-2">
+                    <Text className="hidden md:flex text-base font-bold text-primary">
                         Preview
                     </Text>
                     {showResetButton && (
@@ -384,6 +406,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     )}
                 </View>
             </View>
+
             <View className="h-4" />
 
             {/* - Props Table - */}
@@ -414,14 +437,15 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                         <View
                             key={`props-table-${key}`}
                             className={cn(
-                                'flex flex-row w-full py-4',
+                                'flex flex-col md:flex-row w-full py-4',
+                                'px-2 md:px-0',
                                 !isLastItem && 'border-b border-gray-500',
                             )}
                         >
                             
                             {/* - Title - */}
 
-                            <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-4">
+                            <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-3 md:pl-4 mb-2 md:mb-0">
                                 <Text className="text-xs font-bold text-primary">
                                     {key}
                                     {isRequired && (
@@ -434,7 +458,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                             {/* - Description - */}
 
-                            <View className="flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2">
+                            <View className="flex w-2/5 min-w-[200px] flex-grow flex-shrink items-start px-2 mb-2 md:mb-0">
                                 {!!description && (
                                     <Text className={cn("text-xs text-primary", !!fieldType && 'mb-2')}>
                                         {description}
@@ -468,7 +492,13 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                             {/* - Preview Inputs - */}
 
-                            <View className="flex w-1/5 min-w-[200px] flex-grow items-start px-2 pr-4">
+                            <View
+                                className={cn(
+                                    "flex flex-grow items-start px-2 pr-4",
+                                    "w-full",
+                                    "md:w-1/5 md:min-w-[200px]",
+                                )}
+                            >
                                 
                                 {fieldType === 'boolean' && isReady && (
                                     <Switch
