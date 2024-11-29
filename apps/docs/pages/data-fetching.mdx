@@ -69,6 +69,8 @@ For an example of what this might look like in an actual project, check the exam
 
 > The recommended and easiest way to create a new route in a workspace is to use the Route Generator:
 
+<div className="h-8" />
+
 ## Using the Route Generator
 
 ```shell
@@ -109,6 +111,8 @@ In which case the generated boilerplate might look like this:
 ```
 
 To explain what the generator does for you, have a look at the recommended steps to add data fetching manually:
+
+<div className="h-8" />
 
 ## Manually set up Data Fetching
 
@@ -494,6 +498,8 @@ This concludes our recommended flow for manually setting up data-fetching for ro
 
 > **However, you might want to fetch data at the component level**, or even mutate / update data instead. For that, we recommend using `react-query` directly in your components:
 
+<div className="h-8" />
+
 ## Using `react-query`
 
 [react-query](https://tanstack.com/query/latest) is a library that helps you manage your data-fetching logic in a way that's easy to use and understand. It provides tools to fetch, cache, and update data in an efficient and flexible way.
@@ -504,6 +510,8 @@ It's built around the concept of **queries** and **mutations**:
 - **Mutations** are used to send data to an API
 
 > Queries are the most common use case, and the one we've been focusing on here.
+
+<div className="h-4" />
 
 ### `UniversalRouteScreen`
 
@@ -588,6 +596,8 @@ if (isServer) {
 
 </details>
 
+<div className="h-4" />
+
 ### Fetch data with `queryFn`
 
 You'll need to define a function to tell react-query how to fetch data. This function is responsible for fetching from a server, database, or any other source. It does not have to be an actual API call, but usually, it will be.
@@ -621,6 +631,8 @@ const data = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
 
 </details>
 
+<div className="h-4" />
+
 ### `queryKey` best practices
 
 > At its core, **TanStack Query manages query caching for you based on query keys**. Query keys **have to be an Array** at the top level, and can be as simple as an Array with a single string, or as complex as an array of many strings and nested objects. As long as the query key is serializable, and unique to the query's data, you can use it!  
@@ -650,6 +662,8 @@ useQuery({ queryKey: ['todo', 5, { preview: true }], ...})
 useQuery({ queryKey: ['todos', { type: 'done' }], ... })
 ```
 
+<div className="h-4" />
+
 ### Invalidating + refetching queries
 
 **Invalidating queries** in React Query **means telling the library to refetch data**, which is necessary when the underlying data may have changed. React Query offers several ways to invalidate queries, such as directly through the queryClient or as a side effect of mutations.
@@ -672,6 +686,8 @@ const mutation = useMutation(createTodo, {
 })
 ```
 
+<div className="h-4" />
+
 ### Update data with `useMutation`
 
 **Mutations** are used to send data to an API. They are similar to queries, but instead of fetching data, they send data to the server. React Query provides a `useMutation` hook to handle mutations.
@@ -687,6 +703,8 @@ const mutation = useMutation(createTodo, {
 // Call the mutation function
 mutation.mutate({ title: 'New todo' }) // <- Data will be passed as the `newTodo` arg
 ```
+
+<div className="h-4" />
 
 ### Workspace recommendations
 
@@ -728,11 +746,15 @@ Like our resolvers and data-bridges, we think it's best to define your custom an
     </FileTree.Folder>
 </FileTree>
 
+<div className="h-8" />
+
 ## GraphQL vs. API routes
 
 We recommend you use GraphQL for your data-fetching logic, as it provides a more flexible and efficient way to fetch data in each environment.
 
 We do recommend using API routes instead when mutating / updating data. Though here too, GraphQL can be used if you prefer.
+
+<div className="h-4" />
 
 ### Why GraphQL for data-fetching?
 
@@ -780,6 +802,8 @@ We think GraphQL is great for fetching data, but not always the best for updatin
 
 You might therefore want to handle mutations of data in a more traditional REST-ful way, using tRPC or just plain old API routes.
 </details>
+
+<div className="h-4" />
 
 ## Further reading
 

@@ -21,6 +21,8 @@ import { View, Text, Image } from 'react-native'
 
 However, you'll likely want to introduce tailwind-style `className` support through [Nativewind](https://www.nativewind.dev/):
 
+<div className="h-8" />
+
 ## Nativewind Basics
 
 ![Graph Showing how Nativewind translates to tailwind on web & react-native stylesheet on native with Expo](https://github.com/user-attachments/assets/05be92d7-2fbd-4604-bf93-c99735fa7d3c)
@@ -60,6 +62,8 @@ import { View, Text, Image } from '@app/primitives'
 // (uses regular tailwind css stylesheet on web to apply as actual CSS)
 ```
 
+<div className="h-4" />
+
 ### Responsive Design
 
 If you're doing SSR with responsive-design, this becomes real handy to apply media-queries:
@@ -88,6 +92,8 @@ If you're doing SSR with responsive-design, this becomes real handy to apply med
 
 > Check [nativewind.dev](https://nativewind.dev) and [tailwindcss.com](https://tailwindcss.com/) for a deeper understanding of [Universal Styling](/write-once-styles) and breakpoints
 
+<div className="h-8" />
+
 ## Create your own primitives
 
 ### Optimized Images
@@ -115,6 +121,8 @@ import { styled } from 'nativewind'
 export const Image = styled(UniversalImage, '')
 // ☝️ Adds the ability to assign tailwind classes
 ```
+
+<div className="h-4" />
 
 ### `styled()`
 
@@ -167,6 +175,8 @@ import { Image, View, H1, P } from '@app/primitives'
 </View>
 ```
 
+<div className="h-4" />
+
 ### Prefilling other style props
 
 Next to just prefilling `className`, you can also prefill other props by passing them as the third argument to `styled()`, e.g.:
@@ -178,8 +188,9 @@ const RestyledCheckbox = styled(Checkbox, 'bg-primary', {
 })
 ```
 
-## Combining classnames with `cn()`
+<div className="h-8" />
 
+## Combining classnames with `cn()`
 
 ```tsx
 import { cn } from '@app/primitives'
@@ -194,6 +205,8 @@ If you want to combine multiple classes, you can use the `cn()` utility:
 This will only apply the second class if `someBoolean` is `true`.
 
 > Underneath, `cn()` uses a combination of `twMerge()` and `cslx()` to merge the classes together.
+
+<div className="h-8" />
 
 ## Theme management
 
@@ -254,6 +267,8 @@ It's advised to reuse this `universalTheme` in all your `tailwind.config.js` fil
     </FileTree.Folder>
 </FileTree>
 
+<div className="h-4" />
+
 ### Colors and Dark Mode
 
 You main colors can be managed in `global.css`.
@@ -292,6 +307,8 @@ This is where you can define, for example, the colors for light and dark mode:
 }
 ```
 
+<div className="h-4" />
+
 ### Theme colors as values
 
 You can retrieve theme colors as values by passing their CSS variable name to one of our style utils:
@@ -314,6 +331,8 @@ import { useThemeColor } from '@app/primitives'
 const primaryColor = useThemeColor('--primary')
 const secondaryColor = useThemeColor('--secondary')
 ```
+
+<div className="h-8" />
 
 ## Recommended tooling
 
@@ -346,6 +365,8 @@ We recommend you add the following settings to your VSCode settings.json:
 
 // ...
 ```
+
+<div className="h-8" />
 
 ## Official docs
 
