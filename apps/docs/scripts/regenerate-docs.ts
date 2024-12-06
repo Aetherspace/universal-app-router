@@ -1,6 +1,5 @@
-import glob from 'glob'
 import fs from 'fs'
-import { parseWorkspaces, swapImportAlias } from '@green-stack/scripts/helpers/scriptUtils'
+import { parseWorkspaces, swapImportAlias, globRel } from '@green-stack/scripts/helpers/scriptUtils'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
@@ -79,12 +78,12 @@ export const getDocumentationProps = ${v.componentName}Props.documentationProps(
 const regenerateDocs = async () => {
     try {
         // Get all component file paths
-        const featureComponentPaths = glob.sync('../../features/**/*.tsx')
-        const packageComponentPaths = glob.sync('../../packages/**/*.tsx')
+        const featureComponentPaths = globRel('../../features/**/*.tsx')
+        const packageComponentPaths = globRel('../../packages/**/*.tsx')
         const allComponentPaths = [...featureComponentPaths, ...packageComponentPaths]
 
         // Figure out import paths from each workspace
-        const { workspaceImports } = parseWorkspaces()
+        const { workspaceImports } = parseWorkspaces('../../')
 
         // Filter out irrelevant or non-component files
         const filteredComponentPaths = allComponentPaths.filter((componentPath) => {

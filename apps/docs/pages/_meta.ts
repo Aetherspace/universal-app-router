@@ -27,12 +27,12 @@ export const meta = {
 
     // -- Plugins --
 
-    '-- Plugin Branches': {
-        'type': 'separator',
-        'title': 'Plugin Branches',
-    },
+    // '-- Plugin Branches': {
+    //     'type': 'separator',
+    //     'title': 'Plugin Branches',
+    // },
 
-    ...renderPluginItems({ display: false }),
+    // ...renderPluginItems({ display: false }),
 
     'plugins': {
         title: 'Plugin Branches',

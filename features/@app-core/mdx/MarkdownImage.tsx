@@ -63,6 +63,7 @@ export const MarkdownImage = (props: UniversalImageProps) => {
                 <Image
                     key={`img-loading-${wrapperKey}`}
                     className="android:opacity-0"
+                    alt={alt}
                     src={src}
                     style={finalDimensions}
                     contentFit="contain"

@@ -41,7 +41,7 @@ const HomeScreen = (props: HomeScreenProps) => {
 
     // TODO: Remove this useEffect once you're done with testing this demo
     useEffect(() => {
-        if (serverHealth) console.log('Server Health:', JSON.stringify(serverHealth, null, 4))
+        // if (serverHealth) console.log('Server Health:', JSON.stringify(serverHealth, null, 4))
     }, [!!serverHealth])
 
     // -- Render --
@@ -194,6 +194,7 @@ const HomeScreen = (props: HomeScreenProps) => {
                                     className="rounded-full"
                                     src="https://codinsonn.dev/_next/image?url=%2Fimg%2FCodelyFansLogoPic160x160.jpeg&w=256&q=75"
                                     alt="Thorr / codinsonn's Profile Picture"
+                                    unoptimized
                                     fill
                                 />
                             </View>

@@ -1,11 +1,11 @@
 
 export default {
+    TextInput: 'TextInput',
+    TextArea: 'TextArea',
+    Switch: 'Switch',
+    Select: 'Select',
+    RadioGroup: 'RadioGroup',
+    NumberStepper: 'NumberStepper',
     Checkbox: 'Checkbox',
     CheckList: 'CheckList',
-    NumberStepper: 'NumberStepper',
-    RadioGroup: 'RadioGroup',
-    Select: 'Select',
-    Switch: 'Switch',
-    TextArea: 'TextArea',
-    TextInput: 'TextInput',
 }
