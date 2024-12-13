@@ -77,7 +77,7 @@ const PLUGINS = inputOptions({
 
 /* --- Schema --------------------------------------------------------------------------------- */
 
-const TestForm = schema('TestForm', {
+const FormScreenProps = schema('FormScreenProps', {
     email: z.string().email().optional(),
     age: z.number().min(1).max(130).optional(),
     identifiesWith: IDENTITIES.optional(),
@@ -96,11 +96,18 @@ const TestForm = schema('TestForm', {
     minHourlyPrice: z.number().default(50),
 })
 
-type TestForm = z.input<typeof TestForm>
+type FormScreenProps = z.input<typeof FormScreenProps>
 
 /* --- Components ------------------------------------------------------------------------------ */
 
-const CustomRadioGroup = RadioGroup.create<TestForm['identifiesWith']>()
+const CustomRadioGroup = RadioGroup.create<FormScreenProps['identifiesWith']>()
+
+const Li = ({ children }: { children: string | any$Todo }) => (
+    <View className="flex-row items-center mb-2">
+        <Icon name="CheckFilled" size={14} color={getThemeColor('--success')} className="mr-2" />
+        <Text className="ml-1">{children}</Text>
+    </View>
+)
 
 const Li = ({ children }: { children: string | any$Todo }) => (
     <View className="flex-row items-center mb-2">
@@ -111,7 +118,7 @@ const Li = ({ children }: { children: string | any$Todo }) => (
 
 /* --- <FormsScreen/> ------------------------------------------------------------------------- */
 
-const FormsScreen = (props: TestForm) => {
+export const FormsScreen = (props: FormScreenProps) => {
     // Nav
     const { setParams } = useRouter()
     const params = useRouteParams(props)
@@ -128,7 +135,7 @@ const FormsScreen = (props: TestForm) => {
     const [validateOnChange, setValidateOnChange] = useState(!!params.validateOnChange)
 
     // Forms
-    const formState = useFormState(TestForm, {
+    const formState = useFormState(FormScreenProps, {
         initialValues: { ...props, ...params },
         validateOnChange,
     })
@@ -941,7 +948,7 @@ const FormsScreen = (props: TestForm) => {
 
 /* --- Documentation --------------------------------------------------------------------------- */
 
-export const getDocumentationProps = TestForm.documentationProps('FormScreen')
+export const getDocumentationProps = FormScreenProps.documentationProps('FormScreen')
 
 /* --- Exports --------------------------------------------------------------------------------- */
 
