@@ -109,13 +109,6 @@ const Li = ({ children }: { children: string | any$Todo }) => (
     </View>
 )
 
-const Li = ({ children }: { children: string | any$Todo }) => (
-    <View className="flex-row items-center mb-2">
-        <Icon name="CheckFilled" size={14} color={getThemeColor('--success')} className="mr-2" />
-        <Text className="ml-1">{children}</Text>
-    </View>
-)
-
 /* --- <FormsScreen/> ------------------------------------------------------------------------- */
 
 export const FormsScreen = (props: FormScreenProps) => {
