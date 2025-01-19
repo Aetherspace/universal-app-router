@@ -25,6 +25,8 @@ export type ComponentDocsProps = {
 export type ComponentDocsContext = {
     components: { [key: string]: ComponentDocsProps },
     setComponentDocs: (key: string, value: ComponentDocsProps) => void,
+    showCode?: boolean,
+    setShowCode?: (value: boolean) => void,
 }
 
 /* --- Context --------------------------------------------------------------------------------- */
@@ -47,7 +49,7 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
     const componentName = props.docsConfig.componentName! || props.component.displayName!
     
     // Context
-    const { components, setComponentDocs } = useComponentDocsContext()
+    const { components, setComponentDocs, showCode, setShowCode } = useComponentDocsContext()
     const componentData = components[componentName]
     const { component, docsConfig } = componentData || props
     const { propSchema, propMeta, previewProps, previewState } = docsConfig
@@ -145,14 +147,25 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
         didMount: !!didMount,
         didApplyParams: !!didApplyParams,
         isReady,
+        showCode,
+        setShowCode,
     }
 }
 
 /* --- <ComponentDocsContextManager/> ---------------------------------------------------------- */
 
-export const ComponentDocsContextManager = ({ children }: { children: React.ReactElement }) => {
+export const ComponentDocsContextManager = (props: { children: React.ReactElement }) => {
+    // Props
+    const { children } = props
+
+    // Router
+    const isServer = typeof window === 'undefined'
+    const search = isServer ? '' : window.location.search
+    const initialShowCode = search.includes('showCode=true')
+
     // State
     const [components, setComponents] = useState<ComponentDocsContext['components']>({})
+    const [showCode, setShowCode] = useState(initialShowCode)
 
     // -- Handlers --
 
@@ -163,7 +176,14 @@ export const ComponentDocsContextManager = ({ children }: { children: React.Reac
     // -- Render --
 
     return (
-        <ComponentDocsContext.Provider value={{ components, setComponentDocs }}>
+        <ComponentDocsContext.Provider
+            value={{
+                components,
+                setComponentDocs,
+                showCode,
+                setShowCode,
+            }}
+        >
             {children}
         </ComponentDocsContext.Provider>
     )
@@ -177,10 +197,9 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 
     // Context
     const docsUtils = useComponentDocs(props)
-    const { componentName, previewProps, didMount, isReady, setDidMount } = docsUtils
+    const { componentName, previewProps, didMount, isReady, setDidMount, showCode } = docsUtils
 
     // State
-    const [showCode, setShowCode] = useState(false)
     const [didCopy, setDidCopy] = useState(false)
     
     // -- Theme --
@@ -216,16 +235,15 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
         const onChange = (value: any$Unknown) => {
             const newValue = isEmpty(value) ? "" : value
             const newValueObj = { [docsUtils.valueProp]: newValue }
-            const newParams = { ...docsUtils.params, ...newValueObj }
+            const newParams = { ...docsUtils.params, ...newValueObj, showCode }
             const query = buildUrlParamsObject(newParams)
-            // if (!newValue) delete query[docsUtils.valueProp]
             docsUtils.router.push({ query }, undefined, { shallow: true })
         }
         return {
             ...previewProps,
             [docsUtils.onChangeProp]: onChange,
         }
-    }, [createKey(previewProps || props.docsConfig.previewProps)])
+    }, [createKey(previewProps || props.docsConfig.previewProps), showCode])
 
     // -- Code --
 
@@ -264,7 +282,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
                 <Component {...previewPropsWithHandlers} />
                 <Pressable
                     className="absolute bottom-0 right-0 p-2 rounded-tl-md border-t border-l border-gray-500"
-                    onPress={() => setShowCode((prev) => !prev)}
+                    onPress={() => docsUtils.setShowCode?.(!showCode)}
                 >
                     <Text className="text-primary select-none">
                         {showCode ? 'Hide Code' : 'Show Code'}
@@ -296,7 +314,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     // Context
     const docsUtils = useComponentDocs(props, true)
-    const { previewProps, propSchema, propMeta, router, params, } = docsUtils
+    const { previewProps, propSchema, propMeta, router, params, showCode } = docsUtils
     const { didMount, didApplyParams, isReady, hasParams, setDidApplyParams } = docsUtils
 
     // Props
@@ -341,10 +359,10 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     useEffect(() => {
         docsUtils.setPreviewProps(formState.values)
         if (isReady) {
-            const query = buildUrlParamsObject(formState.values)
+            const query = buildUrlParamsObject({ ...formState.values, showCode })
             router.push({ query }, undefined, { shallow: true })
         }
-    }, [formState.valuesKey, hasParams, didMount, isReady])
+    }, [formState.valuesKey, hasParams, didMount, isReady, showCode])
 
     // -- Render --
 
