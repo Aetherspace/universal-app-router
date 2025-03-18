@@ -6,6 +6,7 @@ import { Image } from '@app/primitives'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Universal Data Fetching
@@ -24,21 +25,21 @@ features/@some-feature
  └── /resolvers/... # <- Defines portable data bridges
  └── /screens/... # <- Reuses data bridges on front-end
       └── PostDetailScreen.tsx
- └── /routes/... # <- Reuses screens that have data-fetching logic
-     └── posts /[slug]/ index.tsx # <- Reuses e.g. 'PostDetailScreen.tsx'
+ └── /routes/... # <- Reuses screens and bridges for data-fetching
+     └── posts /[slug]/ index.tsx # <- e.g. reuse 'PostDetailScreen.tsx'
 ```
 
-This workspace based structure will help keep your features acopy-pasteable and portable across different projects by avoiding a front-end vs. back-end split.
+This workspace structure will help keep your features as copy-pasteable and portable across different projects by avoiding a front-end vs. back-end split.
 
 For an example of what this might look like in an actual project, check the example below. Don't hesitate to click open some of the folders to get a better idea of how portable routes with data-fetching are structured:
 
 <FileTree>
     <FileTree.Folder name="apps">
         <FileTree.Folder name="expo" defaultOpen>
-            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Expo" />
+            <FileTree.Folder name="app / posts/...  ← Re-exports routes from /features/ in Expo" />
         </FileTree.Folder>
         <FileTree.Folder name="next" defaultOpen>
-            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Next" />
+            <FileTree.Folder name="app / posts/...  ← Re-exports routes from /features/ in Next" />
         </FileTree.Folder>
     </FileTree.Folder>
     <FileTree.Folder name="features">
@@ -211,7 +212,7 @@ It's a metadata object you can use from either side to provide / transform into:
 - ✅ can **execute on the server, browser, iOS and Android** (better for universal routes)
 - ✅ can **automatically build the query string** from input and output **schemas in the bridge**
 - ✅ is **auto typed** *when using the bridge to provide the query automagically*
-- ✅ **supports custom queries** that are also auto typed, with `graphql.tada` (as an alternative)
+- ✅ **supports custom queries** that are also auto typed, with `gql.tada` (as an alternative)
 
 <FileTree>
     <FileTree.Folder name="@some-feature" defaultOpen>
@@ -257,13 +258,13 @@ To write a custom query with only certain fields, you can use our `graphql()` he
 import { ResultOf, VariablesOf } from 'gql.tada'
 // ☝️ Type helpers that interface with the GraphQL schema
 import { graphql } from '../graphql/graphql'
-// ☝️ Custom graphql.tada query builder that integrates with our types
+// ☝️ Custom gql.tada query builder that integrates with our types
 import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher'
 // ☝️ Universal graphql fetcher that can be used in any JS environment
 
 /* --- Query ----------------------- */
 
-// VSCode and GraphQL.tada will help suggest or autocomplete thanks to our schema definitions
+// VSCode and gql.tada will help suggest or autocomplete thanks to our schema definitions
 export const getPostQuery = graphql(`
   query getPost ($getPostArgs: GetPostInput) {
     getPost(args: $getPostArgs) {

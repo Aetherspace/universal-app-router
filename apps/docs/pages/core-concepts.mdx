@@ -6,6 +6,7 @@ import { Image } from '@app/primitives'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Core concepts
@@ -14,10 +15,10 @@ Unlike most boilerplates, this starterkit is not just a collection of tools and 
 
 This document will cover the **core concepts that make this starterkit unique**:
 
-- **[Universal, from the start](#universal-from-the-start)**
-- **[Evergreen with the GREEN stack](#the-green-stack)**
-- **[Single Sources of Truth](#single-sources-of-truth)**
-- **[Design for copy-paste](#design-features-for-copy-paste)**
+- **[Universal, from the start](/core-concepts#universal-from-the-start)**
+- **[Evergreen with the GREEN stack](/core-concepts#the-green-stack)**
+- **[Single Sources of Truth](/core-concepts#single-sources-of-truth)**
+- **[Design for copy-paste](/core-concepts#design-features-for-copy-paste)**
 
 <div className="h-8" />
 
@@ -29,7 +30,7 @@ Luckily, in Next.js web-apps, as well as iOS and Android apps with Expo, using `
 
 No extra time wasted writing features twice or more, as 90% of react-native styles translate well to web. All it takes is to start with react-native's `View` / `Text` / `Image` primitives. They'll get transformed to HTML dom nodes on web.
 
-### Build for how users prefer apps
+### Build for nuanced user preferences
 
 Think about your users for a second. Now think about your own behaviour when interacting with software.
 
@@ -84,22 +85,22 @@ The dream of React has always been "write-once, use anywhere". For now, react-na
 
 ### Universal Data Fetching with GraphQL
 
-GraphQL's ability to **query data from the server, browser and mobile** puts it in the unique position to service all three platforms. Paired with `react-query` for optimizing the caching of queries, and graphql.tada for auto inferring types from the schema + query definitions, integrated with a universal router, and you have a great universal initial data fetching solution. Type-safe end to end.
+GraphQL's ability to **query data from the server, browser and mobile** puts it in the unique position to service all three platforms. Paired with `react-query` for optimizing the caching of queries, and [gql.tada 🪄](https://gql-tada.0no.co/get-started/#a-demo-in-128-seconds) for auto inferring types from the schema + query definitions, integrated with a universal router, and you have a great universal initial data fetching solution. Type-safe end to end.
 
-*This doesn't mean you only have GraphQL at your disposal.* Resolvers in the GREEN stack are quite flexible. Designed so that porting them to `tRPC` (through a plugin) and/or Next.js API routes is quick and easy to do. From experience, we're convinded GraphQL works best when used in an RPC manner. Instead of a REST-like graph you can explore each domain of your data with, resolvers should typically be created in function of the UI they need data for.
+*This doesn't mean you only have GraphQL at your disposal.* Resolvers in the GREEN stack are quite flexible. Designed so that porting them to `tRPC` (through a plugin) and/or Next.js API routes is quick and easy to do. From experience, we're convinded GraphQL works best when used in an RPC manner. Instead of a REST-like graph you can explore each domain of your data with, we instead urge you to create resolvers in function of the UI they need data for.
 
 > To illustrate RPC-style queries in your mind, think of `getDashboardData()` vs. having to call 3 separate `Orders()`, `Products()`, `Transactions()` type resolvers to achieve the same thing.
 
 When used in this manner, quite similar to tRPC, it remains the best for initial data-fetching. Though mutating data might be better served as a tRPC call or API route POST / PUT / DELETE request.
 
-To avoid footguns, the starterkit provides a way of working that can automate a bunch of the hard stuff when it comes to doing GraphQL, or data resolvers in general, right.
+To avoid footguns, the starterkit provides a way of working that can automate a bunch of the hard stuff when it comes to doing GraphQL, or data resolvers in general, the right way.
 
 **This includes things like:**
 - auto-generating the entire **schema from Zod definitions**
 - auto-generating fetcher functions and **`react-query` hooks** from Zod definitions
 - keeping schema definitions a 1 on 1 match with your RPC / "command-like" resolver functions
-- universal `graphqlRequest()` util that **auto infers types** from Zod input & output schemas
-- ... or using graphql.tada for type inferrence when only requesting specific fields. 
+- universal `graphqlRequest()` util to **auto infer types** from Zod input & output schemas
+- ... or using [gql.tada](https://gql-tada.0no.co/get-started/#a-demo-in-128-seconds) for type hints / infers when only requesting specific fields.
 
 ### Tech that's here to stay.
 
@@ -109,13 +110,13 @@ To bring it all together, you could say the GREEN stack stands for:
 - ✅ Expo
 - ✅ Next.js.
 
-You could say the second "E" is in there because Expo, with it's drive to bring react-native to web, is doing double the lifting.  
+The second "E" is in there because Expo, with it's drive to bring react-native to web, is doing double the lifting.  
 
 > ...but in reality, the main goal of this stack is simply to stay 'Evergreen'
 
-These core technologies and the ecosystems around them create a stack that's full-featured and flexible where need be. Other included essentials like **Typescript, Tailwind and Zod**, have gained enough popularity, adoption, frequent funding and community support they're likely to be around for a long time.
+These core technologies and the ecosystems around them create a stack that's **full-featured yet flexible** where needed. Other included essentials like **Typescript, Tailwind and Zod**, have gained enough popularity, adoption, frequent funding and community support they're just as likely to be around for a long time.
 
-It's a stack you can stick, evolve and perfect your craft with.
+It's a stack you can stick, evolve and perfect your craft with for a longer period of time.
 
 <div className="h-8" />
 
@@ -156,7 +157,7 @@ With the hardest 2 of 8 data definition scenario's tackled, the starterkit comes
 
 Writing documentation is essential, *but often requires time teams feel they don't have.*
 
-Yet you'll eventually need them. Especially if you want others to build on top of your work:
+Any successfull project will eventually need documentation though. Especially if you want others to build on top of your work:
 
 > "**Documentation Drives Adoption**" - Storybook
 

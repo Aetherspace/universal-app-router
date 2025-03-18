@@ -6,6 +6,7 @@ import { FileTree } from 'nextra/components'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Project structure
@@ -67,20 +68,22 @@ your-universal-app/
      
      └── /admin-panel/...
 
-     └── /blog/...
+     └── /blog-engine/...
 
-     └── /comment-section/...
+     └── /forum/...
+
+     └── /roadmap/...
 ```
 
 Each of these might have specific routes or route-segments, data shapes, components and business logic that's mostly the same across projects.
 
-Think of these as the main sections of your app that eiter would feel like bloating the `@app/core` workspace, or that you'd like to be able to reuse later.
+Think of these as the main sections of your app that would feel like either bloating the `@app/core` workspace, or that you know you'll reuse later in another project.
 
 ### Package workspaces
 
-Package workspaces are less defined by features and more focused on utility. They're the place to put code that you'd like to consume across feature workspaces. Kind of like an NPM package, but local.
+Package workspaces are less defined by features and more focused on utility. They're the place to put code that you'd like to consume across feature workspaces. Kind of like an NPM package, but local, editable and portable.
 
-The most common usecase will likely be driver-like behaviour, e.g.
+A common usecase will likely be driver-like behaviour, e.g.
 
 ```shell
 your-universal-app/
@@ -91,11 +94,13 @@ your-universal-app/
 
      └── /@db-mongoose/... # <- '@db/mongoose' as a driver option
 
-     └── /@storage-driver/... # <- '@storage/driver' (similar)
+     └── /@storage-driver/... # <- '@storage/driver'
+
+     └── /@storage-uploadthing/... # <- '@storage/uploadthing'
+
+     └── /@payments-stripe/...
 
      └── /emails/...
-
-     └── /stripe-integration/...
 ```
 
 ### Workspace structure
@@ -106,7 +111,7 @@ We recommend sticking to a similar structure for each workspace:
 features/some-feature
 
  └── /schemas/... # <- Single sources of truth
- └── /models/... # <- Reuses schemas
+ └── /models/... # <- Models / collections based on schemas
  └── /resolvers/... # <- Reuses models & schemas
 
  └── /components/...
@@ -122,7 +127,7 @@ features/some-feature
  └── package.json # <- Name the workspace, manage dependencies
 ```
 
-Each folder that follows this structure should have its own `package.json` file to define the package name and dependencies. This way, you can easily copy-paste a feature or domain from one project to another, and NPM will have it work out of the box.
+Each folder that follows this structure should have its own `package.json` file to define the package name and dependencies. This way, you can copy-paste a feature or domain from one project to another, and your JS package manager + bundler + runtime will have it work out of the box.
 
 Here's what this might look like in the full project.  
 Don't hesitate to open the `/apps/`, `/features/` or `/packages/` folders:
@@ -242,19 +247,19 @@ Don't hesitate to open the `/apps/`, `/features/` or `/packages/` folders:
 
 There are two main reasons for this recommended structure:
 
-1. ✅ **Group server and client code together** in the same workspace so there's no big split between front and back-end folders. If we did do a front-end back-end split, you'd have to copy-paste multiple files to different destinations, as well as manage feature dependencies in two different places.
+1. ✅ **Group server and client code together** in the same workspace __so there's no big split between front and back-end__ folders. If we did do a front-end back-end split, you'd have to copy-paste multiple files to different destinations, as well as manage feature dependencies in two different places.
 
-2. ✅ It's **predictable**. Anything that's predictable can be used in automation, scripts and generators, which will further speed up your development in the long run.
+2. ✅ It's **predictable**. Anything that's predictable can be used in automation, scripts and generators, which can further speed up your development in the long run.
 
 Aside from `/schemas/`, `/models/`, `/resolvers/`, `/routes/` and `/icons/`, we have no automations related to the other folders. The names are just suggestions, and you can rename, add or split as you see fit.
 
 ## Turborepo Basics
 
-The tool we use to manage the monorepo is called [Turborepo](https://turbo.build/repo).
+The tool we use to manage the monorepo is called **[Turborepo](https://turbo.build/repo)**.
 
-It's a wrapper around package manager workspaces (like npm / yarn / pnpm) that adds some extra features.
+It's a wrapper around package manager (npm / yarn / pnpm) workspaces that adds some extra features.
 
-> Turborepo goes out of its way to get out of your way:
+> Most importantly, **Turborepo goes out of its way to get out of your way**:
 
 - Does the least amount of work possible
 - Tries to never redo work that's already been done before
@@ -268,7 +273,7 @@ You can also [share your cache](https://turbo.build/repo/docs/getting-started/ex
 - [A package manager lockfile](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#package-manager-lockfile)
 - [Root `package.json`](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#root-turbojson)
 - [Root `turbo.json`](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#root-turbojson)
-- [`package.json` in each package](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#packagejson-in-each-package)
+- [`package.json` in each feature / package / app workspace](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#packagejson-in-each-package)
 
 > All of this is already set up in the starterkit. However, you might want to keep this in mind when creating new feature or package workspaces.
 
@@ -345,7 +350,7 @@ your-universal-app/
 
          └── /scripts/... # <- Scripts to collect files from workspaces
 
-     └── /@registries/... # ⬇⬇⬇ Collections from other workspaces
+     └── /@registries/... # ⬇⬇⬇ Collection of generated files from other workspaces
 
          # Drivers - e.g. result of `npm run collect:drivers`
          └── drivers.config.ts # driver enums & types

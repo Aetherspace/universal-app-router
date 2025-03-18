@@ -6,16 +6,17 @@ import { Image } from '@app/primitives'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Cross-Platform Navigation + Routing
 
 Table of Contents:
 
-- [Making routes portable](#workspace-defined-routes)
-- [Adding page routes](#using-the-route-generator)
-- [`<Link/>`](#universal-link-component)
-- [`useRouter()`](#universal-userouter-hook)
+- [Making routes portable](/universal-routing#workspace-defined-routes)
+- [Adding page routes](/universal-routing#using-the-route-generator)
+- [`<Link/>`](/universal-routing#universal-link-component)
+- [`useRouter()`](/universal-routing#universal-userouter-hook)
 
 ## Workspace Defined Routes
 
@@ -24,7 +25,7 @@ Table of Contents:
 This way you can:
 
 - ✅ **Colocate** routes with the rest of a feature's domain (*maximizes copy-paste-ability*)
-- ✅ **Reuse across platforms** (*auto re-exported* to **`@app/expo`** and **`@app/next`**)
+- ✅ **Reuse them across platforms** (*auto re-exported* to **`@app/expo`** and **`@app/next`**)
 
 ```shell {4, 6}
 features/@some-feature
@@ -41,10 +42,10 @@ For an example of what this might look like in an actual project, check the exam
 <FileTree>
     <FileTree.Folder name="apps">
         <FileTree.Folder name="expo" defaultOpen>
-            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Expo" />
+            <FileTree.Folder name="app / posts/...  ← Re-exported routes from /features/ in Expo" />
         </FileTree.Folder>
         <FileTree.Folder name="next" defaultOpen>
-            <FileTree.Folder name="app / posts/...  ← Reuses routes from /features/ in Next" />
+            <FileTree.Folder name="app / posts/...  ← Re-exported routes from /features/ in Next" />
         </FileTree.Folder>
     </FileTree.Folder>
     <FileTree.Folder name="features" defaultOpen>
@@ -78,7 +79,7 @@ For an example of what this might look like in an actual project, check the exam
     </FileTree.Folder>
 </FileTree>
 
-The recommended and easiest way to create a new route in a workspace is to use the Route Generator:
+> The recommended and easiest way to create a new route in a workspace is to use the Route Generator:
 
 <div className="h-8" />
 
@@ -116,17 +117,19 @@ npm run add:route
 >>> Success!
 ```
 
-> We'll be ignoring [Data Fetching](/data-fetching) for now, but we'll come back to it in .
+> We'll be ignoring [providing initial data](/data-fetching) for now, but we'll come back to it in [Universal Data Fetching](/data-fetching).
 
 <div className="h-8" />
 
 ## Manually adding universal routes
 
-> If you prefer to add routes manually, follow the steps below:
+> You *could* define your routes twice, once in `@apps/expo` and once in `@apps/next`, in line with their way of working.
+
+> If you prefer to add routes manually, and like colocating to keep them portable, follow the steps below:
 
 <Steps>
 
-### Add the screen component
+### Add a screen component
 
 Add a new screen component in a workspace `/screens/` folder, e.g.:
 
@@ -192,10 +195,10 @@ npm run collect:routes
 
 <FileTree>
     <FileTree.Folder name="apps / expo" defaultOpen>
-        <FileTree.Folder name="app / examples / [slug] / index.tsx  ← Reuses route from /features/ in Expo" />
+        <FileTree.Folder name="app / examples / [slug] / index.tsx  ← Re-exported route from /features/ in Expo" />
     </FileTree.Folder>
     <FileTree.Folder name="apps / next" defaultOpen>
-        <FileTree.Folder name="app / examples / [slug] / page.tsx  ← Reuses route from /features/ in Next" />
+        <FileTree.Folder name="app / examples / [slug] / page.tsx  ← Re-exported route from /features/ in Next" />
     </FileTree.Folder>
 </FileTree>
 
@@ -203,9 +206,9 @@ npm run collect:routes
 
 ## Navigating pages
 
-You can navigate using the `useRouter` hook or `Link` component from `@green-stack/navigation`. They provide familiar APIs to how navigation works in both the Next.js and `expo-router` app routers.
+You can navigate using the `useRouter` hook or `Link` component from `@green-stack/navigation`. They provide APIs familiar to how navigation works in both the Next.js and `expo-router` app routers.
 
-While they use each platform's underlying navigation system, they are not limited to just `expo-router` or `next.js`
+While they do use each platform's underlying navigation system, they are not limited to just `expo-router` or `next.js`. Instead they will provide universal navigation utility.
 
 <div className="h-8" />
 
@@ -230,7 +233,7 @@ There are also other methods available on the `router` object:
 - `router.navigate()` - Navigate to the provided href
 - `router.replace()` - Navigate without appending to the history
 - `router.back()` - Go back in the history
-- `router.canGoBack()` - Check if there's history that supports invoking the `back` function
+- `router.canGoBack()` - Check if there's history that supports invoking the `back()` function
 - `router.setParams()` - Update the current route query params without navigating
 
 <div className="h-8" />
@@ -239,13 +242,13 @@ There are also other methods available on the `router` object:
 
 If you import the `Link` component from `@green-stack/navigation`, it will automatically use the correct navigation system for the platform you are on.
 
-```tsx
+```tsx copy
 import { Link } from '@green-stack/navigation'
 ```
 
 However, you can also ***import it from `@app/primitives` to apply tailwind styles***:
 
-```tsx
+```tsx copy
 import { Link } from '@app/primitives'
 ```
 

@@ -6,6 +6,7 @@ import { Image } from '@app/primitives'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Universal UI
@@ -19,7 +20,9 @@ import { View, Text, Image } from 'react-native'
 // ☝️ Auto-transformed to 'react-native-web' in Next.js
 ```
 
-However, you'll likely want to introduce tailwind-style `className` support through [Nativewind](https://www.nativewind.dev/):
+You *can* use the `style` prop or react-native's `StyleSheet` API to style them.
+
+However, it's better for mobile-first to use tailwind-style `className` support through [Nativewind](https://www.nativewind.dev/):
 
 <div className="h-8" />
 
@@ -101,15 +104,15 @@ If you're doing SSR with responsive-design, this becomes real handy to apply med
 Some primitives like the `Image` component have optimized versions for each environment:
 
 - `next/image` for web
-- `expo-image` for native
+- `expo-image` for mobile
 
-To automatically use the right in the context that it's rendered, we've provided our own universal `Image` component:
+To automatically use the right one per render context, we've provided our own universal `Image` component:
 
 ```typescript
 import { Image } from '@green-stack/components/Image'
 ```
 
-Which, ofcourse, you might wish to wrap with Nativewind to provide class names to:
+Which you might wish to wrap with Nativewind to provide class names to:
 
 ```tsx {5} /styled/2 filename="styled.tsx"
 import { Image as UniversalImage } from '@green-stack/components/Image'
@@ -126,7 +129,7 @@ export const Image = styled(UniversalImage, '')
 
 ### `styled()`
 
-You could also create other fixed styles for e.g. headings using this same method.
+It's advised to create fixed styles for e.g. headings using this same method.
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
@@ -138,7 +141,7 @@ You could also create other fixed styles for e.g. headings using this same metho
     </FileTree.Folder>
 </FileTree>
 
-Prestyling can be done using the `styled()` util:
+Pre-styling can be done using the `styled()` util:
 
 ```tsx {2} filename="styled.tsx"
 import { Text as RNText } from 'react-native'
@@ -149,9 +152,9 @@ import { styled } from 'nativewind'
 /* --- Typography ------------ */
 
 export const P = styled(RNText, 'text-base')
-export const H1 = styled(RNText, 'font-bold text-2xl text-primary-100')
-export const H2 = styled(RNText, 'font-bold text-xl text-primary-100')
-export const H3 = styled(RNText, 'font-bold text-lg text-primary-100')
+export const H1 = styled(RNText, 'font-bold text-2xl text-primary')
+export const H2 = styled(RNText, 'font-bold text-xl text-secondary')
+export const H3 = styled(RNText, 'font-bold text-lg text-gray-100')
 // ☝️ These styles will always be applied unless overridden by the className prop
 
 ```
@@ -204,13 +207,22 @@ If you want to combine multiple classes, you can use the `cn()` utility:
 
 This will only apply the second class if `someBoolean` is `true`.
 
-> Underneath, `cn()` uses a combination of `twMerge()` and `cslx()` to merge the classes together.
+> Underneath, `cn()` uses a combination of [`twMerge()`](https://www.npmjs.com/package/tailwind-merge) and [`cslx()`](https://www.npmjs.com/package/clsx) to merge the classes together.
 
 <div className="h-8" />
 
 ## Theme management
 
 You can manage colors, default text sizes, spacing and other theme-related properties in a single place:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.File name="tailwind.theme.js  ← Main universal theme" />
+            <FileTree.File name="tailwind.config.js  ← Reused" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
 
 ```js {5} /--primary/1 filename="tailwind.theme.js"
 const universalTheme = {
@@ -262,7 +274,7 @@ It's advised to reuse this `universalTheme` in all your `tailwind.config.js` fil
     <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@app-core" defaultOpen>
             <FileTree.File name="tailwind.theme.js  ← Main universal theme" />
-            <FileTree.File name="tailwind.config.js" />
+            <FileTree.File name="tailwind.config.js  ← Reused" />
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>

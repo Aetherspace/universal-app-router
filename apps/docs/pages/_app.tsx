@@ -38,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
         }
         // Hacky, but it works 🤷‍♂️ (listening for theme or scheme changes is unreliable, sadly)
         const queuedThemeCheck = () => {
+            window.scrollTo(0, 0)
             new Array(20).fill(null).forEach((_, idx) => setTimeout(resolveTheme, idx * 200))
         }
         // Attach listeners

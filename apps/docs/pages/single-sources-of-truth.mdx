@@ -6,6 +6,7 @@ import { FileTree } from 'nextra/components'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # Schemas as Single Sources of Truth
@@ -24,10 +25,10 @@ A core feature of this universal starterkit is taking what works and making it b
 
 ## Why Single Sources of Truth?
 
-Think of all the places you may need to (re)define the shape of data.
+Think of all the places you might re-define data shapes.
 
 - ✅ Types
-- ✅ Validation
+- ✅ Validation + defaults
 - ✅ DB models
 - ✅ API inputs & outputs
 - ✅ Form state
@@ -39,13 +40,13 @@ Quite an extensive list for what is **essentially describing the same data**.
 
 ### The problem
 
-Generally speaking, you never want to define your datastructures more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
+Generally speaking, you never want to define your data shape more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
 
 If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
 
 ### The solution
 
-You can use `schema()` to build out the shape of our data in one go. The resulting object will enable us to create other definitions from it for (e.g.) GraphQL and more. Meaning we can avoid ever declaring it again.
+You can use `schema()` to build out the shape of our data in one go. The resulting object will enable us to create all other definitions from it for (e.g.) GraphQL, DB models, docs and more. Meaning we can avoid ever declaring it again.
 
 This is a huge win for maintainability and developer experience, as it avoids the need to keep it all in sync. No more redeclaring the same data shape for all your component props, database models or function args / responses.
 
@@ -91,13 +92,17 @@ export const User = schema('User', {
 
 ### Extracting Types
 
-The main thing you'll want to use your schemas for is to hard-link your validation with your types.
+The main thing to use schemas for is to hard-link validation with types.
 
-You can extract the type from the schema using `z.infer()`:
+You can extract the type from the schema using `z.infer()`, `z.input()` or `z.output()`:
 
 ```tsx filename="User.ts"
 // Extract type from the schema and export it as a type alias
 export type User = z.infer<typeof User>
+
+// If you have defaults, you can use z.input() or z.output() instead
+export type UserOutput = z.output<typeof User>
+export type UserInput = z.input<typeof User>
 ```
 
 `⬇⬇⬇`
@@ -110,6 +115,8 @@ export type User = z.infer<typeof User>
 //     birthDate?: Date | null,
 // }
 ```
+
+> In this case where we check the resulting type of `z.input()`, the 'isAdmin' field will be marked as optional, as it's supposedly not defaulted to `false` yet. If we'd inspect `z.output()` or `z.infer()`, it would be marked as required since it's either provided or presumed defaulted.
 
 ## Validating inputs
 
@@ -298,7 +305,7 @@ type Team = z.infer<typeof Team>
 //     }[]
 // }
 
-// ⬇⬇⬇ Which is in essense:
+// ⬇⬇⬇ Which is the same as:
 
 // {
 //     teamName: string,
@@ -328,6 +335,22 @@ const User = schema('...', {
     isAdmin: z.boolean().default(false), // <- false
 })
 ```
+
+> When using `.default()`, you might need to be more specifc when inferring types. You can use `z.input()` or `z.output()` to get the correct type. Based on which you choose, defaulted fields will be either optional or required.
+
+### Marking fields as sensitive
+
+```ts
+    password: z.string().sensitive()
+```
+
+In your schemas, you can mark fields as sensitive using `.sensitive()`. This will:
+
+- Exclude the field from appearing in the GraphQL schema, introspection or queries
+- Mark the field as strippable in API resolvers / responses (*)
+- Mark the field with `isSensitive: true` in schema introspection
+
+> * 'Strippable' means when using either `withDefaults()` OR `applyDefaults()` / `formatOutput()` with the `{ stripSensitive: true }` option as second argument. If none of these are used, the field will still be present in API route handler responses, but not GraphQL.
 
 ## Transforming to other formats
 
@@ -420,7 +443,11 @@ type Metadata<S> = {
     schema?: S,
 
     // The actual Zod object, only included with .introspect(true)
-    zodStruct?: z.ZodType & { ... },
+    zodStruct?: z.ZodType & { ... }, // <- Outer zod schema (e.g. ZodDefault)
+    innerStruct?: z.ZodType & { ... }, // <- Inner zod schema (not wrapped)
+
+    // Mark as serverside only, strippable in API responses
+    isSensitive?: boolean, 
 
     // Compatibility with other systems like databases & drivers
     isID?: boolean,
@@ -430,17 +457,17 @@ type Metadata<S> = {
 }
 ```
 
-We're only revealing this to show how it works under the hood. Again, you're unlikely to need to use this directly in your day-to-day work.
+This is just to show how it works under the hood. You're unlikely to need to use this directly in your day-to-day work.
 
-> Are you building your own tools that hook into the introspection result though?  
+> Are you building your own tools that hook into the introspection result?  
 
-> Then you can use this generic metadata type to help provide type-safety:
+> Then you can use these generic metadata types to help provide type-safety:
 
 ```ts copy
-import { Metadata } from '@green-stack/schemas'
+import type { Metadata, Meta$Schema, Meta$Tuple, ... } from '@green-stack/schemas'
 ```
 
-A good example of how these schemas can be transformed through the introspection result is in the [Automatic MDX Docs](TODO) plugin:
+A good example of how introspected schemas can be transformed through is in the [Automatic MDX Docs](TODO) plugin:
 
 ### MDX docs from Schemas
 
@@ -460,8 +487,10 @@ There's two ways schemas are used to create docs:
 **For the best documentation experience, you'll want to add some important metadata:**
 
 - `.describe()` - to add a description to the field
-- `.example()` - to provide an example value for previews
-- `.default()` - to provide a default value (fallback example value)
+- `.example()` - to provide an example value for previews / prop tables
+- `.default()` - to provide a default value (also counts as example value)
+
+Let's say you have a component with props defined in a schema, like a `<UserProfile />` component:
 
 ```tsx {3, 6, 9, 15} filename="UserProfile.tsx"
 const UserProfileProps = schema('UserProfileProps', {
@@ -492,7 +521,7 @@ export const UserProfile = (props: UserProfileProps) => {
 }
 ```
 
-The final step to link this schema to the component so it gets picked up by the docs is exporting the introspection result from the same file as the component:
+Export the prop introspection result from the same file. This links the props schema to the component so it gets picked up by the docs generator:
 
 ```shell {4} /getDocumentationProps/
 some-workspace
@@ -500,7 +529,7 @@ some-workspace
      └── UserProfile.tsx # <- export `getDocumentationProps`
 ```
 
-To match the expected format, you can use `.documentationProps()` on the props schema, it will call `.introspect()` internally to include the metadata we need for the docs:
+You can use `.documentationProps()` on the props schema. This will match export the introspection so it matches the expected format and provides hints to further refine your docs. It will call `.introspect()` internally to include the metadata we need to render in the preview + prop table:
 
 ```tsx {5} filename="UserProfile.tsx"
 // ...
@@ -533,7 +562,7 @@ The end result will look like a Storybook-like documentation page for your compo
 - ✅ Live preview of the component
 - ✅ Props table with types, descriptions, examples, defaults
 - ✅ Copyable component code for current prop settings
-- ✅ Interactive controls to update both live preview and code
+- ✅ Interactive controls to update both live preview, code example and URL
 
 Check out a live example for the interactive [Button](/@app-core/components/Button) component docs:
 
@@ -564,7 +593,7 @@ Check out a live example for the interactive [Button](/@app-core/components/Butt
 
 ## Schema generator
 
-Like with all elements of our recommended way of working, there is a turborepo generator to help you create a schema in a specific workspace:
+Like all elements of our recommended way of working, there is a turborepo generator to help create a schema in a specific workspace:
 
 ```shell
 npm run gen add-schema
@@ -572,7 +601,7 @@ npm run gen add-schema
 
 `⬇⬇⬇`
 
-This will prompt you for a target workspace and name:
+will prompt you for a target workspace and name:
 
 ```shell
 >>> Modify "your-project" using custom generators
@@ -590,9 +619,8 @@ This will prompt you for a target workspace and name:
 
 ? Where would you like to add this schema? # @app/core
 ? What is the schema name? # SomeData
-? Optional description? # ... lorem ipsum, dolor ...
-? Optional examples: Add common field definitions? # id, title
-? Generate an integration for this schema? # form, dbModel
+? Optional description? # ...
+? Generate an integration for this schema? # e.g. form, db-model
 
 >>> Changes made:
   • /features/@app-core/schemas/SomeData.ts # (add)
@@ -629,7 +657,7 @@ Though if you chose to also generate an integration, it might look like this ins
 
 ## Disclaimer -- on using `z.union` and `z.tuple`
 
-Since GraphQL and other systems might not natively support unions or tuples, it could be best to avoid them. We allow you to define them, but tranformations of these to other formats is considered experimental and potentially not fully type-safe.
+Since GraphQL and other systems might not natively support unions or tuples, it could be best to avoid them. We allow you to define them, but tranformations of these to other formats is considered experimental and potentially not entirely type-safe.
 
 You can always use `z.array` and `z.object` to represent the same data shapes.
 
@@ -662,7 +690,7 @@ const SomeSchema = schema('SomeSchema', {
 
 ... which will work in GraphQL and other formats as well.
 
-We've done our best to hack in experimental tuple and union support where possible. *The choice is yours.*
+We've done our best to hack in experimental tuple and union support where possible. You can take it as-is, edit it further to your liking or avoid tuples and unions entirely. *The choice is yours.*
 
 ## Further reading
 
@@ -671,4 +699,4 @@ From our own docs:
 
 Relevant external resources:
 - [Zod's official docs](https://zod.dev) - zod.dev
-- [The Joy of Single Sources of Truth](https://dev.to/codinsonn/the-joy-of-single-sources-of-truth-277o) - Article
+- [The Joy of Single Sources of Truth](https://dev.to/codinsonn/the-joy-of-single-sources-of-truth-277o) - Blogpost by [Thorr ⚡️ @codinsonn.dev](https://codinsonn.dev)

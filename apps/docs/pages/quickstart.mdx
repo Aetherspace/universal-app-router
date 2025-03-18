@@ -6,6 +6,7 @@ import { Image } from '@app/primitives'
     style={{ marginTop: 20 }}
     width={60}
     height={60}
+    unoptimized
 />
 
 # GREEN stack quickstart
@@ -110,7 +111,7 @@ The `@green-stack/core` package helps you bring together:
 - ✅ **Expo** for the best mobile DX and UX + App store deploys
 - ✅ **Next.js** for optimized web-vitals, API routes, SEO and SSR / SSG
 
-Combined with **Typescript, React-Query, Zod** and **graphql.tada** you get a a well rounded tech stack.
+Combined with **Typescript, React-Query, Zod** and **gql.tada** you get a a well rounded tech stack.
 
 `@green-stack/core` has the following aliases to import from:
 
@@ -496,7 +497,7 @@ If you've restarted your dev server or ran `npm run collect:routes`, test your A
 
 ### Attaching a Resolver to GraphQL
 
-API routes are fine, but we think GraphQL is even better, **if you don't have to deal with the hassle of managing it.** So we made it quite easy to enable GraphQL for your resolvers. The flow is quite similar.
+API routes are fine, but we think GraphQL can be even better, ***IF you don't have to deal with the hassle of managing it.*** So we made it quite easy to enable GraphQL for your resolvers. The flow is quite similar.
 
 *In the same file*, add the following:
 
@@ -527,7 +528,7 @@ You can then check out your GraphQL API playground at [/api/graphql](http://loca
 
 To fetch the right amount of data with GraphQL, we'll need to specify the right query for it.
 
-Thanks to `graphql.tada`, we can write queries with hints. The args and results are also automatically typed based on the GraphQL schema the startkit automatically extracts for you:
+Thanks to `gql.tada`, we can write queries with hints. The args and results are also automatically typed based on the GraphQL schema the startkit automatically extracts for you:
 
 <FileTree>
     <FileTree.Folder name="@app-core" defaultOpen>
@@ -543,7 +544,7 @@ Thanks to `graphql.tada`, we can write queries with hints. The args and results 
 import { ResultOf, VariablesOf } from 'gql.tada'
 // ☝️ Type helpers that interface with the GraphQL schema
 import { graphql } from '../graphql/graphql'
-// ☝️ Custom graphql.tada query builder that integrates with our types
+// ☝️ Custom gql.tada query builder that integrates with our types
 
 /* --- Query ----------------------- */
 
@@ -577,7 +578,7 @@ export type HealthCheckQueryInput = VariablesOf<typeof healthCheckQuery>
 export type HealthCheckQueryOutput = ResultOf<typeof healthCheckQuery>
 ```
 
-> Check out [graphql.tada](https://graphql.tada) later to how to write and use GraphQL queries with typescript.
+> Check out [gql.tada](https://gql-tada.0no.co/get-started/#a-demo-in-128-seconds) later to how to write and use GraphQL queries with typescript.
 
 You might think this is a lot of work for a simple query. However, you don't necessarily have to write these queries out yourself. Once we reuse our **`DataBridge`**, it can scaffold out the query for us:
 
