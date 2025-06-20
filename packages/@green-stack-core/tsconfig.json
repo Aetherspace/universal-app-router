@@ -12,7 +12,7 @@
         "../../features/**/*.ts",
         "../../features/**/*.tsx",
         "../../packages/**/*.ts",
-        "../../packages/**/*.tsx",
+        "../../packages/**/*.tsx"
     ],
     "exclude": ["node_modules"]
 }
