@@ -18,15 +18,15 @@ export default {
     ),
     logoLink: 'https://fullproduct.dev',
     project: {
-        link: 'https://github.com/Aetherspace/green-stack-starter-demo?tab=readme-ov-file#:Rr9ab:',
+        link: 'https://github.com/FullProduct-dev/green-stack-starter-demo?tab=readme-ov-file#:Rr9ab:',
     },
     navigation: true,
     sidebar: {
         autoCollapse: true,
-        defaultMenuCollapseLevel: 3,
+        defaultMenuCollapseLevel: 2,
         toggleButton: true,
     },
-    docsRepositoryBase: 'https://github.com/Aetherspace/green-stack-starter-demo',
+    docsRepositoryBase: 'https://github.com/FullProduct-dev/green-stack-starter-demo',
     editLink: {
         component: null,
     },
@@ -34,7 +34,7 @@ export default {
     footer: {
         content: (
             <div className="flex w-full justify-center items-center bg-transparent">
-                <div className="flex flex-col md:flex-row w-full max-w-[90rem] px-0 lg:px-8 justify-between">
+                <div className="flex flex-col md:flex-row w-full max-w-[90rem] px-0 lg:px-8 2xl:px-2 flex-wrap justify-between">
                     <div className="flex flex-col max-w-[364px]">
                         <a 
                             className="text-link flex flex-row no-underline"
@@ -64,7 +64,7 @@ export default {
                                     FullProduct.dev 🚀
                                 </div>
                                 <div dir="auto" className="flex text-left font-medium text-muted text-sm mt-[-3px]">
-                                    Universal Base Starterkit
+                                    Universal App Starterkit
                                 </div>
                             </div>
                         </a>
@@ -107,18 +107,18 @@ export default {
                         </a>
                         <div className="w-4 h-4" />
                         <div dir="auto" className="css-text-146c3p1 text-muted">
-                            FullProduct.dev is a product of 'Aetherspace Digital' (registered in Belgium under 0757.590.784)
+                            FullProduct.dev is a product of 'Aetherspace Digital' (registered as 0757.590.784 in Belgium)
                         </div>
                         <div className="w-2 h-2" />
                         <div dir="auto" className="css-text-146c3p1 text-muted italic">
-                            For support or inquiries, please <a className="text-link underline" href="mailto:info@fullproduct.dev">contact us</a>
+                            For support or inquiries, please email us at <a className="text-link underline" href="mailto:thorr@fullproduct.dev">thorr@fullproduct.dev</a>
                         </div>
                     </div>
                     <div className="h-12 md:h-0" />
-                    <div className="flex flex-row">
-                        <div className="flex flex-col">
+                    <div className="flex flex-row flex-wrap">
+                        {/* <div className="flex flex-col">
                             <div dir="auto" className="css-text-146c3p1 text-primary font-bold text-lg">
-                                The GREEN stack
+                                GREEN stack
                             </div>
                             <div className="h-2" />
                             <a className="underline text-muted" target="_blank" href="https://graphql.org/learn/">
@@ -138,8 +138,8 @@ export default {
                             </a>
                             <div className="h-1" />
                         </div>
-                        <div className="w-12" />
-                        <div className="flex flex-col">
+                        <div className="w-12" /> */}
+                        <div className="flex flex-col pt-12 lg:pt-0 pr-12">
                             <div dir="auto" className="css-text-146c3p1 text-primary font-bold text-lg">
                                 Product
                             </div>
@@ -161,8 +161,7 @@ export default {
                             </a>
                             <div className="h-1" />
                         </div>
-                        <div className="w-12" />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col pt-12 lg:pt-0 pr-12">
                             <div dir="auto" className="css-text-146c3p1 text-primary font-bold text-lg">
                                 Legal
                             </div>
@@ -189,15 +188,15 @@ export default {
         const { asPath } = useRouter()
         if (asPath === '/') {
             return {
-                title: 'FullProduct.dev ⚡️ Universal Base Starter',
+                title: 'FullProduct.dev ⚡️ Universal App Starter',
             }
         } else if (asPath.includes('plugins')) {
             return {
-                titleTemplate: 'FullProduct.dev ⚡️ %s Plugin - Universal Base Starter Docs',
+                titleTemplate: 'FullProduct.dev ⚡️ %s Plugin - Universal App Starter Docs',
             }
         }
         return {
-            titleTemplate: 'FullProduct.dev | %s - Universal Base Starter Docs',
+            titleTemplate: 'FullProduct.dev | %s - Universal App Starter Docs',
         }
     }
 }

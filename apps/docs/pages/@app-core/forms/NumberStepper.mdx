@@ -1,7 +1,11 @@
-
 import { NumberStepper, getDocumentationProps } from '@app/forms/NumberStepper.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## NumberStepper
+</TitleWrapper>
 
 # NumberStepper
 
@@ -9,12 +13,113 @@ import { FileTree, Callout } from 'nextra/components'
 import { NumberStepper } from '@app/forms/NumberStepper.styled'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={NumberStepper}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## NumberStepper Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+    ### Props Schema
+</TitleWrapper>
+
+<details>
+<summary>Show Props Schema</summary>
+
+```typescript copy
+const NumberStepperProps = z.object({
+    value: z
+        .number()
+        .optional(),
+    min: z
+        .number()
+        .optional(),
+    max: z
+        .number()
+        .optional(),
+    step: z
+        .number()
+        .default(1),
+    placeholder: z
+        .string()
+        .optional()
+        .example("Enter number..."),
+    disabled: z
+        .boolean()
+        .optional(),
+    readOnly: z
+        .boolean()
+        .optional(),
+    hasError: z
+        .boolean()
+        .optional(),
+    className: z
+        .string()
+        .optional(),
+    pressableClassName: z
+        .string()
+        .optional(),
+    textInputClassName: z
+        .string()
+        .optional(),
+    placeholderClassName: z
+        .string()
+        .optional(),
+    placeholderTextColor: z
+        .string()
+        .optional(),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+### Props Type
+</TitleWrapper>
+
+<details>
+<summary>Show Props Types</summary>
+
+```typescript copy
+{
+    value?: number;
+    min?: number;
+    max?: number | undefined;
+    step?: number;
+    placeholder?: string | undefined;
+    disabled?: boolean;
+    readOnly?: boolean;
+    hasError?: boolean;
+    className?: string | undefined;
+    pressableClassName?: string | undefined;
+    textInputClassName?: string | undefined;
+    placeholderClassName?: string | undefined;
+    placeholderTextColor?: string | undefined;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `NumberStepper` component in the following location:
 
@@ -27,6 +132,10 @@ You can find the source of the `NumberStepper` component in the following locati
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

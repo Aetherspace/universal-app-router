@@ -11,8 +11,6 @@ import { Image } from '@app/primitives'
 
 # Cross-Platform Navigation + Routing
 
-Table of Contents:
-
 - [Making routes portable](/universal-routing#workspace-defined-routes)
 - [Adding page routes](/universal-routing#using-the-route-generator)
 - [`<Link/>`](/universal-routing#universal-link-component)
@@ -181,12 +179,14 @@ export const maxDuration = 5
 
 ```
 
-### Run `npm run collect:routes`
+### Run `npm run link:routes`
+
+![](https://fullproduct.dev/blog-assets/imgs/feature-routes-to-universal-links.jpg)
 
 This command will automatically re-export all routes from the workspace to the platform-specific `/app/` folder for Expo and Next.js
 
 ```shell
-npm run collect:routes
+npm run link:routes
 ```
 
 > This deduplication will happen automatically when restarting with `npm run dev`

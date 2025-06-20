@@ -34,7 +34,7 @@ This workspace structure will help keep your features as copy-pasteable and port
 For an example of what this might look like in an actual project, check the example below. Don't hesitate to click open some of the folders to get a better idea of how portable routes with data-fetching are structured:
 
 <FileTree>
-    <FileTree.Folder name="apps">
+    <FileTree.Folder name="apps" defaultOpen>
         <FileTree.Folder name="expo" defaultOpen>
             <FileTree.Folder name="app / posts/...  ← Re-exports routes from /features/ in Expo" />
         </FileTree.Folder>
@@ -42,9 +42,9 @@ For an example of what this might look like in an actual project, check the exam
             <FileTree.Folder name="app / posts/...  ← Re-exports routes from /features/ in Next" />
         </FileTree.Folder>
     </FileTree.Folder>
-    <FileTree.Folder name="features">
+    <FileTree.Folder name="features" defaultOpen>
         <FileTree.Folder name="@some-feature" defaultOpen>
-            <FileTree.Folder name="schemas">
+            <FileTree.Folder name="schemas" defaultOpen>
                 <FileTree.File name="Post.schema.ts" />
             </FileTree.Folder>
             <FileTree.Folder name="resolvers" defaultOpen>
@@ -52,7 +52,7 @@ For an example of what this might look like in an actual project, check the exam
                 <FileTree.File name="getPost.query.ts" />
             </FileTree.Folder>
             <FileTree.Folder name="screens" defaultOpen>
-                <FileTree.File name="PostDetailScreen.tsx" />
+                <FileTree.File name="PostDetailScreen.tsx   ← ✅ Fetches Data" />
             </FileTree.Folder>
             <FileTree.Folder name="routes" defaultOpen>
                 <FileTree.Folder name="posts / [slug] /" defaultOpen>
@@ -691,6 +691,8 @@ const mutation = useMutation(createTodo, {
 
 ### Update data with `useMutation`
 
+![](https://fullproduct.dev/blog-assets/imgs/custom-react-query-hooks.jpg)
+
 **Mutations** are used to send data to an API. They are similar to queries, but instead of fetching data, they send data to the server. React Query provides a `useMutation` hook to handle mutations.
 
 ```tsx {3, 9}
@@ -751,7 +753,9 @@ Like our resolvers and data-bridges, we think it's best to define your custom an
 
 ## GraphQL vs. API routes
 
-We recommend you use GraphQL for your data-fetching logic, as it provides a more flexible and efficient way to fetch data in each environment.
+![](https://fullproduct.dev/blog-assets/imgs/universal-reusable-graphql-queries.jpg)
+
+We recommend you use GraphQL for your data-fetching logic, as it provides a more flexible and efficient way to fetch data in each environment. For example, during server-side rendering (SSR), it's quite handy to just be able to call the executable schema.
 
 We do recommend using API routes instead when mutating / updating data. Though here too, GraphQL can be used if you prefer.
 

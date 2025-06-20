@@ -1,7 +1,11 @@
-
 import { Switch, getDocumentationProps } from '@app/forms/Switch.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## Switch
+</TitleWrapper>
 
 # Switch
 
@@ -9,12 +13,28 @@ import { FileTree, Callout } from 'nextra/components'
 import { Switch } from '@app/forms/Switch.styled'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={Switch}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## Switch Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `Switch` component in the following location:
 
@@ -27,6 +47,10 @@ You can find the source of the `Switch` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

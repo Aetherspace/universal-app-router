@@ -44,31 +44,39 @@ blockquote {
 }
 
 #markdown-theme ul {
-    padding: 0;
+    padding-left: 20px;
+    list-style-type: disc;
     color: hsl(var(--primary));
 }
 
 #markdown-theme li {
     font-size: 16px;
+    list-style: disc;
     margin-bottom: 16px;
     line-height: 22px;
     color: hsl(var(--primary));
 }
 
 #markdown-theme blockquote {
+    justify-content: center;
     border-width: 0;
     border-style: solid;
     border-left-color: lightgray;
     border-left-width: 6px;
     font-size: 16px;
     padding-left: 16px;
-    padding-top: 4px;
-    line-height: 22px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+    line-height: 18px;
+}
+
+#markdown-theme blockquote p {
+    margin-bottom: 0px;
 }
 
 #markdown-theme a {
     margin-top: 16px;
-    font-size: 16px;
     color: hsl(var(--link));
     text-align: center;
     text-decoration: underline;
@@ -76,4 +84,24 @@ blockquote {
 
 #markdown-theme img {
     max-width: 100%;
+}
+
+/* Show title anchor links on heading hover */
+
+#markdown-theme h1:hover a,
+#markdown-theme h2:hover a,
+#markdown-theme h3:hover a {
+    opacity: 1;
+    color: hsl(var(--muted));
+}
+
+#markdown-theme h1 a,
+#markdown-theme h2 a,
+#markdown-theme h3 a {
+    opacity: 0;
+    text-decoration: none;
+    color: hsl(var(--primary));
+    font-size: 16px;
+    margin-left: 8px;
+    transition: opacity 0.2s ease-in-out;
 }

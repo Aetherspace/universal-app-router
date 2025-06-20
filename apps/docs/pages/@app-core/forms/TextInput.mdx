@@ -1,7 +1,11 @@
-
 import { TextInput, getDocumentationProps } from '@app/forms/TextInput.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## TextInput
+</TitleWrapper>
 
 # TextInput
 
@@ -9,12 +13,93 @@ import { FileTree, Callout } from 'nextra/components'
 import { TextInput } from '@app/forms/TextInput.styled'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={TextInput}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## TextInput Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+    ### Props Schema
+</TitleWrapper>
+
+<details>
+<summary>Show Props Schema</summary>
+
+```typescript copy
+const TextInputProps = z.object({
+    value: z
+        .string()
+        .optional(),
+    placeholder: z
+        .string()
+        .optional()
+        .example("Start typing..."),
+    className: z
+        .string()
+        .optional(),
+    placeholderClassName: z
+        .string()
+        .optional(),
+    placeholderTextColor: z
+        .string()
+        .default("hsl(var(--muted))"),
+    hasError: z
+        .boolean()
+        .optional(),
+    readOnly: z
+        .boolean()
+        .optional(),
+    disabled: z
+        .boolean()
+        .optional(),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+### Props Type
+</TitleWrapper>
+
+<details>
+<summary>Show Props Types</summary>
+
+```typescript copy
+{
+    value?: string | undefined;
+    placeholder?: string | undefined;
+    className?: string | undefined;
+    placeholderClassName?: string | undefined;
+    placeholderTextColor?: string;
+    hasError?: boolean;
+    readOnly?: boolean;
+    disabled?: boolean;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `TextInput` component in the following location:
 
@@ -27,6 +112,10 @@ You can find the source of the `TextInput` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

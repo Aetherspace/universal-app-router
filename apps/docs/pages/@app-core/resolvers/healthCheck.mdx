@@ -1,0 +1,434 @@
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { View, Image } from '@app/primitives'
+
+<TitleWrapper>
+    ## `healthCheck` - API
+</TitleWrapper>
+
+# healthCheck() - Resolver
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="resolvers" defaultOpen>
+                <FileTree.File name="healthCheck.resolver.ts" />
+                <FileTree.File name="healthCheck.query.ts" />
+                <FileTree.File name="healthCheck.bridge.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+`healthCheck()` is a query resolver that allows you to get data from:
+
+- [Async Functions](#server-usage) during other resolver logic / GraphQL / API calls server-side
+- [GraphQL](#graphql-query) - As a GraphQL query
+- [API route](#nextjs-api-route) (GET)
+- [Clientside Hooks](#client-usage) for calling the API with `react-query` from Web / Mobile
+
+<div className="h-8" />
+
+## Resolver Config
+
+Input / output types, defaults, schemas and general config for the `healthCheck()` resolver are defined in its DataBridge file. Importable from:
+
+```typescript copy
+import { healthCheckBridge } from '@app/core/resolvers/healthCheck.bridge'
+```
+
+<div className="h-6" />
+
+### Input Shape
+
+You can find the schema used to validate the input arguments for the `healthCheck()` resolver in the bridge config:
+
+```typescript copy
+const HealthCheckInput = healthCheckBridge.inputSchema
+```
+
+<details open>
+<summary>Show Input Schema</summary>
+
+```typescript copy
+const HealthCheckInput = z.object({
+    echo: z
+        .string()
+        .default("Hello World"),
+    verbose: z
+        .boolean()
+        .optional(),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-4" />
+
+If needed, you can extract the TypeScript type from the schema using `z.input()`, e.g.:
+
+```typescript copy
+type HealthCheckInput = z.input<typeof HealthCheckInput>
+```
+
+
+<details open>
+<summary>Show Input Type</summary>
+
+```typescript copy
+{
+    echo?: string;
+    verbose?: boolean;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+### Output Shape
+
+You can find the schema used to provide output defaults for the `healthCheck()` resolver in the bridge config too:
+
+```typescript copy
+const HealthCheckOutput = healthCheckBridge.outputSchema
+```
+
+<details>
+<summary>Show Output Schema</summary>
+
+```typescript copy
+const HealthCheckOutput = z.object({
+    echo: z
+        .string()
+        .optional(),
+    status: z
+        .literal("OK"),
+    alive: z
+        .boolean(),
+    kicking: z
+        .boolean(),
+    now: z
+        .string(),
+    aliveTime: z
+        .number(),
+    aliveSince: z
+        .date(),
+    serverTimezone: z
+        .string(),
+    requestHost: z
+        .string()
+        .optional(),
+    requestProtocol: z
+        .string()
+        .optional(),
+    requestURL: z
+        .string()
+        .optional(),
+    baseURL: z
+        .string()
+        .optional(),
+    backendURL: z
+        .string()
+        .optional(),
+    apiURL: z
+        .string()
+        .optional(),
+    graphURL: z
+        .string()
+        .optional(),
+    port: z
+        .number()
+        .int()
+        .nullable(),
+    debugPort: z
+        .number()
+        .int()
+        .nullable(),
+    nodeVersion: z
+        .string()
+        .optional(),
+    v8Version: z
+        .string()
+        .optional(),
+    systemArch: z
+        .string()
+        .optional(),
+    systemPlatform: z
+        .string()
+        .optional(),
+    systemRelease: z
+        .string()
+        .optional(),
+    systemFreeMemory: z
+        .number()
+        .optional(),
+    systemTotalMemory: z
+        .number()
+        .optional(),
+    systemLoadAverage: z
+        .array(z.number())
+        .optional(),
+    context: z
+        .record(z.string(), z.unknown())
+        .nullish(),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-4" />
+
+Here too, you can extract the TypeScript type from the schema using `z.output()`, e.g.:
+
+```typescript copy
+type HealthCheckOutput = z.output<typeof HealthCheckOutput>
+```
+
+<details>
+<summary>Show Output Type</summary>
+
+```typescript copy
+{
+    echo?: string | undefined;
+    status: "OK";
+    alive: boolean;
+    kicking: boolean;
+    now: string;
+    aliveTime: number;
+    aliveSince: Date;
+    serverTimezone: string;
+    requestHost?: string | undefined;
+    requestProtocol?: string | undefined;
+    requestURL?: string | undefined;
+    baseURL?: string | undefined;
+    backendURL?: string | undefined;
+    apiURL?: string | undefined;
+    graphURL?: string | undefined;
+    port: number | null;
+    debugPort: number | null;
+    nodeVersion?: string | undefined;
+    v8Version?: string | undefined;
+    systemArch?: string | undefined;
+    systemPlatform?: string | undefined;
+    systemRelease?: string | undefined;
+    systemFreeMemory?: number | undefined;
+    systemTotalMemory?: number | undefined;
+    systemLoadAverage?: number[] | undefined;
+    context?: ({
+        [x: string]: unknown;
+    } | null) | undefined;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+## Server Usage
+
+<div className="h-6" />
+
+### `healthCheck()` function
+
+```typescript copy
+import { healthCheck } from '@app/core/resolvers/healthCheck.resolver'
+```
+
+```typescript copy
+// ... Later, in resolver or script logic ...
+const output = await healthCheck({ ...inputArgs })
+//     ?^ HealthCheckOutput 
+```
+
+Note that using resolvers like `healthCheck()` as async functions is only available server-side, and might cause issues if imported into the client bundle. For client-side usage, use any of the other options below.
+
+<div className="h-8" />
+
+## GraphQL Query
+
+<div className="h-6" />
+
+### `healthCheckFetcher()`
+
+```typescript copy
+import { healthCheckFetcher } from '@app/core/resolvers/healthCheck.query'
+```
+
+`healthCheckFetcher()` is a universal GraphQL query fetcher function.  
+It wil query the `healthCheck` resolver for you as a GraphQL query:
+
+```typescript copy
+const response = await healthCheckFetcher({ healthCheckArgs: { ...inputArgs } })
+//       ?^ { healthCheck: HealthCheckOutput } 
+```
+
+Just make sure the `healthCheckArgs` input matches the [`HealthCheckInput`](#input-shape) schema.
+
+If you prefer, you can also use the following GraphQL snippet in your own GraphQL fetching logic:
+
+<div className="h-8" />
+
+### GraphQL Query Snippet
+
+```graphql copy
+query healthCheck($healthCheckArgs: HealthCheckInput!) {
+    healthCheck(args: $healthCheckArgs) {
+        echo
+        status
+        alive
+        kicking
+        now
+        aliveTime
+        aliveSince
+        serverTimezone
+        requestHost
+        requestProtocol
+        requestURL
+        baseURL
+        backendURL
+        apiURL
+        graphURL
+        port
+        debugPort
+        nodeVersion
+        v8Version
+        systemArch
+        systemPlatform
+        systemRelease
+        systemFreeMemory
+        systemTotalMemory
+        systemLoadAverage
+        context {
+            zodType
+            baseType
+        }
+    }
+}
+```
+
+<div className="h-4" />
+
+### Custom Query
+
+Using a custom query, you can omit certain fields you don't need and request only what's necessary.
+
+If you do, we suggest using `graphqlQuery()`, as it works seamlessly on the server, browser and mobile app:
+
+```typescript copy
+import { graphql } from '@app/core/graphql/graphql'
+import { graphqlQuery } from '@app/core/graphql/graphqlQuery'
+
+const query = graphql(`
+    query healthCheck($healthCheckArgs: HealthCheckInput!) {
+        healthCheck(args: $healthCheckArgs) {
+            // -i- ... type hints for the fields you need ... -i-
+        }
+    }
+`)
+
+const response = await graphqlQuery(query, { healthCheckArgs: { ...inputArgs } })
+//       ?^ { healthCheck: HealthCheckOutput } 
+```
+
+Just make sure the `healthCheckArgs` input matches the [`HealthCheckInput`](#input-shape) schema.
+
+<div className="h-8" />
+
+## Next.js API Route
+
+<div className="h-6" />
+
+### `GET` requests
+
+```shell copy
+GET /api/health?...
+```
+
+Provide query parameters as needed (e.g. `?someArg=123`).
+
+Make sure the params / query input match the [`HealthCheckInput`](#input-shape) schema.
+
+<div className="h-4" />
+
+<div className="h-4" />
+
+## Client Usage
+
+<div className="h-6" />
+
+### Custom `react-query` hook
+
+> e.g. In the `healthCheck.query.ts` file:
+
+```typescript copy
+import { useQuery, UseQueryOptions, QueryKey } from '@tanstack/react-query'
+```
+
+```typescript copy
+
+export const useHealthCheckQuery = (
+    input: HealthCheckQueryInput,
+    options?: Omit<UseQueryOptions<HealthCheckQueryOutput>, 'queryFn' | 'queryKey'> & {
+        queryKey?: QueryKey,
+    },
+) => {
+    return useQuery({
+        queryKey: ['healthCheckFetcher', input],
+        queryFn: (context) => healthCheckFetcher(input),
+        ...options,
+    })
+}
+```
+
+Be sure to check the [`useQuery`](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery) docs for all the available options you might want to prefill or abstract.
+
+<div className="h-6" />
+
+### Usage in React
+
+```typescript copy
+import { useHealthCheckQuery } from '@app/core/resolvers/healthCheck.query'
+```
+
+```typescript copy
+const { data, error, isLoading } = useHealthCheckQuery({ healthCheckArgs: /* ... */ }, {
+    // ... any additional options ...
+})
+```
+
+Be sure to check the [`useQuery`](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery) docs for all the available options.
+
+<div className="h-8" />
+
+## Developer Notes
+
+### Why this resolver?
+
+We included this resolver in the starterkit as a reference implementation for a simple API resolver.
+
+While it can be used to verify that the application is running and responsive, its main goals for inclusion are to demonstrate:
+
+- How to create a basic API resolver.
+- What our way of working of creating resolvers gets you. (typesafety, async function, REST API, GraphQL API, docs)
+- Automatic docgen for API resolvers. (this entire docs page)
+
+### Adding your own resolvers
+
+If you want to quickly replicate this way of working for setting up APIs with all the side-effects listed above, you can use our resolver generator:
+
+```bash copy
+npm run add:resolver
+```
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic API docs were auto-generated with `npm run regenerate-docs`. This happens from `.bridge.ts` files in any `/resolvers/` folder.
+
+You can opt-out of this by adding `export const optOut = true` somewhere in the file. 
+</Callout>

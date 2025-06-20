@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import { useState, createContext, useContext, useEffect, useMemo } from 'react'
 import { useTheme } from 'nextra-theme-docs'
 import { useRouter } from 'next/router'
@@ -14,12 +14,14 @@ import { NumberStepper } from '@app/docs/components/NumberStepper.docs'
 import { isEmpty } from '@green-stack/utils/commonUtils'
 import { Icon } from '@green-stack/components/Icon'
 import { CodeBlock } from './CodeBlock'
+import { Hidden } from '@app/docs/components/Hidden'
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
 export type ComponentDocsProps = {
     component: React.ComponentType<any>,
     docsConfig: DocumentationProps
+    children?: React.ReactNode
 }
 
 export type ComponentDocsContext = {
@@ -38,12 +40,15 @@ export const ComponentDocsContext = createContext<ComponentDocsContext>({
 
 export const useComponentDocsContext = () => useContext(ComponentDocsContext)
 
+const isProd = process.env.NODE_ENV === 'production'
+
 /* --- useComponentDocs() ---------------------------------------------------------------------- */
 
 export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = false) => {
+
     // Nav
     const router = useRouter()
-    const params = parseUrlParamsObject(router.query)
+    const { showCode: _, ...params } = parseUrlParamsObject(router.query)
 
     // Props
     const componentName = props.docsConfig.componentName! || props.component.displayName!
@@ -155,6 +160,7 @@ export const useComponentDocs = (props: ComponentDocsProps, syncInitialState = f
 /* --- <ComponentDocsContextManager/> ---------------------------------------------------------- */
 
 export const ComponentDocsContextManager = (props: { children: React.ReactElement }) => {
+
     // Props
     const { children } = props
 
@@ -192,12 +198,13 @@ export const ComponentDocsContextManager = (props: { children: React.ReactElemen
 /* --- <ComponentDocsPreview/> ----------------------------------------------------------------- */
 
 export const ComponentDocsPreview = (props: ComponentDocsProps) => {
+    
     // Props
     const { component: Component } = props
 
     // Context
     const docsUtils = useComponentDocs(props)
-    const { componentName, previewProps, didMount, isReady, setDidMount, showCode } = docsUtils
+    const { componentName, previewProps, didMount, isReady, setDidMount, showCode, router } = docsUtils
 
     // State
     const [didCopy, setDidCopy] = useState(false)
@@ -224,7 +231,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 
     const viewClassNames = cn(
         'relative min-w-400 min-h-200 p-12 rounded-xl border border-gray-500',
-        showCode && 'rounded-b-none',
+        showCode && isReady && 'rounded-b-none',
         didMount && colorScheme === 'light' && 'bg-background',
         didMount && colorScheme === 'dark' && 'bg-zinc-900',
     )
@@ -237,7 +244,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
             const newValueObj = { [docsUtils.valueProp]: newValue }
             const newParams = { ...docsUtils.params, ...newValueObj, showCode }
             const query = buildUrlParamsObject(newParams)
-            docsUtils.router.push({ query }, undefined, { shallow: true })
+            router.push({ query }, undefined, { shallow: true })
         }
         return {
             ...previewProps,
@@ -312,6 +319,7 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
 /* --- <ComponentDocsPropTable/> --------------------------------------------------------------- */
 
 export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
+
     // Context
     const docsUtils = useComponentDocs(props, true)
     const { previewProps, propSchema, propMeta, router, params, showCode } = docsUtils
@@ -367,7 +375,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
     // -- Render --
 
     return (
-        <View className="relative md:min-w-400 my-12">
+        <View nativeID="docsTable" className="relative md:min-w-400 my-12">
 
             {/* - Column Headings - */}
 
@@ -445,7 +453,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                     let fieldType = meta.baseType?.toLowerCase() // @ts-ignore
                     let subType = !isArray ? '' : meta.schema?.baseType?.toLowerCase()
                     if (meta.zodType === 'ZodEnum') fieldType = 'enum'
-                    if (isArray && subType) fieldType = `[${subType}]`
+                    if (isArray && subType) fieldType = `${subType}[]`
                     if (isObject && meta.name) fieldType = meta.name
                     // Recreate component if theme changes
                     const inputKey = `${key}-${[resolvedTheme, didMount, timesReset].filter(Boolean).join('-')}`
@@ -464,7 +472,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                             {/* - Title - */}
 
                             <View className="flex w-1/5 max-w-[150px] items-start px-2 pl-3 md:pl-4 mb-2 md:mb-0">
-                                <Text className="text-xs font-bold text-primary">
+                                <Text className="text-xs font-bold text-primary max-w-full">
                                     {key}
                                     {isRequired && (
                                         <Text className="text-xs text-danger">
@@ -483,7 +491,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                     </Text>
                                 )}
                                 {fieldType && (
-                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-inverse text-secondary">
+                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-foreground text-secondary">
                                         {`${fieldType}`}
                                     </Text>
                                 )}
@@ -498,7 +506,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                 )}
                             >
                                {defaultValue ? (
-                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-inverse text-secondary">
+                                    <Text className="text-xs px-2 py-1 rounded-md bg-secondary-foreground text-secondary max-w-full">
                                         {defaultValue}
                                     </Text>
                                ) : (
@@ -601,6 +609,7 @@ export const ComponentDocs = (props: ComponentDocsProps) => (
     <View className="relative min-w-400 mt-12">
         <ComponentDocsPreview {...props} />
         <View className="h-8" />
+        <Hidden>{props.children}</Hidden>
         <ComponentDocsPropTable {...props} />
     </View>
 )

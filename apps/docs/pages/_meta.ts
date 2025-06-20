@@ -1,53 +1,11 @@
-import { meta as pluginsMeta } from './plugins/_meta'
 import { isEmpty } from '@green-stack/utils/commonUtils'
 import { featureMeta, packageMeta } from '@app/registries/workspaceImports.generated'
-
-/* --- Helpers --------------------------------------------------------------------------------- */
-
-const renderPluginItems = (options: any$Todo) => {
-    return Object.entries(pluginsMeta).reduce((acc, [key, value]) => ({
-        ...acc,
-        [key]: {
-            title: value.title,
-            route: value.route || `/plugins/${key}`,
-            ...options,
-    }}), {})
-}
 
 /* --- Top Level Sidebar ----------------------------------------------------------------------- */
 
 export const meta = {
 
-    '-- Universal Base Starter': {
-        'type': 'separator',
-        'title': 'Universal Base Starter',
-    },
-
-    'index': 'Introduction',
-
-    // -- Plugins --
-
-    // '-- Plugin Branches': {
-    //     'type': 'separator',
-    //     'title': 'Plugin Branches',
-    // },
-
-    // ...renderPluginItems({ display: false }),
-
-    'plugins': {
-        title: 'Plugin Branches',
-        type: 'folder',
-        items: renderPluginItems({ display: true }),
-    },
-
-    // -- FullProduct.dev ⚡️ --
-
-    '-- FullProduct.dev ⚡️': {
-        'type': 'separator',
-        'title': '- FullProduct.dev ⚡️ Upgrade -',
-    },
-
-    'quickstart': 'Quickstart',
+    'index': 'Quickstart',
     'core-concepts': 'Core Concepts',
     'project-structure': 'Project Structure',
     'single-sources-of-truth': 'Single Sources of Truth',
@@ -84,15 +42,15 @@ export const meta = {
     // 'maximum-code-reuse': 'Maximize Code Reuse',
     // 'workspace-drivers': 'Workspace Drivers',
 
-    // -- Saving Time --
+    // -- Time Savers --
 
-    // '-- Saving Time': {
-    //     'type': 'separator',
-    //     'title': 'Saving Time',
-    // },
+    '-- Time Savers': {
+        'type': 'separator',
+        'title': 'Time Savers',
+    },
 
     // 'automations': 'Scripts and Automations',
-    // 'generators': 'Code Generators',
+    'generators': 'Code Generators',
     // 'git-based-plugins': 'Git based Plugins',
 
     // -- Features --
@@ -116,6 +74,13 @@ export const meta = {
     } : {}),
 
     ...packageMeta,
+
+    // -- EndPadding --
+
+    '-- EndPadding': {
+        'type': 'separator',
+        'title': ' ',
+    },
 }
 
 export default meta

@@ -67,6 +67,7 @@ export const MarkdownImage = (props: UniversalImageProps) => {
                     src={src}
                     style={finalDimensions}
                     contentFit="contain"
+                    unoptimized
                 />
             )}
         </View>

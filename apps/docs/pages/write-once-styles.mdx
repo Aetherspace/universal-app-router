@@ -99,7 +99,9 @@ If you're doing SSR with responsive-design, this becomes real handy to apply med
 
 ## Create your own primitives
 
-### Optimized Images
+![](https://fullproduct.dev/blog-assets/imgs/write-once-universal-ui.jpg)
+
+### Platform Optimized Images
 
 Some primitives like the `Image` component have optimized versions for each environment:
 
@@ -233,9 +235,9 @@ const universalTheme = {
             'background': 'hsl(var(--background))',
             'foreground': 'hsl(var(--foreground))',
             'primary': 'hsl(var(--primary))',
-            'primary-inverse': 'hsl(var(--primary-inverse))',
+            'primary-foreground': 'hsl(var(--primary-foreground))',
             'secondary': 'hsl(var(--secondary))',
-            'secondary-inverse': 'hsl(var(--secondary-inverse))',
+            'secondary-foreground': 'hsl(var(--secondary-foreground))',
             'link': 'hsl(var(--link))',
             'muted': 'hsl(var(--muted))',
             'warn': 'hsl(var(--warn))',
@@ -300,9 +302,9 @@ This is where you can define, for example, the colors for light and dark mode:
         --background: 0, 0%, 100%; /* #FFFFFF; /* tailwind: colors.white */
         --foreground: 240, 5%, 10%; /* #18181b; /* tailwind: colors.zinc[900] */
         --primary: 222, 15%, 13%; /* #111827; /* tailwind: colors.gray[900] */
-        --primary-inverse: 0, 0%, 100%; /* #FFFFFF; /* tailwind: colors.white */
+        --primary-foreground: 0, 0%, 100%; /* #FFFFFF; /* tailwind: colors.white */
         --secondary: 217, 13%, 19%; /* #1f2937; /* tailwind: colors.gray[800] */
-        --secondary-inverse: 210, 16%, 96%; /* #f3f4f6; /* tailwind: colors.gray[100] */
+        --secondary-foreground: 210, 16%, 96%; /* #f3f4f6; /* tailwind: colors.gray[100] */
         --link: 213, 94%, 76%; /* #93c5fd; /* tailwind: colors.blue[300] */
         --muted: 220, 8%, 65%; /* #9ca3af; /* tailwind: colors.gray[400] */
         --warn: 24, 89%, 47%; /* #ea580c; /* tailwind: colors.orange[600] */
@@ -313,7 +315,7 @@ This is where you can define, for example, the colors for light and dark mode:
         --background: 216, 34%, 17%; /* #1e293b; /* tailwind: colors.slate[800] */
         --foreground: 210, 16%, 96%; /* #f3f4f6; /* tailwind: colors.gray[100] */
         --primary: 210, 16%, 96%; /* #f3f4f6; /* tailwind: colors.gray[100] */
-        --primary-inverse: 222, 15%, 13%; /* #111827; /* tailwind: colors.gray[900] */
+        --primary-foreground: 222, 15%, 13%; /* #111827; /* tailwind: colors.gray[900] */
         ...
     }
 }

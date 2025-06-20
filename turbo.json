@@ -27,6 +27,10 @@
             "cache": false
         },
         "@app/docs#regenerate:docs": {
+            "dependsOn": [
+                "@green-stack/core#collect:resolvers",
+                "@green-stack/core#collect:schemas"
+            ],
             "cache": false
         },
         "@app/docs#dev": {

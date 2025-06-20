@@ -1,5 +1,10 @@
 import { Image } from '@app/primitives'
 import { FileTree } from 'nextra/components'
+import { TitleWrapper, Hidden } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Intro - Schemas for Abstractions
+</TitleWrapper>
 
 <Image
     src={require('@app/assets/green-stack-logo.png')}
@@ -25,7 +30,23 @@ A core feature of this universal starterkit is taking what works and making it b
 
 ## Why Single Sources of Truth?
 
-Think of all the places you might re-define data shapes.
+![Tweet by Matt Pocock: The right abstraction, found at the right time, can save you weeks of work. It's often worth putting the time in.](https://fullproduct.dev/blog-assets/imgs/matt-pocock-right-abstractions.jpg)
+
+### The problem
+
+Think about all the places you might need to redefine the structure of your data. Quite an extensive list for what is **essentially describing the same data**.
+
+![Slide screenshot asking the question of where you might need to re-define data across the lifetime of a project](https://fullproduct.dev/blog-assets/imgs/data-shape-redefinitions.jpg)
+
+Generally speaking, you never want to define your data shape more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
+
+If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
+
+![Slide screenshot listing the risks of redefining your data in all these places](https://fullproduct.dev/blog-assets/imgs/redefining-shapes-risks.jpg)
+
+### The solution
+
+Now Imagine you can get all of this from just one schema:
 
 - ✅ Types
 - ✅ Validation + defaults
@@ -36,34 +57,17 @@ Think of all the places you might re-define data shapes.
 - ✅ Mock & test data
 - ✅ GraphQL schema defs
 
-Quite an extensive list for what is **essentially describing the same data**.
-
-### The problem
-
-Generally speaking, you never want to define your data shape more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
-
-If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
-
-### The solution
-
 You can use `schema()` to build out the shape of our data in one go. The resulting object will enable us to create all other definitions from it for (e.g.) GraphQL, DB models, docs and more. Meaning we can avoid ever declaring it again.
 
 This is a huge win for maintainability and developer experience, as it avoids the need to keep it all in sync. No more redeclaring the same data shape for all your component props, database models or function args / responses.
 
 ## Building Schemas with Zod
 
+<Hidden>
+![Title Slide of the FullProduct and Zod logos subtitled: Zod Schemas as the Single Source of Truth](https://fullproduct.dev/blog-assets/imgs/fpd-x-zod-ssots.jpg)
+</Hidden>
+
 Let's have a look at how `zod` and `schema()` defs translate to Typescript types: 👇
-
-### Defining Primitives
-
-```typescript
-const someString = z.string() // -> string
-const someNumber = z.number() // -> number
-const someBoolean = z.boolean() // -> boolean
-const someDate = z.date() // -> Date
-```
-
-### Defining Objects
 
 An object in this sense is a key-value pair, often used to represent the shape of a data "unit":
 
@@ -74,11 +78,9 @@ some-workspace
      └── User.ts # <- e.g. User schema
 ```
 
-
-
-```tsx {4, 8} /Requires a name/1 /'User'/ /to port to other formats later/ filename="User.ts"
+```tsx {4, 8} /Requires a name/1 /'User'/ filename="User.ts"
 export const User = schema('User', {
-    // Requires a name value (☝️) to port to other formats later, best to keep the same
+    // Requires a name value (☝️) to port to other formats later, keep it the same as your schema and TS type
 
     // Zod can help you go even narrower than typescript
     name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
@@ -89,6 +91,8 @@ export const User = schema('User', {
     birthdate: z.Date().nullish(), // = same as calling .nullable().optional()
 })
 ```
+
+> Check the full [schema reference docs](/@green-stack-core/schemas) for all available way to build and describe schemas.
 
 ### Extracting Types
 
@@ -116,9 +120,9 @@ export type UserInput = z.input<typeof User>
 // }
 ```
 
-> In this case where we check the resulting type of `z.input()`, the 'isAdmin' field will be marked as optional, as it's supposedly not defaulted to `false` yet. If we'd inspect `z.output()` or `z.infer()`, it would be marked as required since it's either provided or presumed defaulted.
+> In this case where we check the resulting type of `z.input()`, the 'isAdmin' field will be marked as optional, as it's supposedly not defaulted to `false` yet. If we'd inspect `z.output()`, it would be marked as required since it's either provided or presumed defaulted.
 
-## Validating inputs
+### Schema Validation
 
 You can use the `.parse()` method to validate inputs against the schema:
 
@@ -155,57 +159,7 @@ try {
 }
 ```
 
-### Custom Errors
-
-You can provide custom error messages by passing the `message` prop:
-
-```ts
-const NumberValue = z.number({ message: 'Please provide a number' })
-// Throws => ZodError: [{ message: "Please provide a number", ... })
-```
-
-You can provide **custom error messages** for specific validations:
-
-```ts
-const MinimumValue = z.number().min(10, { message: 'Value must be at least 10' })
-// Throws => ZodError: [{ message: "Value must be at least 10", ... })
-
-const MaximumValue = z.number().max(100, { message: 'Value must be at most 100' })
-// Throws => ZodError: [{ message: "Value must be at most 100", ... })
-```
-
-## Advanced Types
-
-```ts {3, 6, 9}
-const Task = schema('Task', {
-
-    // Enums
-    status: z.enum(['draft', 'published', 'archived']),
-
-    // Arrays
-    tags: z.array(z.string()),
-
-    // Tuples
-    someTuple: z.tuple([z.string(), z.number()]),
-
-})
-```
-
-When extracting the type with `type Task = z.infer<typeof Task>`:
-
-```ts
-// {
-//     status: 'draft' | 'published' | 'archived',
-//     tags: string[],
-//     someTuple: [string, number],
-// }
-```
-
-*Anything you can define the shape of in Typescript, you can define in Zod:*
-
-> Check [zod.dev](https://zod.dev) for the full list of what you can define with zod.
-
-### Reusing and extending schemas
+## Reusing and Expanding schemas
 
 It can happen that you need to differentiate between two similar data shapes, for example, needing to expand on an existing shape.
 
@@ -237,83 +191,12 @@ type AdminUser = z.infer<typeof AdminUser>
 
 > You will **need to provide a new name** for the extended schema. This ensures there is no conflict with the original one when we port it to other formats.
 
-### `.pickSchema()` - select fields
+There are other ways to create schemas from other ones, similar to how you would do it with Typescript:
 
-Similar to extending, **you can create a new schema by picking specific fields from another**:
+- [`.pickSchema()`](/@green-stack-core/schemas#pickschema---select-fields) - to pick a subset of fields
+- [`.omitSchema()`](/@green-stack-core/schemas#omitschema---remove-fields) - to remove a subset of fields
 
-```ts {6} /.pickSchema/ filename="PublicUser.ts"
-const PublicUser = User.pickSchema('PublicUser', {
-    name: true,
-    age: true, // <- Only these fields will be included
-})
-
-type PublicUser = z.infer<typeof PublicUser>
-
-// {
-//     name: string,
-//     age: number,
-// }
-```
-
-### `.omitSchema()` - remove fields
-
-The reverse is also possible by removing certain fields from another. The new schema will have all fields from the original, *except the ones you specify*:
-
-```ts {5} /.omitSchema/ filename="PublicUser.ts"
-const PublicUser = User.omitSchema('PublicUser', {
-    birthDate: true, // <- Will be missing in the new schema
-})
-
-type PublicUser = z.infer<typeof PublicUser>
-
-// {
-//     name: string,
-//     age: number,
-// }
-```
-
-### Nesting and Collections
-
-You can nest schemas within each other.  
-This is useful when you need to represent a more complex data shape
-
-<FileTree>
-    <FileTree.Folder name="schemas" defaultOpen>
-        <FileTree.File name="User.ts" />
-        <FileTree.File name="AdminUser.ts" />
-        <FileTree.File name="PublicUser.ts" />
-        <FileTree.File name="Team.ts ← Contains 'User' members" />
-    </FileTree.Folder>
-</FileTree>
-
-For example, sometimes you need to represent a collection of specific data:
-
-```ts {6, 17} /z.array(User)/ /User[]/ filename="Team.ts"
-const Team = schema('Team', {
-    members: z.array(User), // <- Pass the 'User' schema to z.array()
-    teamName: z.string(),
-})
-
-type Team = z.infer<typeof Team>
-
-// {
-//     teamName: string,
-//     members: {
-//         name: string,
-//         age: number,
-//         birthDate?: Date | null,
-//     }[]
-// }
-
-// ⬇⬇⬇ Which is the same as:
-
-// {
-//     teamName: string,
-//     members: User[]
-// }
-```
-
-### Defaults and optionality
+### Defining Defaults
 
 You can mark fields as optional or provide default values by using either:
 - `.optional()` - to allow `undefined`
@@ -349,8 +232,6 @@ In your schemas, you can mark fields as sensitive using `.sensitive()`. This wil
 - Exclude the field from appearing in the GraphQL schema, introspection or queries
 - Mark the field as strippable in API resolvers / responses (*)
 - Mark the field with `isSensitive: true` in schema introspection
-
-> * 'Strippable' means when using either `withDefaults()` OR `applyDefaults()` / `formatOutput()` with the `{ stripSensitive: true }` option as second argument. If none of these are used, the field will still be present in API route handler responses, but not GraphQL.
 
 ## Transforming to other formats
 
@@ -469,7 +350,7 @@ import type { Metadata, Meta$Schema, Meta$Tuple, ... } from '@green-stack/schema
 
 A good example of how introspected schemas can be transformed through is in the [Automatic MDX Docs](TODO) plugin:
 
-### MDX docs from Schemas
+### Automatic MDX docgen
 
 ```shell
 git merge with/automatic-docs
@@ -566,16 +447,20 @@ The end result will look like a Storybook-like documentation page for your compo
 
 Check out a live example for the interactive [Button](/@app-core/components/Button) component docs:
 
-[![DocgenExample](https://github.com/user-attachments/assets/1ed43e31-6e02-49fa-a438-6475be00495b)](/@app-core/components/Button)
+[![DocgenExample](https://fullproduct.dev/blog-assets/imgs/nextra-url-docs-example.jpg)](/@app-core/components/Button)
 
-### Plugin branches with Zod schema integrations
+### Custom Zod schema integrations
 
 **Out of the box:**
 
 - `npm run build:schema` - Builds your `schema.graphql` from zod schemas
-- `bridgedFetcher()` - Data fetcher that auto-scaffolds GraphQL query from zod
-- `useFormState()` - Form state hook to provide typed form state and validation utils
+- `bridgedFetcher()` - Data fetcher that auto-scaffolds GraphQL query from zod input + output schemas
+- [`useFormState()`](/form-management) - Form state hook to provide typed form state and validation utils
 - `createSchemaModel()` - Creates `mock` model until merging any DB driver plugin 👇
+
+**In the near future, we will add plugin branches that further integrate zod schemas with DB and API solutions**
+
+<Hidden>
 
 **Interactive DB driver plugins:**
 
@@ -591,12 +476,16 @@ Check out a live example for the interactive [Button](/@app-core/components/Butt
 
 > Note that these plugins are only available in the paid version of the starterkit.
 
+</Hidden>
+
+Using introspection and the resulting metadata, you could also create your own custom integrations.
+
 ## Schema generator
 
 Like all elements of our recommended way of working, there is a turborepo generator to help create a schema in a specific workspace:
 
-```shell
-npm run gen add-schema
+```shell copy
+npm run add:schema
 ```
 
 `⬇⬇⬇`
@@ -607,9 +496,9 @@ will prompt you for a target workspace and name:
 >>> Modify "your-project" using custom generators
 
 ? Where would you like to add this schema? 
-❯ features/app-core # -- importable from: '@app/core' 
-  features/cv-page # -- importable from: 'cv-page' 
-  features/links-page # -- importable from: 'links-page'
+❯ @app/core # -- from features/app-core 
+  some-feature # -- from features/some-feature 
+  some-package # -- from packages/some-package
 ```
 
 `⬇⬇⬇`
@@ -620,11 +509,10 @@ will prompt you for a target workspace and name:
 ? Where would you like to add this schema? # @app/core
 ? What is the schema name? # SomeData
 ? Optional description? # ...
-? Generate an integration for this schema? # e.g. form, db-model
 
 >>> Changes made:
   • /features/@app-core/schemas/SomeData.ts # (add)
-  • /features/@app-core/schemas/index.ts # (append-last-line)
+  • Opened 1 file in VSCode # (open-in-vscode)
 
 >>> Success!
 ```
@@ -637,6 +525,8 @@ will prompt you for a target workspace and name:
  └── /schemas/...
      └── SomeData.schema.ts
 ```
+
+<Hidden>
 
 Though if you chose to also generate an integration, it might look like this instead:
 
@@ -653,46 +543,11 @@ Though if you chose to also generate an integration, it might look like this ins
      └── SomeData.ts # <- `@db/driver` model using `createSchemaModel()`
 ```
 
+</Hidden>
+
 > Pretty powerful, right?
 
-## Disclaimer -- on using `z.union` and `z.tuple`
-
-Since GraphQL and other systems might not natively support unions or tuples, it could be best to avoid them. We allow you to define them, but tranformations of these to other formats is considered experimental and potentially not entirely type-safe.
-
-You can always use `z.array` and `z.object` to represent the same data shapes.
-
-e.g. instead of:
-
-```ts
-const someUnionField = z.union([z.string(), z.number()])
-// TS: string | number
-
-const someTupleField = z.tuple([z.string(), z.number()])
-// TS: [string, number]
-```
-
-you might try this instead:
-
-```ts
-const SomeSchema = schema('SomeSchema', {
-
-    // Unions
-    someUnionFieldStr: z.string(), // TS: string
-    someUnionFieldNum: z.number(), // TS: number
-
-    // Tuples
-    someTupleField: schema('SomeTupleField', {
-        stringValue: z.string(), // TS: string
-        numberValue: z.number(), // TS: number
-    })
-})
-```
-
-... which will work in GraphQL and other formats as well.
-
-We've done our best to hack in experimental tuple and union support where possible. You can take it as-is, edit it further to your liking or avoid tuples and unions entirely. *The choice is yours.*
-
-## Further reading
+### Further reading
 
 From our own docs:
 - [Data Bridges for fetching](/data-resolvers#start-from-a-databridge) - Starterkit Docs

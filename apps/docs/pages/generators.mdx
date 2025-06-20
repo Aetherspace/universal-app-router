@@ -1,0 +1,61 @@
+import { Image } from '@app/primitives'
+import { FileTree } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Available Generators
+</TitleWrapper>
+
+<Image
+    src={require('@app/assets/green-stack-logo.png')}
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Codegen with Turbo Generators
+
+Our Starterkit goes beyond the setup by helping you skip boilerplate code through generators:
+
+- [`add-workspace`](@green-stack-core/generators/add-workspace)
+- [`add-script`](@green-stack-core/generators/add-script)
+- [`add-schema`](@green-stack-core/generators/add-schema)
+- [`add-route`](@green-stack-core/generators/add-route)
+- [`add-resolver`](@green-stack-core/generators/add-resolver)
+- [`add-generator`](@green-stack-core/generators/add-generator)
+- [`add-form`](@green-stack-core/generators/add-form)
+
+## Using generators programmatically
+
+### Bypassing prompts in the terminal
+
+Any generator in the project can be called from the terminal with pre-filled answers to the prompts. This will bypass the question being asked.
+
+```md
+npx turbo gen <generator-name> --args <answer-1> <answer-2> <answer_3> ...
+```
+
+This also works with some of the npm scripts predefined in the project, but you'll need to pass the `--` argument to separate the npm script arguments from the npm command line arguments, e.g.:
+
+```md
+npm run add:schema -- --args <workspacePath> <name> <description>
+```
+
+Take note that the order of the arguments is important.
+
+Pass them in the order they are defined as prompts in the generator / asked without providing them.
+
+If you pass too little arguments, the generator will simply ask you to answer the rest of the questions.
+
+> You can also pass `_` instead of an answer to an argument to still have that specific question asked, e.g:
+
+```md
+npx turbo gen <generator-name> --args <answer-1> _ <answer_3> ...
+```
+
+```md
+npm run add:schema -- --args 'packages/@app-core' _ 'Some New Schema'
+
+>>> ? What is the name of the schema?
+```

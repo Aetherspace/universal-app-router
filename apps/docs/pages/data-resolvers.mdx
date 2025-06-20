@@ -1,5 +1,10 @@
 import { FileTree, Steps } from 'nextra/components'
 import { Image } from '@app/primitives'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Intro - Resolvers and APIs
+</TitleWrapper>
 
 <Image
     src={require('@app/assets/green-stack-logo.png')}
@@ -16,11 +21,11 @@ import { Image } from '@app/primitives'
  └── /resolvers/... # <- Reusable back-end logic goes here
 ```
 
-> To get an idea of API design in portable workspaces, open the file tree below:
+> To get an idea of API design in portable workspaces, inspect the file tree below:
 
 <FileTree>
-    <FileTree.Folder name="@some-feature">
-        <FileTree.Folder name="schemas" defaultOpen>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas">
             <FileTree.File name="Post.schema.ts" />
         </FileTree.Folder>
         <FileTree.Folder name="resolvers" defaultOpen>
@@ -178,7 +183,7 @@ Let's use the data bridge we just created to bundle together the input and outpu
 
 You can do so by creating a new resolver file and passing the bridge as the final arg to `createResolver` at the end. The first argument is your resolver function containing your business logic:
 
-```ts {7, 14, 22} /updatePostBridge/ /createResolver/1,3 filename="updatePost.resolver.ts"
+```ts {7, 17, 22} /updatePostBridge/ /createResolver/1,3 filename="updatePost.resolver.ts" copy
 import { createResolver } from '@green-stack/schemas/createResolver'
 import { updatePostBridge } from './updatePost.bridge'
 import { Posts } from '@db/models'
@@ -271,9 +276,11 @@ What `createNextRouteHandler()` does under the hood:
 
 > Check [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) to understand supported exports (like `GET` or `POST`) and their options.
 
-> Restart your dev server or run `npm run collect:routes` to make sure your new API route is available.
+> Restart your dev server or run `npm run link:routes` to make sure your new API route is available.
 
 ### GraphQL, without the hassle
+
+![](https://fullproduct.dev/blog-assets/imgs/schema-from-zod.jpg)
 
 API routes are fine, but we think GraphQL is even better, **if you don't have to deal with the hassle of managing it.** So we made it quite easy to enable GraphQL for your resolvers. The flow is quite similar.
 
@@ -282,7 +289,7 @@ API routes are fine, but we think GraphQL is even better, **if you don't have to
 ```ts {3, 11} filename="features / @app-core / routes / api / health / route.ts"
 import { updatePost } from '@app/resolvers/updatePost.resolver'
 import { createNextRouteHandler } from '@green-stack/schemas/createNextRouteHandler'
-import { createGraphResolver } from '@green-stack/sck,nhemas/createGraphResolver'
+import { createGraphResolver } from '@green-stack/schemas/createGraphResolver'
 
 /* --- Routes ------------ */
 
@@ -303,7 +310,7 @@ This will:
 
 You can now check out your GraphQL API playground at [/api/graphql](http://localhost:3000/api/graphql)
 
-![Apollo Server GraphQL Playground Preview](https://github.com/Aetherspace/universal-app-router/assets/5967956/3b6b1d98-1228-44a4-aaa0-968664a027c3)
+![Apollo Server GraphQL Playground Preview](https://github.com/FullProduct-dev/universal-app-router/assets/5967956/3b6b1d98-1228-44a4-aaa0-968664a027c3)
 
 ### Optional - Add a universal fetcher
 

@@ -1,7 +1,11 @@
-
 import { FormsScreen, getDocumentationProps } from '@app/screens/FormsScreen'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## FormsScreen
+</TitleWrapper>
 
 # FormsScreen
 
@@ -9,12 +13,28 @@ import { FileTree, Callout } from 'nextra/components'
 import { FormsScreen } from '@app/screens/FormsScreen'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={FormsScreen}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## FormsScreen Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `FormsScreen` component in the following location:
 
@@ -27,6 +47,10 @@ You can find the source of the `FormsScreen` component in the following location
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

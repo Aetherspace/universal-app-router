@@ -4,7 +4,7 @@ import nextra from 'nextra'
 const withNextra = nextra({
     theme: "nextra-theme-docs",
     themeConfig: "./docs.theme.jsx",
-});
+})
 
 import mainNextConfig from '@app/next/next.config.base.cjs'
 

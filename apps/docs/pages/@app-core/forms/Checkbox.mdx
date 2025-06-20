@@ -1,7 +1,11 @@
-
 import { Checkbox, getDocumentationProps } from '@app/forms/Checkbox.styled'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## Checkbox
+</TitleWrapper>
 
 # Checkbox
 
@@ -9,12 +13,97 @@ import { FileTree, Callout } from 'nextra/components'
 import { Checkbox } from '@app/forms/Checkbox.styled'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={Checkbox}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## Checkbox Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+    ### Props Schema
+</TitleWrapper>
+
+<details>
+<summary>Show Props Schema</summary>
+
+```typescript copy
+const CheckboxProps = z.object({
+    checked: z
+        .boolean()
+        .optional(),
+    label: z
+        .string()
+        .optional()
+        .example("Label"),
+    disabled: z
+        .boolean()
+        .optional(),
+    hasError: z
+        .boolean()
+        .optional(),
+    className: z
+        .string()
+        .optional(),
+    checkboxClassName: z
+        .string()
+        .optional(),
+    indicatorClassName: z
+        .string()
+        .optional(),
+    labelClassName: z
+        .string()
+        .optional(),
+    hitSlop: z
+        .number()
+        .default(6),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+### Props Type
+</TitleWrapper>
+
+<details>
+<summary>Show Props Types</summary>
+
+```typescript copy
+{
+    checked?: boolean;
+    label?: string | undefined;
+    disabled?: boolean;
+    hasError?: boolean;
+    className?: string | undefined;
+    checkboxClassName?: string | undefined;
+    indicatorClassName?: string | undefined;
+    labelClassName?: string | undefined;
+    hitSlop?: number;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `Checkbox` component in the following location:
 
@@ -27,6 +116,10 @@ You can find the source of the `Checkbox` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

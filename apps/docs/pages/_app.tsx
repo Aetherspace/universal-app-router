@@ -1,27 +1,31 @@
 import type { AppProps } from 'next/app'
 import React, { useEffect } from 'react'
 import { useTheme } from 'nextra-theme-docs'
-import { useColorScheme } from 'nativewind' // @ts-ignore
+import { useColorScheme } from 'nativewind'
 import UniversalAppProviders from '@app/screens/UniversalAppProviders'
 import ServerStylesProvider from '@app/next/app/ServerStylesProvider'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ComponentDocsContextManager } from '@app/core/mdx/ComponentDocs'
 import { Image as NextContextImage } from '@green-stack/components/Image.next'
 import { Link as NextContextLink } from '@green-stack/navigation/Link.next'
+import { useRouter as useNextRouter } from 'next/router'
 import { useRouter as useNextContextRouter } from '@green-stack/navigation/useRouter.next'
 import { useRouteParams as useNextRouteParams } from '@green-stack/navigation/useRouteParams.next'
 import '@app/next/global.css'
 
+/* --- </App> ---------------------------------------------------------------------------------- */
+
 export default function App({ Component, pageProps }: AppProps) {
     // Navigation
     const nextContextRouter = useNextContextRouter()
+    const nextRouter = useNextRouter()
 
     // Styles
     const theme = useTheme()
     const scheme = useColorScheme()
     const resolvedTheme = theme.resolvedTheme || theme.systemTheme
 
-    // -- Effects --
+    // -- Theme Effects --
 
     useEffect(() => {
         // Figure out the theme and apply it

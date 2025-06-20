@@ -1,4 +1,4 @@
 
 export default {
-    Button: 'Button',
+    'Button': 'Button',
 }

@@ -1,7 +1,11 @@
-
 import { Button, getDocumentationProps } from '@app/components/Button'
 import { ComponentDocs } from '@app/core/mdx/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## Button
+</TitleWrapper>
 
 # Button
 
@@ -9,12 +13,129 @@ import { FileTree, Callout } from 'nextra/components'
 import { Button } from '@app/components/Button'
 ```
 
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
 <ComponentDocs
     component={Button}
     docsConfig={getDocumentationProps}
-/>
+>
+    ## Button Props
+</ComponentDocs>
 
-### Location
+<div className="h-8" />
+
+<TitleWrapper>
+    ### Props Schema
+</TitleWrapper>
+
+<details>
+<summary>Show Props Schema</summary>
+
+```typescript copy
+const ButtonProps = z.object({
+    type: z
+        .enum(["primary", "secondary", "outline", "link", "warn", "danger", "info", "success"])
+        .default("primary"),
+    text: z
+        .string()
+        .optional()
+        .example("Press me"),
+    size: z
+        .enum(["sm", "md", "lg"])
+        .default("md"),
+    href: z
+        .string()
+        .url()
+        .optional()
+        .example("https://fullproduct.dev"),
+    iconLeft: z
+        .enum(["AddFilled", "ArrowLeftFilled", "ArrowRightFilled", "CheckFilled", "ChevronDownFilled", "ChevronUpFilled", "RemoveFilled", "UndoFilled"])
+        .optional()
+        .describe("Name of an icon registered in the icon registry"),
+    iconRight: z
+        .enum(["AddFilled", "ArrowLeftFilled", "ArrowRightFilled", "CheckFilled", "ChevronDownFilled", "ChevronUpFilled", "RemoveFilled", "UndoFilled"])
+        .optional()
+        .example("ArrowRightFilled")
+        .describe("Name of an icon registered in the icon registry"),
+    disabled: z
+        .boolean()
+        .optional(),
+    fullWidth: z
+        .boolean()
+        .optional(),
+    className: z
+        .string()
+        .optional(),
+    textClassName: z
+        .string()
+        .optional(),
+    iconSize: z
+        .number()
+        .default(16),
+    hitSlop: z
+        .number()
+        .default(10),
+    target: z
+        .enum(["_blank", "_self", "_parent", "_top"])
+        .default("_self")
+        .example("_blank"),
+    replace: z
+        .boolean()
+        .optional(),
+    push: z
+        .boolean()
+        .optional(),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+### Props Type
+</TitleWrapper>
+
+<details>
+<summary>Show Props Types</summary>
+
+```typescript copy
+{
+    type?: "primary" | "secondary" | "outline" | "link" | "warn" | "danger" | "info" | "success";
+    text?: string;
+    size?: "sm" | "md" | "lg";
+    href?: string | undefined;
+    /** Name of an icon registered in the icon registry */
+    iconLeft?: ("AddFilled" | "ArrowLeftFilled" | "ArrowRightFilled" | "CheckFilled" | "ChevronDownFilled" | "ChevronUpFilled" | "RemoveFilled" | "UndoFilled") | undefined;
+    /** Name of an icon registered in the icon registry */
+    iconRight?: ("AddFilled" | "ArrowLeftFilled" | "ArrowRightFilled" | "CheckFilled" | "ChevronDownFilled" | "ChevronUpFilled" | "RemoveFilled" | "UndoFilled") | undefined;
+    disabled?: boolean;
+    fullWidth?: boolean;
+    className?: string | undefined;
+    textClassName?: string | undefined;
+    iconSize?: number;
+    hitSlop?: number;
+    target?: "_blank" | "_self" | "_parent" | "_top";
+    replace?: boolean | undefined;
+    push?: boolean | undefined;
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
 
 You can find the source of the `Button` component in the following location:
 
@@ -27,6 +148,43 @@ You can find the source of the `Button` component in the following location:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
+
+## Developer Notes
+
+### `children` vs `text` prop
+
+You can pass either `props.children` or `props.text` to the Button component. If you pass `props.children`, it will render the children as the button content. This supports JSX and other React Components. Whereas `props.text` only supports actual text strings.
+
+If you pass both, `props.children` will be used instead `props.text`.
+
+### `style` prop
+
+Instead of using just `className`, you can also pass a `style` prop. We will combine the styles from `className` and `style` props. This allows you to use inline styles for dynamic styling while still applying CSS classes.
+
+If both classNames and `style` prop influence the same style, the `style` prop will take precedence.
+
+### `onPress` event handlers
+
+Just like react-native's Pressable, our `Button` component supports the `onPress` prop, alongside other event handlers:
+
+- [`onPress()`](https://reactnative.dev/docs/pressable#onpress) - Called when a touch is released.
+- [`onPressIn()`](https://reactnative.dev/docs/pressable#onpressin) - Called when a touch is initiated.
+- [`onPressOut()`](https://reactnative.dev/docs/pressable#onpressout) - Called when a touch is released, after `onPressIn`.
+- [`onHoverIn()`](https://reactnative.dev/docs/pressable#onhoverin) - Called when the pointer enters the button area.
+- [`onHoverOut()`](https://reactnative.dev/docs/pressable#onhoverout) - Called when the pointer leaves the button area.
+- [`onLongPress()`](https://reactnative.dev/docs/pressable#onlongpress) - Called when a long press gesture is detected.
+- [`onBlur()`](https://reactnative.dev/docs/pressable#onblur) - Called when the button loses focus.
+- [`onFocus()`](https://reactnative.dev/docs/pressable#onfocus) - Called when the button gains focus.
+
+Naturally, when `props.disabled` is `true`, all event handlers will be ignored.
+
+If you pass both `href` and `onPress` props, we will try to execute both. Giving preference to the `onPress` handler first.
+
+<div className="h-8" />
+
+## Other
 
 ### Disclaimer - Automatic Docgen
 

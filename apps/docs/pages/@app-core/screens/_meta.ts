@@ -1,4 +1,4 @@
 
 export default {
-    FormsScreen: 'FormsScreen',
+    'FormsScreen': 'FormsScreen',
 }

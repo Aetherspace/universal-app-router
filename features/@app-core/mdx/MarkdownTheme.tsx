@@ -24,7 +24,7 @@ const MarkdownTheme = ({ children }: MarkdownThemeProps) => {
                 ul={(props) => <View className="p-0" {...props} />}
                 li={(props) => <Text className="mb-4" {...props} />}
                 blockquote={(props) => <View className="border-l-4 border-gray-300 text-base pl-4 pt-1 leading-6" {...props} />}
-                a={(props) => <Link className="mt-4 text-base underline text-center max-w-full overflow-hidden" {...props} />}
+                a={(props) => <Link className="mt-4 text-base underline text-center max-w-full overflow-hidden" target="_blank" {...props} />}
                 img={(props) => <MarkdownImage {...props} styles={styles.img} />}
             >
                 {children}

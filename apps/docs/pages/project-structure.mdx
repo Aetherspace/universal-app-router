@@ -37,7 +37,11 @@ There's two main reasons why the starterkit is structured this way:
 
 2. It facilitates **architecting for copy-paste**. A workspace folder within a monorepo is the ideal unit of work to copy and paste between projects. You define your custom code and the dependencies it needs in a single folder, and can then consume it in another workspace. Colocating the UI / API / models / schemas / utils / constants / resolvers / components / hooks for a single, portable, feature.
 
+![](https://fullproduct.dev/blog-assets/imgs/colocate-by-feature-workspaces.jpg)
+
 ## Monorepo workspaces
+
+![](https://fullproduct.dev/blog-assets/imgs/reusing-features-in-apps.jpg)
 
 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '24px' }}>
     Note on terminology
@@ -293,6 +297,8 @@ https://turbo.build/repo/docs/crafting-your-repository/configuring-tasks
 
 ### Speed up development with Turborepo generators
 
+![](https://fullproduct.dev/blog-assets/imgs/skip-boilerplate-with-codegen.jpg)
+
 Turborepo comes out of the box with a [code generator system](https://turbo.build/repo/docs/guides/generating-code).
 
 For exmaple, to add a new workspace interactively, we've added a generator:
@@ -329,6 +335,8 @@ npx turbo gen # interactive list to pick from
 ❯ add-dependencies: Install Expo SDK compatible deps
   add-workspace: Create new feature or package workspace 
 ```
+
+> More about FullProduct.dev specific generators on our [generators page](/generators).
 
 ## The registry pattern
 
