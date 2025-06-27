@@ -17,7 +17,7 @@ import { createPrompts, toOptions, createOptionLookup } from '../scripts/helpers
 
 const { PATH_PKGS } = parseWorkspaces('./')
 const workspaceOptions = getWorkspaceOptions('./')
-const availableSchemas = getAvailableSchemas('./')
+const availableSchemas = getAvailableSchemas('./', { includeOptOut: true })
 
 const GraphQlResolverOption = `GraphQL resolver` as const
 const GetApiRouteOption = `GET api route` as const
@@ -587,8 +587,8 @@ export const registerResolverGenerator = (plop: PlopTypes.NodePlopAPI) => {
                         `${ctx.workspacePath}/resolvers/${ctx.resolverBrigeFileName}.ts`,
                         `${ctx.workspacePath}/resolvers/${ctx.resolverFileName}.ts`,
                         `${ctx.workspacePath}/resolvers/${ctx.fetcherFileName}.ts`,
-                        ctx.generatables?.includes('formHook') ? `${ctx.workspacePath}/hooks/${ctx.formHookFileName}.ts` : undefined,
-                    ],
+                        ctx.generatables?.includes('formHook') && `${ctx.workspacePath}/hooks/${ctx.formHookFileName}.ts`,
+                    ].filter(Boolean),
                 },
             ] as PlopTypes.ActionType[]
 
