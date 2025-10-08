@@ -1,5 +1,5 @@
 import { isEmpty } from '@green-stack/utils/commonUtils'
-import { featureMeta, packageMeta } from '@app/registries/workspaceImports.generated'
+import { featureMeta, packageMeta, pluginMeta } from '@app/registries/workspaceImports.generated'
 
 /* --- Top Level Sidebar ----------------------------------------------------------------------- */
 
@@ -74,6 +74,17 @@ export const meta = {
     } : {}),
 
     ...packageMeta,
+
+    // -- Plugins --
+
+    ...(!isEmpty(pluginMeta) ? {
+        '-- Plugins': {
+            'type': 'separator',
+            'title': 'Plugins',
+        },
+    } : {}),
+
+    ...pluginMeta,
 
     // -- EndPadding --
 

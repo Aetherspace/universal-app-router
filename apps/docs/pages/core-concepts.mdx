@@ -26,6 +26,8 @@ This document will cover the **core concepts that make this starterkit unique**:
 
 ## Universal, from the start
 
+![It's a lot harder and costly to add a mobile app later than it is to start universally](https://fullproduct.dev/blog-assets/imgs/start-universally.jpg)
+
 It's a lot harder to add a mobile app later, than to build for web and app stores from the start.
 
 Luckily, in Next.js web-apps, as well as iOS and Android apps with Expo, using `react-native` for the UI layer will keep your code mostly write-once.
@@ -54,11 +56,15 @@ On mobile, your **app icon** is now listed on their phone, taking up valuable sc
 
 ### Universal (Deep)links
 
+![Example slide of combining Next.js and Expo app routers to provide universal deeplinking](https://fullproduct.dev/blog-assets/imgs/combining-app-routers.jpg)
+
 Our shared digital experience thrives on links. Expo-router is the *first ever url based routing system for mobile*. Deeplinking, where you set up your mobile app to **open the right screen for specific URLs**, happens automatically in Expo-router. When people share anything from the app or the web version, the links will just work. Whether they've installed the app or not.
 
 Once users learn they can just share links, it turns existing users into ambassadors.
 
 ### More with less
+
+![Write-once + Universal UI title image](https://fullproduct.dev/blog-assets/imgs/write-once-universal-ui.jpg)
 
 Even if you're just freelancing or working as a digital product studio, you'll be able to deliver the same app on multiple platforms. This can give you the advantage you need to win more clients. Or you could charge a premium for the same amount of work.
 
@@ -86,6 +92,8 @@ Expo has made starting, building, testing, deploying, submitting and updating re
 The dream of React has always been "write-once, use anywhere". For now, react-native and react-native-web gets us 90% of the way there. In the future, things like react-strict-dom will likely bump that number up higher. Until then, pairing react-native with Nativewind or a full-blown universal styling system like Tamagui seems like the way to go.
 
 ### Universal Data Fetching with GraphQL
+
+![Slide on how GraphQL enables you to use the same query and way of fetching on server, browser and mobile](https://fullproduct.dev/blog-assets/imgs/universal-reusable-graphql-queries.jpg)
 
 GraphQL's ability to **query data from the server, browser and mobile** puts it in the unique position to service all three platforms. Paired with `react-query` for optimizing the caching of queries, and [gql.tada 🪄](https://gql-tada.0no.co/get-started/#a-demo-in-128-seconds) for auto inferring types from the schema + query definitions, integrated with a universal router, and you have a great universal initial data fetching solution. Type-safe end to end.
 
@@ -124,6 +132,8 @@ It's a stack you can stick, evolve and perfect your craft with for a longer peri
 
 ## Single Sources of Truth
 
+![Tweet by Matt Pocock saying that the right abstraction can often save you weeks of time](https://fullproduct.dev/blog-assets/imgs/matt-pocock-right-abstractions.jpg)
+
 Think of all the places you may need to (re)define the shape of data.
 
 - ✅ Types
@@ -157,11 +167,11 @@ With the hardest 2 of 8 data definition scenario's tackled, the starterkit comes
 
 ### Zod for Automatic docs
 
+![Quote by Storybook that documentation drives adaption](https://fullproduct.dev/blog-assets/imgs/docs-drive-adoption.jpg)
+
 Writing documentation is essential, *but often requires time teams feel they don't have.*
 
-Any successfull project will eventually need documentation though. Especially if you want others to build on top of your work:
-
-> "**Documentation Drives Adoption**" - Storybook
+Any successfull project will eventually need documentation though. Especially if you want others to build on top of your work.
 
 Once it's time to scale up the team, you'll definitely want them. Ideally, you can onboard new devs rather quickly so they can add value sooner. Good docs reduce how much mentoring new people need from your senior developers.
 
@@ -185,6 +195,8 @@ More about this pattern in the [Single Sources of Truth](/single-sources-of-trut
 <div className="h-8" />
 
 ## Design features for copy-paste
+
+![Example Workspace Folder structure for copy-pasteable architecture, where each feature has it's own components, utils, resolvers and even routes](https://fullproduct.dev/blog-assets/imgs/colocate-by-feature-workspaces.jpg)
 
 What tools like Tailwind and Shad-CN enabled for copy-pasting components, we aim to replicate for entire features and domains.
 
@@ -352,7 +364,9 @@ Finally, PR based plugins solve common issues with other templates:
 
 - ✅ Pick and choose your own preferred tech stack
 
-### Workspace Drivers - Pick your own DB / Auth / Mail / ...
+<Hidden actuallyHidden>
+
+######## Workspace Drivers - Pick your own DB / Auth / Mail / ...
 
 Drivers are a way to abstract away the specific implementation of e.g. your specific database, storage or authentication system. This allows you to switch between different implementations without changing the rest of your code.
 
@@ -451,7 +465,11 @@ Drivers and plugins within the starterkit's Way of Working have been designed to
 
 <div className="h-8" />
 
+</Hidden>
+
 ## Maximizing time saved
+
+![Title slide with 6 ways to save time as a developer: Setup, keeping things write-one, using the right abstractions, quick feedback loops, codegen, reusability](https://fullproduct.dev/blog-assets/imgs/tip-5-proper-codegen.jpg)
 
 > The big difference between a weekend boilerplate and a value adding starterkit is how far it goes to save you time.
 
@@ -470,6 +488,8 @@ There are **more ways to save time as a developer** though. To recap our core co
 
 ### Generators to skip boilerplate
 
+![Comparison slide of code generators vs. AI codegen. Where you have much more control over the result with regular generators, but that AI codegen can actually write the business logic as well](https://fullproduct.dev/blog-assets/imgs/generators-vs-ai.jpg)
+
 This zod-based way of working, combined with the predictability of file-system based routing, can lead to some huge time saved when you automate the repetitive parts.
 
 The starterkit comes with a number of generators that can help you skip the repetitive boilerplate code and manual linking of files and objects when creating new features:
@@ -484,8 +504,6 @@ The starterkit comes with a number of generators that can help you skip the repe
 <Hidden>- `npx turbo gen domain` - Like `gen workspace` on steroids, full domain with all the above</Hidden>
 
 ### AI -- Codegen +
-
-![](https://fullproduct.dev/blog-assets/imgs/generators-vs-ai.jpg)
 
 Using generators can be a safe way to quickly set-up the boilerplate and linking, and you could have AI fill in the blanks of the business logic.
 

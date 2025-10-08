@@ -1,6 +1,7 @@
 import { FileTree } from 'nextra/components'
 import { View, Image } from '@app/primitives'
 import { ImageZoom } from 'nextra/components'
+import { Hidden } from '../components/Hidden'
 
 <Image
     src={require('@app/assets/green-stack-logo.png')}
@@ -10,7 +11,7 @@ import { ImageZoom } from 'nextra/components'
     unoptimized
 />
 
-# GREEN stack quickstart
+# FullProduct.dev - Quickstart
 
 <View className="h-6" />
 
@@ -29,9 +30,13 @@ This quickstart covers a few topics:
 
 ## Start for Web *+* App Stores with [FullProduct.dev](https://fullproduct.dev) ⚡️
 
-**Fork or generate** a new repo from the [green-stack-starter](https://github.com/FullProduct-dev/green-stack-starter-demo) repo and **include all branches** to enable plugins later.
+```bash copy
+npx @fullproduct/universal-app init
+```
 
-Github will generate a copy of the template repo to customize.  
+Or, manually through GitHub: [![Create new project button](https://img.shields.io/badge/Create%20New%20Project-gray)](https://github.com/new?template_name=green-stack-starter-demo&template_owner=FullProduct-dev&visibility=private&use_v2_form=true&description=🚧%20Make%20sure%20to%20run%20`npx%20@fullproduct/universal-app%20sync`%20to%20attach%20the%20starterkit%27s%20git%20history%20💡%20Run%20`npx%20@fullproduct/universal-app%20install%20plugins`%20afterwards%20to%20expand%20your%20setup)
+
+Our init command will generate a new project from our GREEN stack starterkit.  
 It comes out of the box with setup for:
 
 - ✅ **Next.js web app** (file based app dir routing, SSR, SSG, ...)
@@ -41,12 +46,16 @@ It comes out of the box with setup for:
 - ✅ **Generators** and **automation** to generate files, API's & component docs
 - ✅ **Docs** and **recommended way of working** for the starterkit and its features and plugins
 
+<Hidden>
+
 > Optionally, have a look at some plugin branches:
 
 - Github actions for automatic mobile deployments
 - Linting and prettifying your code
 - Automatic interactive docs generation for features you develop
 - Email, Authentication, Payments, Storage and more 🙌
+
+</Hidden>
 
 ### Up and running in no time
 

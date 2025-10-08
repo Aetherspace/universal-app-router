@@ -739,13 +739,41 @@ const regenerateDocs = async () => {
     try {
 
         // Keep track of metadata
-        const workspaceMeta = { features: {}, packages: {} } as Record<string, Record<string, string>>
+
+        const workspaceMeta = {
+            apps: {},
+            features: {},
+            packages: {},
+            plugins: {},
+        } as Record<string, Record<string, string>>
+
         const metaFilesTree = {} as Record<string, Record<string, string>>
-        const addWorkspaceMeta = (workspacePath: string) => {
+
+        const addWorkspaceMeta = (
+            workspacePath: string,
+            forceWorkspaceType?: 'apps' | 'features '| 'packages' | 'plugins',
+        ) => {
             const workspaceName = PATH_PKGS[workspacePath]
-            const [workspaceType, workspaceFolder] = workspacePath.split('/')
+            let [workspaceType, workspaceFolder] = workspacePath.split('/')
+            if (forceWorkspaceType) workspaceType = forceWorkspaceType
+            if (workspaceMeta['plugins'][workspaceFolder]) workspaceType = 'plugins' // Override
             workspaceMeta[workspaceType][workspaceFolder] = workspaceName
         }
+
+        // ----------------------------------------------------------------------------------------
+        // -i- Keep track of which workspaces are plugins first
+        // ----------------------------------------------------------------------------------------
+
+        const appPluginPaths = globRel('../../apps/**/README.plugin.mdx')
+        const featurePluginPaths = globRel('../../features/**/README.plugin.mdx')
+        const packagePluginPaths = globRel('../../packages/**/README.plugin.mdx')
+        const allPluginPaths = [...appPluginPaths, ...featurePluginPaths, ...packagePluginPaths]
+
+        allPluginPaths.map((pluginPath) => {
+            const filePath = pluginPath.replaceAll('../', '') // e.g. 'features/@app-core/README.plugin.mdx'
+            const workspacePath = filePath.split('/').slice(0, 2).join('/') // e.g. 'features/@app-core'
+            addWorkspaceMeta(workspacePath, 'plugins')
+        })
 
         // ----------------------------------------------------------------------------------------
         // -i- Clear existing autogenerate package / feature docs
@@ -768,7 +796,7 @@ const regenerateDocs = async () => {
         const featureReadMePaths = globRel('../../features/**/README.md')
         const packageReadMePaths = globRel('../../packages/**/README.md')
         const allReadMePaths = [...featureReadMePaths, ...packageReadMePaths]
-        const allCustomDocsPaths = [...allMdxDocsPaths, ...allReadMePaths]
+        const allCustomDocsPaths = [...allPluginPaths, ...allMdxDocsPaths, ...allReadMePaths]
 
         const customDocsTree = allCustomDocsPaths.reduce((acc, customDocsPath) => {
 
@@ -1112,11 +1140,14 @@ const regenerateDocs = async () => {
         // Write package aliases to registries
         const hasFeatureMeta = Object.keys(workspaceMeta.features).length > 0
         const hasPackageMeta = Object.keys(workspaceMeta.packages).length > 0
+        const hasPluginMeta = Object.keys(workspaceMeta.plugins).length > 0
         const featureMeta = hasFeatureMeta ? JSON.stringify(workspaceMeta.features, null, 4) : '{}'
         const featureMetaLines = `export const featureMeta = ${featureMeta}`
         const packageMeta = hasPackageMeta ? JSON.stringify(workspaceMeta.packages, null, 4) : '{}'
         const packageMetaLines = `export const packageMeta = ${packageMeta}`
-        const workspaceImportsFile = [featureMetaLines, packageMetaLines].join('\n\n')
+        const pluginMeta = hasPluginMeta ? JSON.stringify(workspaceMeta.plugins, null, 4) : '{}'
+        const pluginMetaLines = `export const pluginMeta = ${pluginMeta}`
+        const workspaceImportsFile = [featureMetaLines, packageMetaLines, pluginMetaLines].join('\n\n')
         fs.writeFileSync('../../packages/@registries/workspaceImports.generated.ts', workspaceImportsFile)
 
     } catch (err) {

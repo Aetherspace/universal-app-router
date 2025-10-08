@@ -252,6 +252,15 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
         }
     }, [createKey(previewProps || props.docsConfig.previewProps), showCode])
 
+    // -- Effects --
+
+    useEffect(() => {
+        if (didCopy) {
+            const timeout = setTimeout(() => setDidCopy(false), 5000)
+            return () => clearTimeout(timeout)
+        }
+    }, [didCopy])
+
     // -- Code --
 
     const filteredPropLines = Object.entries(previewProps).map(([key, value]) => {
@@ -303,9 +312,15 @@ export const ComponentDocsPreview = (props: ComponentDocsProps) => {
                     className="p-8 border border-t-0 border-gray-500 rounded-t-none rounded-b-xl mt-[-24px]"
                 >
                     <Pressable
-                        className="absolute bottom-0 right-0 mb-[1px] mr-[1px] p-2 rounded-tl-md rounded-br-xl bg-zinc-900 border-t border-l border-gray-500"
+                        className="absolute bottom-0 right-0 mb-[1px] mr-[1px] p-2 rounded-tl-md rounded-br-xl bg-zinc-900 border-t border-l border-gray-500 flex-row items-center"
                         onPress={() => { navigator.clipboard.writeText(jsxCode); setDidCopy(true); }}
                     >
+                        <Icon
+                            name={didCopy ? 'CheckFilled' : 'CopyIcon'}
+                            size={12}
+                            color="#FFFFFF"
+                        />
+                        <View className='w-1' />
                         <Text className="text-white select-none">
                             {didCopy ? 'Copied' : 'Copy Code'}
                         </Text>

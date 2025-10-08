@@ -16,6 +16,7 @@ export type CodeBlockProps = {
 /* --- <CodeBlock/> ---------------------------------------------------------------------------- */
 
 export const CodeBlock = (props: CodeBlockProps) => {
+    
     // Props
     const { code, lang = 'jsx', className, children } = props
 

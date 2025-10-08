@@ -19,7 +19,7 @@ const MarkdownScreen = () => {
         <ScrollView className="bg-background">
             <StatusBar style={scheme.colorScheme === 'light' ? 'dark' : 'light'} />
             <View className="flex flex-col justify-center items-center bg-background">
-                <View className="h-20 ios:h-24 android:h-24" />
+                <View className="h-20 ios:h-28 android:h-28" />
                 <View className="relative flex flex-col w-full items-start px-4 max-w-[600px]">
                     <MarkdownTheme>
                         <ReadMe />
@@ -29,7 +29,7 @@ const MarkdownScreen = () => {
             </View>
             <BackButton
                 backLink="/subpages/Universal%20Nav"
-                color={getThemeColor('--primary')}
+                color={getThemeColor('--primary', 'dark')}
             />
         </ScrollView>
     )

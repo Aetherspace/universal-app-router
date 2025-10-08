@@ -5,3 +5,5 @@ export const featureMeta = {
 export const packageMeta = {
     "@green-stack-core": "@green-stack/core"
 }
+
+export const pluginMeta = {}
