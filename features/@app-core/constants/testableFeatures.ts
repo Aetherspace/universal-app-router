@@ -2,11 +2,15 @@
 export const testableFeatures = [
     {
         title: 'Test Images?',
-        link: '/demos/images'
+        description: 'Universal Images, platform optimized',
+        link: '/demos/images',
+        icon: '📷',
     },
     {
         title: 'Test Forms?',
-        link: '/demos/forms'
+        description: 'Zod based Form Management',
+        link: '/demos/forms',
+        icon: '📝',
     },
     {
         title: 'Test Markdown?',
