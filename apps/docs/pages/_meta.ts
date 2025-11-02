@@ -18,7 +18,7 @@ export const meta = {
     },
 
     'universal-routing': 'Cross-Platform Routing',
-    'write-once-styles': 'Styling Universal UI',
+    'write-once-styles': 'Write-once Universal UI',
     'data-resolvers': 'Flexible Resolvers and API\'s',
     'data-fetching': 'Universal Data Fetching',
     'form-management': 'Form Management',
@@ -31,6 +31,7 @@ export const meta = {
     },
 
     'app-config': 'Env Vars + App Config',
+    'workspace-drivers': 'Workspace Drivers',
 
     // -- Portability --
 
@@ -50,8 +51,9 @@ export const meta = {
     },
 
     // 'automations': 'Scripts and Automations',
-    'generators': 'Code Generators',
-    // 'git-based-plugins': 'Git based Plugins',
+    'generators': 'Turbo Code Generators',
+    'automatic-docgen': 'Automatic Docgen',
+    'git-based-plugins': 'Git Based Plugins',
 
     // -- Features --
 

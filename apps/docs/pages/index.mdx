@@ -26,7 +26,7 @@ This quickstart covers a few topics:
 - **[The GREEN stack + write once, render anywhere](#the-green-stack)** way of working
 - **[Zod for Single sources of truth](#zod-for-single-sources-of-truth)** - Defining **portable data shapes** for UIs, APIs and beyond
 - **[Universal Data Fetching](#universal-routes--data-fetching)** - Using `react-query` and e.g. GraphQL (without the hassle)
-- Git / PR based plugins to **[Pick your own Auth / DB / Mail / Storage / ...](#powerful-results-)**
+- Git / PR based [plugins](/git-based-plugins.mdx) to **[Pick your own Auth / DB / Mail / Storage / ...](#powerful-results-)**
 
 ## Start for Web *+* App Stores with [FullProduct.dev](https://fullproduct.dev) ⚡️
 
@@ -847,7 +847,7 @@ Following these instructions has provided us with a **bunch of value** in **litt
 
 ---
 
-### Next steps and plugins 🚀
+### Next steps and plugins 🚀 *-- more coming soon*
 
 Now that you know how to build write-once cross-platform apps, why not dive into the [Core Concepts](/core-concepts) section next? It will give you a deeper understanding of how to get the most out of this starterkit.
 
@@ -855,18 +855,20 @@ Now that you know how to build write-once cross-platform apps, why not dive into
 
 __In the near future__ (🔵/⏳), you can expand the core setup with **ready to merge `git based plugins`**, so you can **pick and choose the rest of your stack**:
 
-- 🔵 Database: `Supabase` / `Prisma` / `Drizzle` / `✅ Mongoose` / ...?
-- 🔵 Authentication: `Clerk` / `Kinde` / `Supabase` / custom?
-- 🔵 Payments: `Stripe` / `Lemonsqueezy` / other?
+- 🔵 Database: `Supabase` / `Convex` / `Drizzle` / `Mongoose` / ...?
+- 🔵 Authentication: [`Clerk`](https://fullproduct.dev/docs/@auth-clerk/README) ✅ / `Kinde` / `Supabase` / custom?
+- 🔵 Payments: [`Stripe`](https://fullproduct.dev/docs/@payments-stripe/README) ✅ / `Lemonsqueezy` / other?
 - 🔵 Email: `react-email` + `Resend` / `Mailgun` / ...?
 - 🔵 Storage: `UploadThing` / `Supabase` / ...?
 - 🔵 UI kit: `Tamagui` / `Gluestack` / ...?
 
-If none of these options work for you, feel free to add what you're familiar with.
+If none of the available options (✅) work for you, you can [add what you're familiar with](/git-based-plugins#build-your-own-plugins) to your fork of the starter.
+
+Alternatively, check our [Public Roadmap](https://fullproductdev.featurebase.app/roadmap) to see our progress with building these.
 
 Our core is the GREEN stack and we make absolutely no assumptions about the rest of your stack.
 
-> We will provide plugins with [zod based drivers](TODO) for the most popular options (listed above). Drivers and plugins are entirely optional and can be completely ignored if you don't need them.
+> We will provide plugins with [zod based drivers](/workspace-drivers) for the most popular options (listed above). Drivers and plugins are entirely optional and can be completely ignored if you don't need them.
 
 So, merge what you're familiar with, or check out the individual PR's to test and learn how they differ before making a decision.
 
