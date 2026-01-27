@@ -15,7 +15,18 @@ import { Hidden } from '../components/Hidden'
 
 <View className="h-6" />
 
-<ImageZoom src="https://fullproduct.dev/full-product-dev-bento.jpg" />
+<div className="w-full md:max-w-[640px]">
+    <div className="relative pt-[56.25%]"> {/* 16:9 aspect ratio */}
+        <iframe
+            className="absolute inset-0 h-full w-full rounded-lg"
+            src="https://www.youtube.com/embed/wCNDcxYhRbg?si=T3nswwlkGbcnNxsy"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+        />
+    </div>
+</div>
 
 > **Welcome to FullProduct.dev!** 🙌  
 > This guide will help set up your Web, iOS and Android app up quickly. It will also introduce you to write-once components that render on all platforms, powered by GraphQL, React-Native, Expo and Next.js

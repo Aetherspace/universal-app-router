@@ -61,6 +61,10 @@ const NumberStepperProps = z.object({
     readOnly: z
         .boolean()
         .optional(),
+    startFromPlaceholder: z
+        .boolean()
+        .optional()
+        .describe("If true, the stepper will start from the placeholder value when pressing the +/- controls when the input is empty"),
     hasError: z
         .boolean()
         .optional(),
@@ -102,6 +106,8 @@ const NumberStepperProps = z.object({
     placeholder?: string | undefined;
     disabled?: boolean;
     readOnly?: boolean;
+    /** If true, the stepper will start from the placeholder value when pressing the +/- controls when the input is empty */
+    startFromPlaceholder?: boolean;
     hasError?: boolean;
     className?: string | undefined;
     pressableClassName?: string | undefined;
