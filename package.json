@@ -56,6 +56,7 @@
     "env:local": "npx turbo run env:local",
     "regenerate:docs": "npx turbo run @app/docs#regenerate:docs",
     "gen": "npx turbo gen",
+    "test": "npm -w @green-stack/core test",
     "turbo:login": "npx turbo login",
     "turbo:link": "npx turbo link",
     "turbo:unlink": "npx turbo unlink",
