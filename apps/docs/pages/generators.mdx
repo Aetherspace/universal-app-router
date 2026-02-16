@@ -14,9 +14,9 @@ import { TitleWrapper } from '@app/docs/components/Hidden'
     unoptimized
 />
 
-# Codegen with Turbo Generators
+# Codegen with Plop Generators
 
-Our Starterkit goes beyond the setup by helping you skip boilerplate code through generators:
+Our Starterkit goes beyond the setup by helping you skip boilerplate code through Plop-based generators:
 
 - [`add-workspace`](@green-stack-core/generators/add-workspace)
 - [`add-script`](@green-stack-core/generators/add-script)
@@ -28,31 +28,33 @@ Our Starterkit goes beyond the setup by helping you skip boilerplate code throug
 
 ## Using generators programmatically
 
-### Bypassing prompts in the terminal
+### Passing args from the terminal
 
-Any generator in the project can be called from the terminal with pre-filled answers to the prompts. This will bypass the question being asked.
+Any generator can be run with pre-filled answers. Use `npm run gen` for the interactive picker, or `npm run add:<generator>` for a specific generator:
 
-```md
-npx turbo gen <generator-name> --args <answer-1> <answer-2> <answer_3> ...
-```
-
-This also works with some of the npm scripts predefined in the project, but you'll need to pass the `--` argument to separate the npm script arguments from the npm command line arguments, e.g.:
+**Positional args** (order matches the prompts; `--args` optional):
 
 ```md
-npm run add:schema -- --args <workspacePath> <name> <description>
+npm run add:schema -- --args <workspacePath> <schemaName> <schemaDescription>
 ```
-
-Take note that the order of the arguments is important.
-
-Pass them in the order they are defined as prompts in the generator / asked without providing them.
-
-If you pass too little arguments, the generator will simply ask you to answer the rest of the questions.
-
-> You can also pass `_` instead of an answer to an argument to still have that specific question asked, e.g:
 
 ```md
-npx turbo gen <generator-name> --args <answer-1> _ <answer_3> ...
+npm run add:schema -- packages/@green-stack-core MySchema "Description"
 ```
+
+**Named args** (use `--key value`; `--args` is optional):
+
+```md
+npm run add:schema -- --workspacePath packages/@green-stack-core --schemaName MySchema --schemaDescription "Description"
+```
+
+**Checkbox/array prompts** support space-separated values:
+
+```md
+npm run add:workspace -- --workspaceStructure schemas resolvers components
+```
+
+If you pass too few arguments, the generator will prompt for the rest. Pass `_` with `--args` to explicitly ask for a specific question:
 
 ```md
 npm run add:schema -- --args 'packages/@app-core' _ 'Some New Schema'

@@ -496,14 +496,14 @@ This zod-based way of working, combined with the predictability of file-system b
 
 The starterkit comes with a number of generators that can help you skip the repetitive boilerplate code and manual linking of files and objects when creating new features:
 
-- `npx turbo gen add-dependencies` - Add Expo SDK compatible dependencies to a workspaces
-- `npx turbo gen workspace` - Add a new feature or package workspace folder to the project
-- `npx turbo gen schema` - Add a new Zod schema to serve as single source of truth
-<Hidden>- `npx turbo gen model` - Add a new DB model to the project based on a Zod schema</Hidden>
-- `npx turbo gen resolver` - GraphQL resolver *and* API route based on Zod input and output
-- `npx turbo gen form` - Create form hooks for a specific schema in your workspaces
-- `npx turbo gen route` - New universal route + screen, and integrate with a resolver
-<Hidden>- `npx turbo gen domain` - Like `gen workspace` on steroids, full domain with all the above</Hidden>
+- `npm run add:dependencies` - Add Expo SDK compatible dependencies to a workspace
+- `npm run add:workspace` - Add a new feature or package workspace folder to the project
+- `npm run add:schema` - Add a new Zod schema to serve as single source of truth
+<Hidden>- `npm run add:model` - Add a new DB model to the project based on a Zod schema</Hidden>
+- `npm run add:resolver` - GraphQL resolver *and* API route based on Zod input and output
+- `npm run add:form` - Create form hooks for a specific schema in your workspaces
+- `npm run add:route` - New universal route + screen, and integrate with a resolver
+<Hidden>- `npm run add:domain` - Like add:workspace on steroids, full domain with all the above</Hidden>
 
 ### AI -- Codegen +
 

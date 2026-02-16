@@ -51,7 +51,7 @@ export const meta = {
     },
 
     // 'automations': 'Scripts and Automations',
-    'generators': 'Turbo Code Generators',
+    'generators': 'Code Generators',
     'automatic-docgen': 'Automatic Docgen',
     'git-based-plugins': 'Git Based Plugins',
 

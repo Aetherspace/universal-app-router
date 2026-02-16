@@ -295,17 +295,17 @@ https://turbo.build/repo/docs/crafting-your-repository/configuring-tasks
 
 > Have a look at the `turbo.json` in the root of the starterkit to see how we've set up the tasks for this project.
 
-### Speed up development with Turborepo generators
+### Speed up development with code generators
 
 ![](https://fullproduct.dev/blog-assets/imgs/skip-boilerplate-with-codegen.jpg)
 
-Turborepo comes out of the box with a [code generator system](https://turbo.build/repo/docs/guides/generating-code).
+The starterkit includes Plop-based code generators to skip boilerplate.
 
-For example, to add a new workspace interactively, we've added a generator:
+For example, to add a new workspace interactively:
 
 ```shell
-npx turbo gen add-workspace
-# or `npm run gen add-workspace`
+npm run add:workspace
+# or `npm run gen` to pick from all generators
 ```
 
 `⬇⬇⬇`
@@ -324,7 +324,7 @@ Depending on which other plugin branches you've merged, there may be [other gene
 To check which generators are available:
 
 ```shell
-npx turbo gen # interactive list to pick from
+npm run gen
 ```
 
 ```shell
