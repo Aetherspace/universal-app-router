@@ -1,5 +1,5 @@
 import { FileTree } from 'nextra/components'
-import { Image } from '@app/primitives'
+import { Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 
 <TitleWrapper>
@@ -57,7 +57,7 @@ npm run add:workspace -- --workspaceStructure schemas resolvers components --fol
 
 ### Resulting Files
 
-```bash
+```md
 /{workspaceType}/ # <- e.g. packages/ or features/
  └── {folderName}/ ❇️
      └── {workspaceStructure}/ ❇️ # <- e.g. schemas/, resolvers/, components/, ...

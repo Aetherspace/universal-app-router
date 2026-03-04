@@ -1,5 +1,5 @@
 import { FileTree } from 'nextra/components'
-import { Image } from '@app/primitives'
+import { Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 
 <TitleWrapper>
@@ -55,7 +55,7 @@ npm run add:script -- --workspacePath features/@app-core --scriptName my:script 
 
 ### Resulting File Changes
 
-```bash
+```md
 /{workspacePath}/ # <- e.g. 'features/@app-core/' or 'packages/some-package/'
   └── scripts/
       └── {scriptFileName}.ts ❇️

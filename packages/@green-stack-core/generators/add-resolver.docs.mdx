@@ -1,5 +1,5 @@
 import { FileTree } from 'nextra/components'
-import { Image } from '@app/primitives'
+import { Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 
 <TitleWrapper>
@@ -63,7 +63,7 @@ npm run add:resolver -- --workspacePath features/@app-core --resolverName myReso
 
 ### Resulting File Changes
 
-```bash
+```md
 /apps/next/
  └── app/(generated)/{routePath}/route.ts ❇️ # <- e.g. '/api/some/endpoint/with/[params]/' (Next.js route handler)
 

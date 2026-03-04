@@ -1,5 +1,5 @@
 import { FileTree } from 'nextra/components'
-import { Image } from '@app/primitives'
+import { Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 
 <TitleWrapper>
@@ -54,7 +54,7 @@ npm run add:generator -- --workspacePath features/@app-core --generatedEntity co
 
 ### Resulting File Changes
 
-```bash
+```md
 /{workspacePath}/ # <- e.g. 'features/@app-core/' or 'packages/some-package/'
  └── generators/
      └── add-{generatedEntity}.ts ❇️
