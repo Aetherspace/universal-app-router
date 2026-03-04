@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useRouteParams } from '@green-stack/navigation/useRouteParams'
-import { View, Text, H1, H3, P, Link, ScrollView, H2, cn } from '../components/styled'
+import { View, Text, H1, H3, P, Link, ScrollView, H2, Pressable, cn } from '../components/styled'
 import { useRouter } from '@green-stack/navigation/useRouter'
 import type { UniversalRouteScreenProps } from '@green-stack/navigation/useRouteParams.types'
 import BackButton from '../components/BackButton'
@@ -161,12 +161,13 @@ const SlugScreen = (props: UniversalRouteScreenProps) => {
                 className="absolute top-12 web:top-5 right-5 pointer-events-box-only"
                 href="https://fullproduct.dev/docs/universal-routing"
                 target="_blank"
+                asChild
             >
-                <View className="flex flex-row bg-stone-900 w-[44px] h-[44px] items-center pointer-events-none rounded-full border border-muted opacity-80 hover:opacity-100 z-0">
+                <Pressable className="flex flex-row bg-foreground w-[44px] h-[44px] items-center rounded-full border border-muted opacity-80 hover:opacity-100 z-0">
                     <Text className="w-full text-lg text-center">
                         {`📚`}
                     </Text>
-                </View>
+                </Pressable>
             </Link>
         </>
     )

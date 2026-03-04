@@ -5,7 +5,7 @@ import type { RequestContext } from '@app/core/middleware/createRequestContext'
 /* --- Middleware ------------------------------------------------------------------------------ */
 
 // -i- https://nextjs.org/docs/app/api-reference/functions/next-request
-export const middleware = async (req: NextRequest) => {
+export const proxy = async (req: NextRequest) => {
 
     // Calculate geolocation (vercel only)
     const vercelReqIP = req.headers.get('x-real-ip') || undefined

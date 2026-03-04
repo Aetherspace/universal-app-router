@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme } from 'nativewind'
-import { View, Text, H1, H2, H3, Link, ScrollView, KeyboardAvoidingView, cn, getThemeColor } from '../components/styled'
+import { View, Text, H1, H2, H3, Link, Pressable, ScrollView, KeyboardAvoidingView, cn, getThemeColor } from '../components/styled'
 import BackButton from '../components/BackButton'
 import { TextInput } from '../forms/TextInput.styled'
 import { NumberStepper } from '../forms/NumberStepper.styled'
@@ -416,12 +416,13 @@ export const FormsScreen = (props: FormScreenProps) => {
                     className="absolute top-12 web:top-5 right-5 pointer-events-box-only"
                     href="https://fullproduct.dev/docs/form-management"
                     target="_blank"
+                    asChild
                 >
-                    <View className="flex flex-row bg-stone-900 w-[44px] h-[44px] items-center pointer-events-none rounded-full border border-muted opacity-80 hover:opacity-100 z-0">
+                    <Pressable className="flex flex-row bg-foreground w-[44px] h-[44px] items-center rounded-full border border-muted opacity-80 hover:opacity-100 z-0">
                         <Text className="w-full text-lg text-center">
                             {`📚`}
                         </Text>
-                    </View>
+                    </Pressable>
                 </Link>
             )}
 
