@@ -2,6 +2,7 @@
   "name": "@fullproduct-dot-dev/universal-app-router",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@10.8.1",
   "workspaces": [
     "apps/*",
     "features/*",
@@ -61,13 +62,13 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.9.1",
-    "@turbo/gen": "^1.13.2",
+    "@turbo/gen": "^2.5.0",
     "@types/react": "19.0.0",
     "inquirer-autocomplete-prompt": "^3.0.1",
     "node-plop": "^0.32.3",
     "plop": "^4.0.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "turbo": "^1.13.2"
+    "turbo": "^2.5.0"
   }
 }
