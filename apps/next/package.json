@@ -5,19 +5,19 @@
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
-    "@next/mdx": "~15.0.4",
+    "@next/mdx": "~16.1.6",
     "@types/mdx": "^2.0.13",
-    "next": "15.0.4"
+    "next": "16.1.6"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
     "postcss": "8.4.23"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "preview": "next build && next start",
+    "preview": "next build --webpack && next start",
     "env:local": "cp .env.example .env.local"
   }
 }
