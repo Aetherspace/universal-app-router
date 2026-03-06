@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import { UniversalLinkProps } from '@green-stack/navigation/Link.types'
 import { UniversalRouterMethods } from '@green-stack/navigation/useRouter.types'

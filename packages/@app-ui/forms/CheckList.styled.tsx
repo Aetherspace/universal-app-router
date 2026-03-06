@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { z } from '@green-stack/schemas'
 import { Checkbox, CheckboxProps } from './Checkbox.styled'

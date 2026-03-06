@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, ElementRef, useState, useEffect } from 'react'
 import type { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
 import { TextInput } from './TextInput.styled'

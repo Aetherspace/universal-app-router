@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, ElementRef } from 'react'
 import { CheckboxRoot, CheckboxIndicator } from '@green-stack/forms/Checkbox.primitives'
 import { cn, View, Text, Pressable, getThemeColor } from '../styled'

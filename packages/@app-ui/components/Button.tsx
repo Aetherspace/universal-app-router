@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect, ReactNode } from 'react'
 import { Platform } from 'react-native'
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'

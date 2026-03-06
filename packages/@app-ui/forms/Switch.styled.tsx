@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, ElementRef } from 'react'
 import { Platform } from 'react-native'
 import * as SP from '@green-stack/forms/Switch.primitives'

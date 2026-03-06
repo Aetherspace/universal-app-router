@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, ElementRef } from 'react'
 import { TextInput as BaseTextInput } from '@green-stack/forms/TextInput.primitives'
 import { cn } from '../styled'

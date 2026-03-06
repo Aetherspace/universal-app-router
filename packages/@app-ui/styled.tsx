@@ -1,3 +1,4 @@
+"use client"
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from './tailwind.config'
 import type { KnownRoutes } from '@app/registries/routeManifest.generated'

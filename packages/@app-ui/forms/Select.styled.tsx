@@ -1,3 +1,4 @@
+"use client"
 import type { ReactNode, ElementRef, Dispatch, SetStateAction, LegacyRef } from 'react'
 import { createContext, useContext, useState, useEffect, forwardRef, useRef } from 'react'
 import { Platform, StyleSheet, Dimensions } from 'react-native'

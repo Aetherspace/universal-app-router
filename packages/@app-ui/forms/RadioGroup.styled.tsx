@@ -1,3 +1,4 @@
+"use client"
 import type { ReactNode, ElementRef, Dispatch, SetStateAction } from 'react'
 import { createContext, useContext, useState, useEffect, forwardRef } from 'react'
 import { RadioGroupRoot, RadioGroupItem, RadioGroupIndicator } from '@green-stack/forms/RadioGroup.primitives'
