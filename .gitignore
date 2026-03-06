@@ -60,3 +60,6 @@ yarn-error.log*
 
 .turbo
 .vscode/tmp
+
+# Pagefind (docs search)
+_pagefind/

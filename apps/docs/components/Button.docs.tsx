@@ -1,4 +1,4 @@
-import * as AppButton from '@app/components/Button'
+import * as AppButton from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

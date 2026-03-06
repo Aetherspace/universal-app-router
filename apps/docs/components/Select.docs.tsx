@@ -3,8 +3,8 @@ import { createContext, useContext, useState, useEffect, forwardRef, useRef } fr
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Platform, StyleSheet, Dimensions } from 'react-native'
 import * as SP from '@green-stack/forms/Select.primitives'
-import * as AppSelect from '@app/core/forms/Select.styled'
-import { cn, styled, View, Text, Pressable, getThemeColor } from '@app/primitives'
+import * as AppSelect from '@app/ui/forms/Select.styled'
+import { cn, styled, View, Text, Pressable, getThemeColor } from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

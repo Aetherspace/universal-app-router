@@ -1,0 +1,238 @@
+import { Image } from '@app/ui'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { FileTree, Callout } from 'nextra/components'
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+<TitleWrapper>
+    ## Automatic Docgen
+</TitleWrapper>
+
+# Automatic Documentation Generation
+
+```md copy
+npx @fullproduct/universal-app install with/automatic-docgen
+```
+
+```md copy
+npm run regenerate:docs
+```
+
+The `regenerate-docs` script automatically generates documentation pages for schemas, resolvers, and components across your monorepo. This keeps your docs in sync with your codebase while letting you add custom developer notes where needed.
+
+### How it works
+
+The script scans your `features/` and `packages/` workspaces and generates MDX docs in `apps/docs/pages/`. It looks for:
+
+- **Schemas** in `{workspace}/schemas/{SchemaName}.schema.ts`
+- **Resolvers** via their DataBridge in `{workspace}/resolvers/{resolverName}.bridge.ts`
+- **Components** with `getDocumentationProps()` in `{workspace}/**/{ComponentName}.tsx`
+- **Plugin docs** via `README.plugin.mdx` in plugin packages (e.g. [@app/mdx](/@app-mdx/README) for MDX rendering and the docs app setup)
+
+Each generated page includes imports, type definitions, usage examples, and links back to source files.
+
+<div className="h-8" />
+
+## Schema documentation
+
+Schemas are auto-documented when:
+
+- Defined and exported in `{workspace}/schemas/{SchemaName}.schema.ts`
+- The schema name matches the filename (e.g. `Customer.schema.ts` exports `Customer`)
+
+### What gets generated
+
+For each schema, the docs include:
+
+- **Import example** — How to import the schema
+- **Zod schema definition** — The schema rendered as `z.object()` syntax
+- **TypeScript type definition** — Inferred types using `z.input()` / `z.output()`
+- **Usage examples** — Validation, form state hooks, component props
+- **Source file location** — FileTree showing where the schema lives
+
+### Example
+
+The [`Customer`](https://fullproduct.dev/docs/@payments-driver/schemas/Customer) schema is documented from `packages/@payments-driver/schemas/Customer.schema.ts`:
+
+```ts filename="packages/@payments-driver/schemas/Customer.schema.ts"
+export const Customer = PaymentProvidable.extendSchema('Customer', {
+    customerId: z.string().index().unique().sensitive(),
+    subscriptionId: z.string().sensitive().nullish(),
+    email: z.string().email().nullish(),
+    name: z.string().nullish(),
+    raw: z.string().sensitive().nullish(),
+})
+```
+
+<div className="h-8" />
+
+## Resolver documentation
+
+Resolvers are auto-documented when:
+
+- Their DataBridge is exported in `{workspace}/resolvers/{resolverName}.bridge.ts`
+- The bridge is created using `createDataBridge()` with `resolverName` matching the filename
+
+### What gets generated
+
+For each resolver, the docs include:
+
+- **Import examples** — Server-side resolver function, GraphQL fetcher, react-query hooks
+- **Input/Output schemas** — Zod definitions and TypeScript types
+- **Server usage** — How to call the resolver as an async function
+- **GraphQL usage** — Query/mutation snippets and fetcher functions
+- **API route handlers** — HTTP method docs (GET, POST, etc.)
+- **Client usage** — React hooks for calling the API
+- **Form state hooks** — For mutation resolvers
+- **Source file locations** — FileTree showing resolver, bridge, and fetcher files
+
+### Example
+
+The [`healthCheck`](/@app-core/resolvers/healthCheck) resolver is documented from `features/@app-core/resolvers/healthCheck.bridge.ts`:
+
+```ts filename="features/@app-core/resolvers/healthCheck.bridge.ts"
+export const healthCheckBridge = createDataBridge({
+    resolverName: 'healthCheck',
+    inputSchema: HealthCheckInput,
+    outputSchema: HealthCheckOutput,
+    apiPath: '/api/health',
+    allowedMethods: ['GRAPHQL', 'GET'],
+})
+```
+
+<div className="h-8" />
+
+## Component documentation
+
+Components are auto-documented when:
+
+- Exported as a named export (e.g. `export const Button`)
+- Located in a `{workspace}/**/{ComponentName}.tsx` file
+- Export `getDocumentationProps` linked to a Zod props schema
+- The component name matches the filename
+
+### What gets generated
+
+For each component, the docs include:
+
+- **Import example** — How to import the component
+- **Interactive preview** — Live component render with prop controls
+- **Props table** — Types, descriptions, examples, defaults from the schema
+- **Code example** — Copyable JSX that updates with prop changes
+- **Props schema definition** — Zod schema as `z.object()` syntax
+- **TypeScript types** — Inferred props types
+- **Source file location** — FileTree showing where the component lives
+
+### Example
+
+The [`Button`](/@app-ui/components/Button) component is documented from `packages/@app-ui/components/Button.tsx`:
+
+```tsx filename="packages/@app-ui/components/Button.tsx"
+export const ButtonProps = schema('ButtonProps', {
+    type: z.enum(['primary', 'secondary', ...]).default('primary'),
+    text: z.string().default(''),
+    // ...
+})
+
+export const Button = (props: ButtonProps) => { /* ... */ }
+
+export const getDocumentationProps = ButtonProps.documentationProps('Button')
+```
+
+<div className="h-8" />
+
+## Custom developer notes
+
+Add custom sections to any auto-generated doc by creating a `.docs.mdx` file next to the source:
+
+### Schema notes
+
+```ts filename="packages/@payments-driver/schemas/Customer.schema.ts"
+// ... schema definition ...
+```
+
+```mdx filename="packages/@payments-driver/schemas/Customer.docs.mdx"
+## Why this schema?
+
+The Customer schema provides a universal abstraction for payment provider customers,
+enabling multi-provider support without leaking implementation details.
+```
+
+The content from `Customer.docs.mdx` is merged into the generated `Customer.mdx` under a "Developer Notes" section.
+
+### Resolver notes
+
+```ts filename="features/@app-core/resolvers/healthCheck.bridge.ts"
+// ... bridge definition ...
+```
+
+```mdx filename="features/@app-core/resolvers/healthCheck.docs.mdx"
+## Why this resolver?
+
+We included this resolver as a reference implementation for a simple API resolver.
+While it can be used to verify the application is running, its main goal is to
+demonstrate our way of working.
+```
+
+### Component notes
+
+```tsx filename="packages/@app-ui/components/Button.tsx"
+// ... component definition ...
+```
+
+```mdx filename="packages/@app-ui/components/Button.docs.mdx"
+### `children` vs `text` prop
+
+You can pass either `props.children` or `props.text` to the Button component.
+If you pass `props.children`, it will render the children as the button content...
+```
+
+<div className="h-8" />
+
+## Opting out of docgen
+
+Sometimes you don't want something to be automatically documented.
+
+You can opt out of automatic docgen in two ways:
+
+### Comment-based opt-out
+
+```ts
+// @automation optOut
+export const SomeSchema = schema('SomeSchema', { /* ... */ })
+```
+
+### Export-based opt-out
+
+```ts
+export const optOut = true
+export const SomeSchema = schema('SomeSchema', { /* ... */ })
+```
+
+Files with either pattern are skipped during doc generation.
+
+<div className="h-8" />
+
+## Docgen Benefits
+
+<Callout>
+Automatic docgen means your documentation stays up to date with your codebase. You write the code and schema once, and comprehensive docs are generated automatically.
+
+You can still add custom developer notes where needed using `.docs.mdx` files, giving you the best of both worlds: automated coverage with manual polish where it matters.
+</Callout>
+
+- ✅ **Zero maintenance** - Docs regenerate from your source files, and can never get out of date
+- ✅ **Type-safe** - Schema introspection ensures accuracy, provides better AI context
+- ✅ **Interactive** - Component docs include live previews through interactive prop tables
+- ✅ **Shareable URLs** - Preview state is saved in the URL → Share specific examples with team
+- ✅ **Copy-pasteable** - All code snippets are copyable too
+- ✅ **Extensible** - Add custom notes via `.docs.mdx` files next to the subject
+- ✅ **Co-located & Portable** - Custom docs live next to implementations → Duplicated to `@app/docs`
+- ✅ **Opt-out friendly** - Skip files that shouldn't be documented
+- ✅ **AI context** - Using Cursor or a similar AI optimized IDE? → Just `@` tag the relevant docs files ✦

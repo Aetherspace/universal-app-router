@@ -59,7 +59,7 @@
         "../../features/@app-core/appConfig.ts",
         "**/*.ts",
         "**/*.tsx"
-    ],
+, "../@app-demo/screens/MarkdownScreen.tsx"    ],
     "exclude": [
         "node_modules"
     ],

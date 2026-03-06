@@ -20,6 +20,7 @@ type ComponentDocsData = {
     componentWorkspace: string,
     workspaceFolder: string,
     importPath: string,
+    exampleImportPath: string,
     componentFileName: string,
     mdxFilePath: string,
     mdxFileFolder: string,
@@ -101,7 +102,7 @@ const renderFileTree = (paths: string[]) => {
 const createComponentDocsContent = (ctx: ComponentDocsData) => [
     
     `import { ${ctx.componentName}, getDocumentationProps } from '${ctx.importPath}'`,
-    `import { ComponentDocs } from '@app/core/mdx/ComponentDocs'`,
+    `import { ComponentDocs } from '@app/docs/components/ComponentDocs'`,
     `import { TitleWrapper } from '@app/docs/components/Hidden'`,
     `import { FileTree, Callout } from 'nextra/components'\n`,
 
@@ -112,7 +113,7 @@ const createComponentDocsContent = (ctx: ComponentDocsData) => [
     `# ${ctx.componentName}\n`,
 
     `\`\`\`typescript copy`,
-    `import { ${ctx.componentName} } from '${ctx.importPath}'`,
+    `import { ${ctx.componentName} } from '${ctx.exampleImportPath}'`,
     `\`\`\`\n`,
 
     `<TitleWrapper>`,
@@ -202,7 +203,7 @@ const createComponentDocsContent = (ctx: ComponentDocsData) => [
 
     `<Callout emoji="🤖">`,
     [
-        `These dynamic component docs were auto-generated with \`npm run regenerate-docs\`. `,
+        `These dynamic component docs were auto-generated with \`npm run regenerate:docs\`. `,
         `You can hook into automatic docgen by exporting \`getDocumentationProps\` from a component file. `,
         `You'll want to provide example props from the ComponentProps zod schema, e.g:`
     ].join(''),
@@ -222,7 +223,7 @@ const createSchemaDocs = (ctx: SchemaContext) => [
 
     `import { FileTree, Callout } from 'nextra/components'`,
     `import { TitleWrapper } from '@app/docs/components/Hidden'`,
-    `import { View, Image } from '@app/primitives'\n`,
+    `import { View, Image } from '@app/ui'\n`,
 
     `<TitleWrapper>`,
     `    ## ${ctx.schemaName}`,
@@ -356,7 +357,7 @@ const createSchemaDocs = (ctx: SchemaContext) => [
 
     `<Callout emoji="🤖">`,
     [
-        `These dynamic schema docs were auto-generated with \`npm run regenerate-docs\`. `,
+        `These dynamic schema docs were auto-generated with \`npm run regenerate:docs\`. `,
         `This happens automatically for schema files in any \`\\schemas\\\` folder. `,
         `You can opt-out of this by adding \`// export const optOut = true\` somewhere in the file. `,
     ].join(''),
@@ -370,7 +371,7 @@ const createResolverDocs = (ctx: ResolverContext) => [
 
     `import { FileTree, Callout } from 'nextra/components'`,
     `import { TitleWrapper } from '@app/docs/components/Hidden'`,
-    `import { View, Image } from '@app/primitives'\n`,
+    `import { View, Image } from '@app/ui'\n`,
 
     `<TitleWrapper>`,
     `    ## \`${ctx.resolverName}\` - API`,
@@ -725,7 +726,7 @@ const createResolverDocs = (ctx: ResolverContext) => [
 
     `<Callout emoji="🤖">`,
     [
-        `These dynamic API docs were auto-generated with \`npm run regenerate-docs\`. `,
+        `These dynamic API docs were auto-generated with \`npm run regenerate:docs\`. `,
         `This happens from \`.bridge.ts\` files in any \`\/resolvers\/\` folder.\n\n`,
         `You can opt-out of this by adding \`export const optOut = true\` somewhere in the file. `,
     ].join(''),
@@ -781,7 +782,7 @@ const regenerateDocs = async () => {
 
         workspacePaths.map((workspacePath) => {
             const workspaceFolderName = workspacePath.split('/').pop()!
-            const docsFolderName = `../../apps/docs/pages/${workspaceFolderName}`
+            const docsFolderName = `../../apps/docs/content/${workspaceFolderName}`
             fs.rmSync(docsFolderName, { recursive: true, force: true })
         })
 
@@ -821,11 +822,11 @@ const regenerateDocs = async () => {
             addWorkspaceMeta(workspacePath)
 
             // Plan MDX file paths and _meta setup
-            let mdxFileFolder = `../../apps/docs/pages/${innerFileFolder}` // e.g. '../../apps/docs/pages/@app-core/docs'
+            let mdxFileFolder = `../../apps/docs/content/${innerFileFolder}` // e.g. '../../apps/docs/content/@app-core/docs'
             let mdxFilePath = `${mdxFileFolder}/${fileName}.mdx` // e.g. '@app-core/docs/Button.mdx',
             const isIndexFile = mdxFilePath.includes('index.mdx')
             if (isIndexFile) mdxFilePath = mdxFilePath.replace('/index', '') // e.g. -> '@green-stack-core/schemas.mdx'
-            if (isIndexFile) mdxFileFolder = mdxFileFolder.split('/').slice(0, -1).join('/') // e.g. -> '../../apps/docs/pages/@green-stack-core'
+            if (isIndexFile) mdxFileFolder = mdxFileFolder.split('/').slice(0, -1).join('/') // e.g. -> '../../apps/docs/content/@green-stack-core'
 
             // Should the docs entry be named after the file or the folder?
             const entityName = isIndexFile ? mdxFilePath.split('/').pop()!.replace('.mdx', '') : fileName
@@ -919,7 +920,7 @@ const regenerateDocs = async () => {
 
             // Extract file and import paths
             const rootPath = componentPath.replaceAll('../', '') // e.g. '/features/@app-core/...'
-            const importPath = swapImportAlias(`${componentWorkspace}${innerFilePath}`) // e.g. '@app-core/components/Button'
+            const importPath = swapImportAlias(`${componentWorkspace}${innerFilePath}`) // e.g. '@app-ui/components/Button'
 
             // Skip if not exported under the correct name
             if (!fileContent.includes(`export const ${componentName}`)) {
@@ -933,6 +934,8 @@ const regenerateDocs = async () => {
             const { getDocumentationProps } = maybeImport(importPathSync) as {
                 getDocumentationProps: ComponentDocsData['documentationProps']
             }
+            const isUIComponent = importPath.startsWith('@app/ui/components/') || importPath.startsWith('@app/ui/forms/')
+            const exampleImportPath = isUIComponent ? '@app/ui' : importPathSync
 
             // Attempt to extract the zod schema definition and type definition
             const propsSchema = getDocumentationProps?.propSchema
@@ -942,7 +945,7 @@ const regenerateDocs = async () => {
             // Build MDX file path
             const mdxFileName = `${componentName}.mdx` // -> 'Button.mdx'
             const mdxInnerFilePath = innerFilePath.replace(componentFileName, mdxFileName)
-            const mdxFilePath = `../../apps/docs/pages/${workspaceFolder}${mdxInnerFilePath}` 
+            const mdxFilePath = `../../apps/docs/content/${workspaceFolder}${mdxInnerFilePath}` 
             const mdxFileFolder = mdxFilePath.split('/').slice(0, -1).join('/')
             const customMdxDocs = extractCustomDocs(mdxFilePath)
 
@@ -964,6 +967,7 @@ const regenerateDocs = async () => {
                     componentWorkspace,
                     workspaceFolder,
                     importPath,
+                    exampleImportPath,
                     componentFileName,
                     mdxFilePath,
                     mdxFileFolder,
@@ -992,7 +996,7 @@ const regenerateDocs = async () => {
             const mdxFileName = `${schemaMeta.schemaName}.mdx` // -> 'Button.mdx'
             const mdxInnerFilePath = `/schemas/${mdxFileName}` // e.g. '/@app-core/schemas/Button.mdx'
             const mdxWorkspaceFolder = schemaMeta.workspacePath.split('/').pop()! // e.g. '@app-core'
-            const mdxFilePath = `../../apps/docs/pages/${mdxWorkspaceFolder}${mdxInnerFilePath}` 
+            const mdxFilePath = `../../apps/docs/content/${mdxWorkspaceFolder}${mdxInnerFilePath}` 
             const mdxFileFolder = mdxFilePath.split('/').slice(0, -1).join('/')
 
             // Figure out custom MDX docs for this schema
@@ -1068,7 +1072,7 @@ const regenerateDocs = async () => {
             const mdxFileName = `${bridgeMeta.resolverName}.mdx` // -> 'Button.mdx'
             const mdxInnerFilePath = `/resolvers/${mdxFileName}` // e.g. '/@app-core/resolvers/Button.mdx'
             const mdxWorkspaceFolder = bridgeMeta.workspacePath.split('/').pop()! // e.g. '@app-core'
-            const mdxFilePath = `../../apps/docs/pages/${mdxWorkspaceFolder}${mdxInnerFilePath}` 
+            const mdxFilePath = `../../apps/docs/content/${mdxWorkspaceFolder}${mdxInnerFilePath}` 
             const mdxFileFolder = mdxFilePath.split('/').slice(0, -1).join('/')
 
             // Figure out custom MDX docs for this resolver

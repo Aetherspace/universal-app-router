@@ -1,4 +1,4 @@
-import * as AppRadioGroup from '@app/core/forms/RadioGroup.styled'
+import * as AppRadioGroup from '@app/ui/forms/RadioGroup.styled'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

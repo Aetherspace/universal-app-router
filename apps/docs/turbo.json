@@ -1,0 +1,24 @@
+{
+    "extends": ["//"],
+    "tasks": {
+        "regenerate:docs": {
+            "dependsOn": [
+                "@green-stack/core#collect:resolvers",
+                "@green-stack/core#collect:schemas"
+            ],
+            "cache": false
+        },
+        "dev": {
+            "dependsOn": ["@app/docs#regenerate:docs"],
+            "cache": false
+        },
+        "build": {
+            "dependsOn": [
+                "@green-stack/core#build:schema",
+                "@app/docs#regenerate:docs"
+            ],
+            "outputs": [".next/**", "!.next/cache/**"],
+            "cache": false
+        }
+    }
+}

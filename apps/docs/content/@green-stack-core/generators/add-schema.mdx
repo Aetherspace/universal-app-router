@@ -1,0 +1,64 @@
+import { FileTree } from 'nextra/components'
+import { Image } from '@app/ui'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## `add-schema` - Generator
+</TitleWrapper>
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# `add-schema`
+
+```md copy
+npm run add:schema
+```
+
+Interactive, or with args (positional, named, or mixed; `--args` optional):
+
+```md copy
+npm run add:schema -- --args <workspacePath> <schemaName> <schemaDescription>
+```
+
+```md copy
+npm run add:schema -- packages/@green-stack-core MySchema "Description"
+npm run add:schema -- --workspacePath packages/@green-stack-core --schemaName MySchema --schemaDescription "Description"
+```
+
+<FileTree>
+  <FileTree.Folder name="packages" defaultOpen>
+    <FileTree.Folder name="@green-stack-core" defaultOpen>
+      <FileTree.Folder name="generators" defaultOpen>
+        <FileTree.File name="add-schema.ts" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+<div className="h-8" />
+
+### Prompt Arguments
+
+| Argument         | Type         | Question / Description                                                                |
+|------------------|--------------|---------------------------------------------------------------------------------------|
+| workspacePath    | autocomplete | Where would you like to add this schema? <br/>=> e.g. `features/@app-core`            |
+| schemaName       | text         | What is the schema name? <br/>=> `string`                                             |
+| schemaDescription| text         | Optional description: What data structure does this schema describe? <br/>=> `string` |
+
+<div className="h-8" />
+
+### Resulting File Changes
+
+```md
+/{workspacePath}/ # <- e.g. 'features/@app-core/' or 'packages/some-package/'
+ └── schemas/
+     └── {schemaName}.schema.ts ❇️
+```
+
+<div className="h-8" />

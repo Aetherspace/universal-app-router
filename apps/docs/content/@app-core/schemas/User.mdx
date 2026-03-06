@@ -1,0 +1,142 @@
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { View, Image } from '@app/ui'
+
+<TitleWrapper>
+    ## User
+</TitleWrapper>
+
+# User
+
+```typescript copy
+import { User } from '@app/core/schemas/User.schema'
+```
+
+### Location
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="User.schema.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+### Zod Schema
+
+What the schema would look like when defined with `z.object()` in Zod V3:
+
+```typescript copy
+const User = z.object({
+    userId: z
+        .string()
+        .index()
+        .unique()
+        .describe("Auth provider sub or user ID"),
+    email: z
+        .string()
+        .index()
+        .unique()
+        .describe("Primary Github email used during OAuth"),
+})
+```
+
+> (💡 Could be handy to copy-paste this schema info into an AI chat assistant)
+<div className="h-8" />
+
+### Type Definition
+
+You can extract the TypeScript type from the schema using `z.input()`, `z.output()` or `z.infer()` methods. e.g.:
+
+```typescript copy
+type User = z.input<typeof User>
+```
+
+What the resulting TypeScript type would look like:
+
+```typescript copy
+{
+    /** Auth provider sub or user ID */
+    userId: string;
+    /** Primary Github email used during OAuth */
+    email: string;
+}
+```
+
+> (💡 Could be handy to copy-paste this type info into an AI chat assistant)
+<div className="h-8" />
+
+### Usage - Validation
+
+To validate data against this schema, you have a few options:
+
+```typescript copy
+// Throws if invalid
+const user = User.parse(data)
+
+// Returns { success: boolean, data?: T, error?: ZodError }
+const user = User.safeParse(data)
+
+```
+
+> This might be useful for parsing API input data or validating form data before submission.
+
+> You can also directly integrate this schema with form state managers like our own:
+
+<div className="h-8" />
+
+### Usage - Form State
+
+```typescript copy
+import { useFormState } from '@green-stack/forms/useFormState'
+
+const formState = useFormState(User, {
+    initialValues: { /* ... */ }, // Provide initial values?
+    validateOnMount: true, // Validate on component mount?
+})
+
+```
+
+Learn more about using schemas for form state in our [Form Management Docs](/form-management).
+
+<div className="h-8" />
+
+### Usage - Component Props / Docs
+
+Another potential use case for the 'User' schema is to type component props, provide default values and generate documentation for that component:
+
+```typescript copy
+export const UserComponentProps = User.extend({
+    // Add any additional props here
+})
+
+export type UserComponentProps = z.input<typeof UserComponentProps>
+
+/* --- <UserComponent/> --------------- */
+
+export const UserComponent = (rawProps: UserComponentProps) => {
+
+    // Extract the props and apply defaults + infer resulting type
+    const props = ComponentProps.applyDefaults(rawProps)
+
+    // ... rest of the component logic ...
+
+}
+
+/* --- Documentation --------------- */
+
+export const documentationProps = UserComponentProps.documentationProps('UserComponent')
+
+```
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic schema docs were auto-generated with `npm run regenerate:docs`. This happens automatically for schema files in any `\schemas\` folder. You can opt-out of this by adding `// export const optOut = true` somewhere in the file. 
+</Callout>

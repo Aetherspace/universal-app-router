@@ -1,5 +1,5 @@
-import * as AppNumberStepper from '@app/core/forms/NumberStepper.styled'
-import { styled } from '@app/primitives'
+import * as AppNumberStepper from '@app/ui'
+import { styled } from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

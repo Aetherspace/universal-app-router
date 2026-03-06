@@ -1,0 +1,67 @@
+import { Image } from '@app/ui'
+import { FileTree } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Usage - `MarkdownImage`
+</TitleWrapper>
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Universal `MarkdownImage` component
+
+```tsx copy
+import { MarkdownImage } from '@app/mdx'
+```
+
+`MarkdownImage` is a responsive image component used for `img` elements inside MDX content. It measures its container and the source image, then computes dimensions that fit within the available width while preserving aspect ratio.
+
+<div className="h-6" />
+
+### How it works
+
+- Measures the wrapper width via `onLayout`
+- Gets the source image dimensions via `Image.getSize()` (React Native)
+- Computes `width` and `height` as `min(originalWidth, wrapperWidth, windowWidth)` while preserving aspect ratio
+- Uses the universal `Image` from `@app/ui` with `contentFit="contain"`
+
+This makes markdown images scale appropriately on both web and native without hardcoding sizes.
+
+<div className="h-6" />
+
+### Props
+
+Extends `UniversalImageProps` from `@green-stack/components/Image.types`:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `src` | `string \| StaticImageData` | Image source (URL or require) |
+| `alt` | `string` | Alt text for accessibility |
+| `styles` | `object` | Optional style object merged with default layout styles |
+
+Typically you don’t use `MarkdownImage` directly; `MarkdownTheme` passes it to `MDXComponents` as the `img` override.
+
+<FileTree>
+    <FileTree.Folder name="packages/@app-mdx" defaultOpen>
+        <FileTree.File name="MarkdownImage.tsx" />
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-6" />
+
+### Direct usage (when needed)
+
+```tsx copy
+import { MarkdownImage } from '@app/mdx'
+
+<MarkdownImage
+    src="https://example.com/image.png"
+    alt="Example image"
+/>
+```

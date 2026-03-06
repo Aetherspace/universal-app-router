@@ -1,0 +1,134 @@
+import { CheckList, getDocumentationProps } from '@app/ui/forms/CheckList.styled'
+import { ComponentDocs } from '@app/docs/components/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## CheckList
+</TitleWrapper>
+
+# CheckList
+
+```typescript copy
+import { CheckList } from '@app/ui'
+```
+
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
+<ComponentDocs
+    component={CheckList}
+    docsConfig={getDocumentationProps}
+>
+    ## CheckList Props
+</ComponentDocs>
+
+<div className="h-8" />
+
+<TitleWrapper>
+    ### Props Schema
+</TitleWrapper>
+
+<details>
+<summary>Show Props Schema</summary>
+
+```typescript copy
+const CheckListProps = z.object({
+    disabled: z
+        .boolean()
+        .optional(),
+    hasError: z
+        .boolean()
+        .optional(),
+    className: z
+        .string()
+        .optional(),
+    checkboxClassName: z
+        .string()
+        .optional(),
+    indicatorClassName: z
+        .string()
+        .optional(),
+    labelClassName: z
+        .string()
+        .optional(),
+    hitSlop: z
+        .number()
+        .default(6),
+    options: z
+        .record(z.string(), z.string()),
+    value: z
+        .array(z.string())
+        .default([]),
+})
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+### Props Type
+</TitleWrapper>
+
+<details>
+<summary>Show Props Types</summary>
+
+```typescript copy
+{
+    disabled?: boolean;
+    hasError?: boolean;
+    className?: string | undefined;
+    checkboxClassName?: string | undefined;
+    indicatorClassName?: string | undefined;
+    labelClassName?: string | undefined;
+    hitSlop?: number;
+    options: {
+        [x: string]: string;
+    };
+    value?: string[];
+}
+```
+> 💡 Could be handy to copy-paste into an AI chat?
+</details>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
+
+You can find the source of the `CheckList` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@app-ui" defaultOpen>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="CheckList.styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic component docs were auto-generated with `npm run regenerate:docs`. You can hook into automatic docgen by exporting `getDocumentationProps` from a component file. You'll want to provide example props from the ComponentProps zod schema, e.g:
+</Callout>
+
+```tsx /getDocumentationProps/ /documentationProps/ copy filename="CheckList.styled.tsx"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = CheckListProps.documentationProps('CheckList')
+```

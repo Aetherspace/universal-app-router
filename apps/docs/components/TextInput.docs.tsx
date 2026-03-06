@@ -1,5 +1,5 @@
-import * as AppTextInput from '@app/core/forms/TextInput.styled'
-import { styled } from '@app/primitives'
+import * as AppTextInput from '@app/ui'
+import { styled } from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

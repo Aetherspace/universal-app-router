@@ -6,7 +6,7 @@
         ".next/types/**/*.ts",
         "../../apps/next/next-env.d.ts",
         "../../packages/@green-stack-core/global.d.ts",
-        "../../features/@app-core/nativewind-env.d.ts",
+        "../../packages/@app-ui/nativewind-env.d.ts",
         "../../features/@app-core/appConfig.ts",
         "../../apps/docs/**/*.ts",
         "../../apps/docs/**/*.tsx",
@@ -16,6 +16,7 @@
         "../../packages/**/*.tsx"
     ],
     "compilerOptions": {
+        "moduleResolution": "bundler",
         "jsxImportSource": "nativewind",
         "plugins": [{
             "name": "next"

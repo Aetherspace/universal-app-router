@@ -3,6 +3,7 @@ module.exports = [
     "@app/registries",
     "@db/driver",
     "@app/ui",
+    "@app/mdx",
     "@green-stack/core",
     "@app/demo",
     "@app/core"

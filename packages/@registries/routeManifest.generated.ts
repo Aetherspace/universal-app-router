@@ -3,9 +3,9 @@
 export const routeManifest = {
     ['/']: 'DemoScreen',
     ['/subpages/[slug]']: 'SlugScreen',
-    ['/demos/markdown']: 'MarkdownScreen',
     ['/demos/images']: 'ImagesScreen',
     ['/demos/forms']: 'FormsScreen',
+    ['/demos/markdown']: 'MarkdownScreen',
 } as const
 
 // eslint-disable-next-line @typescript-eslint/ban-types

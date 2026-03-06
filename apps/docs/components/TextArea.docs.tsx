@@ -1,5 +1,5 @@
-import * as AppTextArea from '@app/core/forms/TextArea.styled'
-import { styled } from '@app/primitives'
+import * as AppTextArea from '@app/ui'
+import { styled } from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

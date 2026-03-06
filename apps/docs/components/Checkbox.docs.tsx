@@ -1,4 +1,4 @@
-import * as AppCheckbox from '@app/core/forms/Checkbox.styled'
+import * as AppCheckbox from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

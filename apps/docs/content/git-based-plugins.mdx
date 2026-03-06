@@ -1,0 +1,235 @@
+import { Image } from '@app/ui'
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+<TitleWrapper>
+    ## Git-Based Plugins
+</TitleWrapper>
+
+# Git-Based Plugins
+
+```md copy
+npx @fullproduct/universal-app install plugins
+```
+
+Installable git branches and Pull Requests that add features, drivers, or utilities to your universal app. Plugins use familiar git workflows: create branches, review PRs, merge when ready.
+
+### What are plugins?
+
+Plugins are git branches prefixed with `with/` that add functionality to the starterkit:
+
+- **Driver implementations** — Payment providers (Stripe, Polar), databases (MongoDB, Supabase), auth (Clerk), etc.
+- **Feature enhancements** — New generators, automation scripts, UI components
+- **Configuration templates** — Pre-configured setups for common use cases
+
+All plugins follow the naming pattern `with/{plugin-name}`.
+
+For [driver](/workspace-drivers) plugins specifically, the pattern is often `with/{driverType}-{provider}`.
+
+### Examples
+
+- `with/automatic-docgen` — Adds [automatic documentation generation](/automatic-docgen)
+- `with/payments-stripe` — Adds Stripe [payment driver](https://fullproduct.dev/docs/@payments-driver/README) implementation
+- `with/auth-clerk` — Adds [Clerk authentication](https://fullproduct.dev/docs/@auth-clerk/README) integration
+
+<div className="h-8" />
+
+## Installing plugins
+
+### Using the CLI
+
+```md copy
+npx @fullproduct/universal-app install plugins
+```
+
+```md copy
+npx @fullproduct/universal-app install plugin
+```
+
+This command will:
+1. Checkout the `with/payments-stripe` branch
+2. Create a Pull Request on your remote repository
+3. Install dependencies and regenerate registries automatically
+
+The PR gives your team a chance to review, test, and edit the changes before merging.
+
+### Manual `git` merges
+
+Since plugins are git-based, you can also "install" them manually by merging the associated branch:
+
+```md
+git fetch origin
+git checkout with/payments-stripe
+# Review changes, test, then merge when ready
+```
+
+<div className="h-8" />
+
+## Plugin structure
+
+### Driver plugins
+
+Driver plugins typically add workspace packages that implement a driver interface:
+
+```
+with/payments-stripe
+├── packages/
+│   └── @payments-stripe/
+│       ├── drivers/
+│       │   └── stripe.payments.ts
+│       ├── resolvers/
+│       └── package.json
+```
+
+When installed, this adds the `@payments/stripe` workspace package and wires it into the [drivers registry](/workspace-drivers).
+
+### Feature plugins
+
+Feature plugins might add:
+
+- Scripts to `@green-stack/core/scripts/`
+- Components to `@app/core/components/`
+- Routes to `apps/next/app/` or `apps/expo/app/`
+- Generators to `packages/@green-stack-core/generators/`
+
+```
+with/automatic-docgen
+├── packages/
+│   └── @green-stack-core/
+│       └── scripts/
+│           └── regenerate-docs.ts
+├── apps/
+│   └── docs/
+│       └── pages/
+│           └── automatic-docgen.mdx
+```
+
+<div className="h-8" />
+
+## Build your own Plugins
+
+You can create custom plugins for your own fork and install them in projects generated from that fork.
+
+### 1. Create a plugin branch
+
+In your fork, create a branch following the `with/{plugin-name}` pattern:
+
+```md
+git checkout -b with/custom-feature
+# Add your plugin code...
+git push origin with/custom-feature
+```
+
+### 2. Create a Pull Request
+
+Open a PR for the `with/custom-feature` branch on your fork's GitHub repository.
+
+### 3. Install in generated projects
+
+From any project generated from your fork, install the plugin using the CLI:
+
+```md
+npx @fullproduct/universal-app install with/custom-feature
+```
+
+The CLI will:
+- Fetch the branch from your fork's remote
+- Create a PR on the project's remote
+- Install dependencies and regenerate registries
+
+This lets you build a library of custom plugins for your team or organization.
+
+<div className="h-8" />
+
+## Review and merge workflow
+
+### Team collaboration
+
+Since plugins install as Pull Requests, your team can:
+
+- ✅ **Review** changes in the familiar GitHub PR interface
+- ✅ **Test** locally by checking out the PR branch
+- ✅ **Discuss** changes with inline comments
+- ✅ **Edit** directly in the PR before merging
+- ✅ **Request changes** if something needs adjustment
+
+### Merging a plugin
+
+Once you're satisfied with the plugin:
+
+```md
+# Option 1: Merge the PR on GitHub
+# Option 2: Merge locally
+git checkout main
+git merge with/payments-stripe
+git push origin main
+```
+
+After merging, you'll typically want to:
+
+1. **Update registries** — Run collection scripts (e.g. `npm run collect:drivers`)
+2. **Configure** — Update `appConfig.ts` if the plugin adds a driver
+3. **Test** — Verify everything works as expected
+
+<div className="h-8" />
+
+## Plugin conventions
+
+### Naming your plugin
+
+- Use kebab-case: `with/payments-stripe` not `with/payments_stripe`
+- Be descriptive: `with/db-mongoose` not `with/db-mongo` (unless you actually mean MongoDB)
+- Match patterns: Driver plugins follow `with/{driverType}-{provider}`
+
+### Branch structure
+
+- Keep plugin changes isolated to the branch
+- Include all necessary dependencies in workspace `package.json` files
+- Add plugin README at `README.plugin.mdx` for documentation
+
+### Registry integration
+
+If your plugin adds a driver implementation, make sure it:
+
+- Exports a `driver` constant validated against the driver signature
+- Follows the `drivers/{provider}.{driverType}.ts` file pattern
+- Can be discovered by the `collect-drivers` script
+
+<div className="h-8" />
+
+## Finding available plugins
+
+List all available plugins from the CLI:
+
+```md copy
+npx @fullproduct/universal-app install
+```
+
+This shows an interactive list of all `with/...` branches available in the remote repository.
+
+<div className="h-8" />
+
+## Benefits of git-based plugins
+
+<Callout>
+Git-based plugins use workflows you already know. No new package managers, no lock-in, just git branches and PRs you can inspect, edit, and merge on your own terms.
+</Callout>
+
+- ✅ **Familiar workflow** — Use git and GitHub PRs you already know
+- ✅ **Inspectable** — Review the full diff before installing
+- ✅ **Editable** — Modify plugin code before or after merging
+- ✅ **Testable** — Check out the branch and test locally first
+- ✅ **Collaborative** — Team reviews and discussions in PRs
+- ✅ **Portable** — Copy plugin branches between projects
+- ✅ **Customizable** — Create your own plugins for your fork
+
+This approach means you're never locked into a plugin system you don't control. You can always fork, modify, and maintain plugins yourself.
+

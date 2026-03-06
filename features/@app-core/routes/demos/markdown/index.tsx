@@ -1,5 +1,5 @@
 import { UniversalRouteScreen } from '@green-stack/core/navigation/UniversalRouteScreen'
-import MarkdownScreen from '../../../screens/MarkdownScreen'
+import MarkdownScreen from '../../../../@app-demo/screens/MarkdownScreen'
 
 /* --- /images --------------------------------------------------------------------------------- */
 

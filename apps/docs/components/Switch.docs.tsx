@@ -1,4 +1,4 @@
-import * as AppSwitch from '@app/core/forms/Switch.styled'
+import * as AppSwitch from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

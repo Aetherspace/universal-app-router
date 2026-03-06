@@ -1,0 +1,361 @@
+import { FileTree, Steps, Cards } from 'nextra/components'
+import { Image } from '@app/ui'
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Schema based Form management
+
+```tsx copy
+import { useFormState } from '@green-stack/forms/useFormState'
+```
+
+<FileTree>
+    <FileTree.Folder name="@some-feature" defaultOpen>
+        <FileTree.Folder name="schemas" defaultOpen>
+            <FileTree.File name="Some.schema.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="forms" defaultOpen>
+            <FileTree.File name="useSomeFormState.ts ←" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+A major goal of this starterkit is to use `zod` schemas as the ultimate source of truth for your app's data shapes, validation and types. *We've extended this concept to include form management as well:*
+
+<div className="h-4" />
+
+## `useFormState()`
+
+```tsx {10} filename="useSomeFormState.ts"
+// Define a Zod schema for your form state (or use an existing one)
+const SomeFormState = schema('SomeFormState', {
+    name: z.string(),
+    age: z.number().optional(),
+    email: z.string().email(),
+    birthDate: z.date().optional(),
+})
+
+// Create a set of form state utils to use in your components
+const formState = useFormState(SomeFormState, {
+    initialValues: { ... },
+    // ... other options
+})
+```
+
+`formState.values` is typed according to the Zod schema you provided as the first argument:
+
+```tsx
+formState.values.name // string
+formState.values.age // number | undefined
+formState.values.email // string
+formState.values.birthDate // Date | undefined
+```
+
+<div className="h-4" />
+
+### defaults and `initialValues`
+
+You can provide initial values through the `initialValues` option:
+
+```tsx {2}
+const formState = useFormState(SomeFormSchema, {
+    initialValues: {
+        name: 'Thorr Codinsonn',
+        email: 'thorr@codinsonn.dev',
+    },
+})
+
+formState.values.name // 'Thorr Codinsonn'
+formState.values.email // 'thorr@codinsonn.dev'
+```
+
+Alternatively, your schema can define default values as well:
+
+```tsx /.default/
+const SomeFormSchema = schema('SomeFormSchema', {
+    name: z.string().default('Thorr Codinsonn'),
+    email: z.string().email().default('thorr@codinsonn.dev'),
+})
+
+const formState = useFormState(SomeFormSchema)
+
+formState.values.name // 'Thorr Codinsonn'
+formState.values.email // 'thorr@codinsonn.dev'
+```
+
+<div className="h-4" />
+
+### Retrieving and updating values
+
+You can use `formState.getValue('some-key'){:tsx}` to get a specific value from the form state. The `'some-key'` argument is any key in the Zod schema you provided as stateSchema and the available keys will he hinted by your IDE.
+
+```tsx
+formState.getValue('name') // string
+//                   ?^  Hinted keys: 'name' | 'email' | 'age' | 'birthDate'
+```
+
+Updating the formState values can similarly be done in two ways:
+
+```tsx
+// Update a single value in the form state by its hinted key
+formState.handleChange('email', 'thorr@fullproduct.dev') // OK
+formState.handleChange('age', 'thirty two') // ERROR (non a number)
+```
+
+```tsx
+// Update multiple values in the form state by passing an object with keys and values
+formState.setValues({
+    name: 'Thorr', // OK
+    email: 'thorr@fullproduct.dev', // OK
+    age: 'some-string', // ERROR: Type 'string' is not assignable to type 'number'
+})
+```
+
+Typescript and your IDE will help you out with the available keys and allowed values through hints and error markings if you try to set a value that doesn't match the Zod schema.
+
+<div className="h-4" />
+
+### Validation and error handling
+
+Call `formState.validate(){:tsx}` to validate current state values against the Zod schema:
+
+```tsx
+const isValid = formState.validate() // true | false
+```
+
+Validating the formstate will also update the `formState.errors` object with any validation errors.
+
+```tsx
+formState.errors
+// {
+//    name: ['Required'],
+//    email: ['Invalid email']
+// }
+```
+
+You could also trigger validation on any change to the form state by passing the `validateOnChange` option:
+
+```tsx {2}
+const formState = useFormState(SomeFormSchema, {
+    validateOnChange: true,
+})
+```
+
+You can manually update or clear the errors object:
+
+```tsx
+formState.updateErrors({ name: ['Required'] })
+
+// Clear all errors
+formState.clearErrors()
+```
+
+`clearErrors()` is essentially the same thing as clearing errors manually with:
+
+```tsx
+// e.g. Clear all error messages by passing an empty object or empty arrays
+formState.updateErrors({
+    username: [],
+    email: [],
+    password: [],
+    twoFactorCode: [],
+})
+```
+
+<div className="h-4" />
+
+#### Custom Errors
+
+You can provide custom error messages by passing the `message` prop in your form schema:
+
+```ts
+age: z.number({ message: 'Please provide a number' })
+// Throws => ZodError: [{ message: "Please provide a number", ... })
+```
+
+You can provide **custom error messages** for specific validations as well:
+
+```ts
+const SomeFormSchema = schema('SomeFormSchema', {
+
+    age: z.number().min(10, { message: 'You must be at least 18 years old' }),
+    // Throws => ZodError: [{ message: "You must be at least 18 years old", ... })
+
+    password: z.string().len(12, { message: 'Passwords must be at least 12 characters long' }),
+    // Throws => ZodError: [{ message: "Passwords must be at least 12 characters long", ... })
+
+})
+```
+
+<div className="h-10" />
+
+## Universal Form Components
+
+Our [full-product.dev](https://fullproduct.dev) starterkit comes with some (minimally styled) universal form components out of the box.
+
+You can see them in the sidebar under `@app-core/forms`:
+
+<Cards>
+    <Cards.Card href="/@app-core/forms/Checkbox" title="Checkbox" icon="✅ " />
+    <Cards.Card href="/@app-core/forms/CheckList" title="CheckList" icon="✅ " />
+    <Cards.Card href="/@app-core/forms/NumberStepper" title="NumberStepper" icon="➕ " />
+    <Cards.Card href="/@app-core/forms/RadioGroup" title="RadioGroup" icon="🔘 " />
+    <Cards.Card href="/@app-core/forms/Select" title="Select" icon="↕ " />
+    <Cards.Card href="/@app-core/forms/Switch" title="Switch" icon="✅ " />
+    <Cards.Card href="/@app-core/forms/TextArea" title="TextArea" icon="✏️ " />
+    <Cards.Card href="/@app-core/forms/TextInput" title="TextInput" icon="✏️ " />
+</Cards>
+
+> These are built with `useFormState` in mind and based on Nativewind-compatible [react-native-primitives](https://rn-primitives.vercel.app/).
+
+<div className="h-4" />
+
+### Integrating with Components
+
+`formState` exposes a few utility functions to make it easy to integrate with form components:
+
+- ✅ `value` props
+- ✅ `onChange` props
+- ✅ `hasError` prop
+
+<div className="h-4" />
+
+#### `getInputProps(...)`
+
+You can use `formState.getInputProps()` to easily integrate your form state with React components that:
+
+- Accept a `value` prop
+- Accept an `onChange` prop
+
+```tsx {6, 15}
+<NumberStepper
+    placeholder="e.g. 32"
+    min={18}
+    max={150}
+    step={1}
+    {...formState.getInputProps('age')}
+/>
+
+<CheckList
+    options={{
+        'option-1': 'Option 1',
+        'option-2': 'Option 2',
+        'option-3': 'Option 3',
+    }}
+    {...formState.getInputProps('options')}
+/>
+```
+
+<div className="h-4" />
+
+#### `getTextInputProps(...)`
+
+`formState.getTextInputProps()` is a replacement for `getInputProps()` with a `TextInput` component:
+
+- Uses `onChangeText` instead of `onChange`
+
+```tsx {3, 8}
+<TextArea
+    placeholder="How could we further improve your workflow?"
+    {...formState.getTextInputProps('feedbackSuggestions')}
+/>
+
+<TextInput
+    placeholder="e.g. thorr@fullproduct.dev"
+    {...formState.getTextInputProps('email')}
+/>
+```
+
+<div className="h-8" />
+
+## Best practices
+
+### `formState` as props
+
+If a child component requires access to the form state, you'll save a bunch of time and lines of code by passing the `formState` object as a prop:
+
+```tsx
+<SomeChildComponent formState={formState} />
+```
+
+This is typically handy when:
+
+- ✅ You're doing modal forms
+- ✅ You have a clear logic and view layer split
+- ✅ You're trying to avoid using global state
+
+<div className="h-4" />
+
+### Flags to track changes
+
+Sometimes you need to execute code when your form state changes.
+
+It's a good idea to use the flags provided in `formState` for this:
+
+```tsx
+// Whether the form is valid, even before calling .validate()
+const isValid = formState.isValid
+
+// Whether the form had changes since the last save
+const isUnsaved = formState.isUnsaved
+
+// Whether the form is in its default state (from initialValues or schema defaults)
+const isDefaultState = formState.isDefaultState
+```
+
+<div className="h-4" />
+
+### Triggering effects based on form state changes
+
+`formState` has a `valuesKey` property that changes every time the form state changes. This can be used to trigger effects when the form state changes:
+
+```tsx
+useEffect(() => {
+    // Do something when the form state changes
+}, [formState.valuesKey])
+```
+
+<div className="h-8" />
+
+## API Reference
+
+| Property                  | Description                                                                                       |
+|---------------------------|---------------------------------------------------------------------------------------------------|
+| `values`                  | The current values of the form                                                                    |
+| `setValues`               | Sets the entire form state to the provided values                                                 |
+| `getValue`                | Gets the form value for the provided field key                                                    |
+| `setValue: handleChange`  | Sets the form value for the provided field key                                                    |
+| `handleChange`            | Sets the form value for the provided field key                                                    |
+| `getChangeHandler`        | Gets the change handler for the provided field key                                                |
+| `validate`                | Validates the form state, sets errors if not, and returns whether it is valid or not              |
+| `isValid`                 | Whether the form is valid                                                                         |
+| `isUnsaved`               | Whether the form is unsaved                                                                       |
+| `isDefaultState`          | Whether the form is in its default state                                                          |
+| `errors`                  | The current errors of the form                                                                    |
+| `updateErrors`            | Sets the errors for the form                                                                      |
+| `getErrors`               | Gets the errors for the provided field key                                                        |
+| `hasError`                | Whether the provided field key has an error                                                       |
+| `clearErrors`             | Clears all errors until validated again                                                           |
+| `clearForm`               | Clears the form values, applying only the schema defaults                                         |
+| `resetForm`               | Resets the form to its original state using initialValues & schema defaults                       |
+| `getInputProps`           | The props to add to an input to manage its state                                                  |
+| `getTextInputProps`       | The props to add to a text input to manage its state, uses `onTextChange` instead                 |
+| `getNumberTextInputProps` | The props to add to a number input to manage its state, uses `onTextChange` instead               |
+| `valuesKey`               | The key of the current form values, good for use in hook dependencies to trigger recalculations   |
+
+<div className="h-8" />
+
+## Further reading
+
+From our own docs:
+- [Single Sources of Truth](/single-sources-of-truth) to base your form state on
+- [Data Resolvers](/data-resolvers) to send your form state to
+
+Relevant external docs:
+- [react-native-primitives](https://rn-primitives.vercel.app/)

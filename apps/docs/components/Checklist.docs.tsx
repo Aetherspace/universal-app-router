@@ -1,4 +1,4 @@
-import * as AppCheckList from '@app/core/forms/CheckList.styled'
+import * as AppCheckList from '@app/ui'
 
 /* --- Documentation overrides? ---------------------------------------------------------------- */
 

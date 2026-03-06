@@ -1,0 +1,156 @@
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { View, Image } from '@app/ui'
+
+<TitleWrapper>
+    ## HealthCheckInput
+</TitleWrapper>
+
+# HealthCheckInput
+
+```typescript copy
+import { HealthCheckInput } from '@app/demo/schemas/HealthCheckInput'
+```
+
+### Location
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-demo" defaultOpen>
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="HealthCheckInput.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+### Zod Schema
+
+What the schema would look like when defined with `z.object()` in Zod V3:
+
+```typescript copy
+const HealthCheckInput = z.object({
+    echo: z
+        .string()
+        .default("Hello World"),
+    verbose: z
+        .boolean()
+        .optional(),
+})
+```
+
+> (💡 Could be handy to copy-paste this schema info into an AI chat assistant)
+<div className="h-8" />
+
+### Type Definition
+
+You can extract the TypeScript type from the schema using `z.input()`, `z.output()` or `z.infer()` methods. e.g.:
+
+```typescript copy
+type HealthCheckInput = z.input<typeof HealthCheckInput>
+```
+
+What the resulting TypeScript type would look like:
+
+```typescript copy
+{
+    echo?: string;
+    verbose?: boolean;
+}
+```
+
+> (💡 Could be handy to copy-paste this type info into an AI chat assistant)
+<div className="h-8" />
+
+### Usage - Validation
+
+To validate data against this schema, you have a few options:
+
+```typescript copy
+// Throws if invalid
+const healthCheckInput = HealthCheckInput.parse(data)
+
+// Returns { success: boolean, data?: T, error?: ZodError }
+const healthCheckInput = HealthCheckInput.safeParse(data)
+
+```
+
+> This might be useful for parsing API input data or validating form data before submission.
+
+> You can also directly integrate this schema with form state managers like our own:
+
+<div className="h-8" />
+
+### Usage - Form State
+
+```typescript copy
+import { useFormState } from '@green-stack/forms/useFormState'
+
+const formState = useFormState(HealthCheckInput, {
+    initialValues: { /* ... */ }, // Provide initial values?
+    validateOnMount: true, // Validate on component mount?
+})
+
+```
+
+Learn more about using schemas for form state in our [Form Management Docs](/form-management).
+
+<div className="h-8" />
+
+### Usage - Component Props / Docs
+
+Another potential use case for the 'HealthCheckInput' schema is to type component props, provide default values and generate documentation for that component:
+
+```typescript copy
+export const HealthCheckInputComponentProps = HealthCheckInput.extend({
+    // Add any additional props here
+})
+
+export type HealthCheckInputComponentProps = z.input<typeof HealthCheckInputComponentProps>
+
+/* --- <HealthCheckInputComponent/> --------------- */
+
+export const HealthCheckInputComponent = (rawProps: HealthCheckInputComponentProps) => {
+
+    // Extract the props and apply defaults + infer resulting type
+    const props = ComponentProps.applyDefaults(rawProps)
+
+    // ... rest of the component logic ...
+
+}
+
+/* --- Documentation --------------- */
+
+export const documentationProps = HealthCheckInputComponentProps.documentationProps('HealthCheckInputComponent')
+
+```
+
+<div className="h-8" />
+
+## Developer Notes
+
+### Why this schema?
+
+We included this schema in the starterkit as a reference guide for what schema docs look like.
+
+It's also reused in the [`healthCheck()`](/@app-core/resolvers/healthCheck) resolver, which has it's own auto-generated docs example.
+
+Learn more about how zod schemas work as the [Single Source of Truth](/single-sources-of-truth) for APIs, forms, GraphQL and other automations we consider the "right abstractions".
+
+### Adding your own schemas
+
+If you want to quickly replicate this way of working for setting up schemas with all the side-effects listed above, you can use our schema generator:
+
+```md copy
+npm run add:schema
+```
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic schema docs were auto-generated with `npm run regenerate:docs`. This happens automatically for schema files in any `\schemas\` folder. You can opt-out of this by adding `// export const optOut = true` somewhere in the file. 
+</Callout>
