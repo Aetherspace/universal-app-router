@@ -11,17 +11,17 @@ This project was kickstarted with FullProduct.dev's universal app starterkit:
 
 ## Detailed docs (reference when relevant)
 
-- [Project structure](https://fullproduct.dev/docs/project-structure)
-- [Routing](https://fullproduct.dev/docs/universal-routing)
-- [Data resolvers & APIs](https://fullproduct.dev/docs/data-resolvers)
-- [Data fetching](https://fullproduct.dev/docs/data-fetching)
-- [Schemas & single sources of truth](https://fullproduct.dev/docs/single-sources-of-truth)
-- [Universal styling](https://fullproduct.dev/docs/write-once-styles)
-- [Form management](https://fullproduct.dev/docs/form-management)
-- [Generators](https://fullproduct.dev/docs/generators)
-- [Workspace drivers](https://fullproduct.dev/docs/workspace-drivers)
-- [Env vars + App config](https://fullproduct.dev/docs/app-config)
-- [Automatic docgen](https://fullproduct.dev/docs/automatic-docgen)
+- [Project structure](apps/docs/content/project-structure.mdx)
+- [Routing](apps/docs/content/universal-routing.mdx)
+- [Data resolvers & APIs](apps/docs/content/data-resolvers.mdx)
+- [Data fetching](apps/docs/content/data-fetching.mdx)
+- [Schemas & single sources of truth](apps/docs/content/single-sources-of-truth.mdx)
+- [Universal styling](apps/docs/content/write-once-styles.mdx)
+- [Form management](apps/docs/content/form-management.mdx)
+- [Generators](apps/docs/content/generators.mdx)
+- [Workspace drivers](apps/docs/content/workspace-drivers.mdx)
+- [Env vars + App config](apps/docs/content/app-config.mdx)
+- [Automatic docgen](apps/docs/content/automatic-docgen.mdx)
 
 # Code Style
 

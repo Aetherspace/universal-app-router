@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Routing
 
-When editing route files, reference [https://fullproduct.dev/docs/universal-routing](https://fullproduct.dev/docs/universal-routing) for:
+When editing route files, reference [apps/docs/content/universal-routing.mdx](apps/docs/content/universal-routing.mdx) for:
 
 - Routes live in `features/*/routes/`, not in `apps/expo/app/` or `apps/next/app/`
 - Run `npm run link:routes` to re-export routes from features to the Expo/Next app routers
