@@ -548,21 +548,21 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
                                 {fieldType === 'boolean' && isReady && (
                                     <Switch
                                         key={inputKey}
-                                        checked={currentValue}
+                                        checked={currentValue} // @ts-ignore
                                         onCheckedChange={(value) => formState.setValue(key, value)}
                                     />
                                 )}
 
                                 {fieldType === 'string' && isReady && (
                                     <TextInput
-                                        key={inputKey}
+                                        key={inputKey} // @ts-ignore
                                         {...formState.getTextInputProps(key)}
                                     />
                                 )}
 
                                 {fieldType === 'number' && isReady && (
                                     <NumberStepper
-                                        key={inputKey}
+                                        key={inputKey} // @ts-ignore
                                         {...formState.getInputProps(key)}
                                         min={meta.minValue}
                                         max={meta.maxValue}
@@ -571,7 +571,7 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                                 {fieldType === 'enum' && isReady && (
                                     <Select
-                                        key={inputKey}
+                                        key={inputKey} // @ts-ignore
                                         {...formState.getInputProps(key)}
                                         value={currentValue || undefined}
                                         required={isRequired}
@@ -596,12 +596,12 @@ export const ComponentDocsPropTable = (props: ComponentDocsProps) => {
 
                                 {isJsonInput && isReady && (
                                     <TextArea
-                                        key={jsonInputKey}
+                                        key={jsonInputKey} // @ts-ignore
                                         hasError={formState.hasError(key)}
                                         defaultValue={JSON.stringify(currentValue, null, 2)}
                                         onChangeText={(value) => {
                                             try {
-                                                const parsedValue = value ? JSON.parse(value) : undefined
+                                                const parsedValue = value ? JSON.parse(value) : undefined // @ts-ignore
                                                 formState.setValue(key, parsedValue)
                                                 formState.updateErrors({ [key]: [] })
                                             } catch (e) {

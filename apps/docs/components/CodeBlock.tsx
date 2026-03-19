@@ -45,7 +45,7 @@ export const CodeBlock = (props: CodeBlockProps) => {
             className={cn("relative overflow-x-auto rounded-xl p-4 ring-0", className)}
             style={{ backgroundColor: bgColor, margin: 0 }}
         >
-            <code className="ml-[-16px] text-xs text-primary border-0">
+            <code className="ml--4 text-xs text-primary border-0">
                 <span dangerouslySetInnerHTML={{ __html: highlightedCode || code }} />
             </code>
             {children}

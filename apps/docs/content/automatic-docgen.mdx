@@ -1,9 +1,10 @@
 import { Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
+import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
 
 <Image
-    src="/green-stack-logo.png"
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
     style={{ marginTop: 20 }}
     width={60}
     height={60}
@@ -43,8 +44,10 @@ Each generated page includes imports, type definitions, usage examples, and link
 
 Schemas are auto-documented when:
 
-- Defined and exported in `{workspace}/schemas/{SchemaName}.schema.ts`
+- Defined and exported in `{workspace}/schemas/{SchemaName}.ts` or `{SchemaName}.schema.ts`
 - The schema name matches the filename (e.g. `Customer.schema.ts` exports `Customer`)
+
+Docgen works for schemas built with Zod v3 (`@green-stack/schemas`), v4 (`@green-stack/schemas/v4`), or mini (`@green-stack/schemas/mini`).
 
 ### What gets generated
 
@@ -133,17 +136,57 @@ For each component, the docs include:
 
 The [`Button`](/@app-ui/components/Button) component is documented from `packages/@app-ui/components/Button.tsx`:
 
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
 ```tsx filename="packages/@app-ui/components/Button.tsx"
+import { z, schema } from '@green-stack/schemas'
+
 export const ButtonProps = schema('ButtonProps', {
     type: z.enum(['primary', 'secondary', ...]).default('primary'),
     text: z.string().default(''),
-    // ...
 })
 
 export const Button = (props: ButtonProps) => { /* ... */ }
 
 export const getDocumentationProps = ButtonProps.documentationProps('Button')
 ```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```tsx filename="packages/@app-ui/components/Button.tsx"
+import { z, schema } from '@green-stack/schemas/v4'
+
+export const ButtonProps = schema('ButtonProps', {
+    type: z.enum(['primary', 'secondary', ...]).default('primary'),
+    text: z.string().default(''),
+})
+
+export const Button = (props: ButtonProps) => { /* ... */ }
+
+export const getDocumentationProps = ButtonProps.documentationProps('Button')
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```tsx filename="packages/@app-ui/components/Button.tsx"
+import * as z from '@green-stack/schemas/mini'
+import { schema } from '@green-stack/schemas/mini'
+
+export const ButtonProps = schema('ButtonProps', {
+    type: z._default(z.enum(['primary', 'secondary', ...]), 'primary'),
+    text: z._default(z.string(), ''),
+})
+
+export const Button = (props: ButtonProps) => { /* ... */ }
+
+export const getDocumentationProps = ButtonProps.documentationProps('Button')
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
 
 <div className="h-8" />
 

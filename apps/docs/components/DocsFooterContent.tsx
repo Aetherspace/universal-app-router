@@ -16,7 +16,7 @@ export const DocsFooterContent = () => (
                             data-nimg="fill"
                             className="w-full h-full"
                             sizes="100vw"
-                            src="/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fgreen-stack-logo.b8051d21.png&amp;w=3840&amp;q=75"
+                            src="https://fullproduct.dev/docs/green-stack-logo.png"
                             style={{
                                 height: '100%',
                                 width: '100%',

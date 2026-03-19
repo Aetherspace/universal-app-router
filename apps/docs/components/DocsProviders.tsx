@@ -34,7 +34,7 @@ export const DocsProviders = ({ children }: { children: React.ReactNode }) => {
                 const prefersDark = mediaQuery.media === '(prefers-color-scheme: dark)' && mediaQuery.matches
                 currentTheme = prefersDark ? 'dark' : 'light'
             }
-            theme.setTheme(currentTheme)
+            // theme.setTheme(currentTheme)
             scheme.setColorScheme(currentTheme)
         }
         const queuedThemeCheck = () => {

@@ -1,9 +1,10 @@
 import { FileTree } from 'nextra/components'
+import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
 import { View, Image } from '@app/ui'
 import { Hidden } from '../components/Hidden'
 
 <Image
-    src="/green-stack-logo.png"
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
     style={{ marginTop: 20 }}
     width={60}
     height={60}
@@ -309,7 +310,10 @@ Try creating a `User` schema for example:
     </FileTree.Folder>
 </FileTree>
 
-```ts {4, 7, 11} /.min/ /.default/ /.nullish/ /.nullable/ /.optional/ filename="User.schema.ts"
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
+```ts {4, 7, 11} /.min/ /.default/ /.nullish/ filename="User.schema.ts"
 import { z, schema } from '@green-stack/schemas'
 
 // Define the shape of the user data
@@ -322,9 +326,53 @@ export const User = schema('User', {
 
     // Just like TS, it can help you indicate fields as optional
     isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
-    birthdate: z.Date().nullish(), // = same as calling .nullable().optional()
+    birthdate: z.date().nullish(), // = same as calling .nullable().optional()
 })
 ```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```ts {4, 7, 11} /.min/ /.default/ /.nullish/ filename="User.schema.ts"
+import { z, schema } from '@green-stack/schemas/v4'
+
+// Define the shape of the user data
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, best to keep the same
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().min(18), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
+    birthdate: z.date().nullish(), // = same as calling .nullable().optional()
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```ts {5, 8, 12} /.min/ /_default/ /.nullish/ filename="User.schema.ts"
+import * as z from '@green-stack/schemas/mini'
+import { schema } from '@green-stack/schemas/mini'
+
+// Define the shape of the user data
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, best to keep the same
+
+    // Zod can help you go even narrower than typescript
+    name: z.string(), // <- e.g. Needs to be a string
+    age: z.number(), // <- e.g. Age must be a number
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z._default(z.boolean(), false), // <- Marked optional, defaults to false
+    birthdate: z.nullish(z.date()), // same as calling nullable(optional(...))
+})
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
 
 Already, our zod powered schema can act like a **single source of truth** for both **types and validation**:
 
@@ -373,26 +421,72 @@ To highlight the power of schemas, let's look beyond validation and types:
 
 Let's link an Input schema and Output schema to some business logic:
 
-```ts {3, 4, 11, 12} filename="healthCheck.resolver.ts"
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
+```ts {5, 6, 10, 11} filename="healthCheck.resolver.ts"
+import { z, schema } from '@green-stack/schemas'
+
 /* -- Schemas ------------ */
 
 // Input validation
 export const HealthCheckInput = schema('HealthCheckInput', {
-
-    echo: z.string()
-        .default('Hello World!')
-        .describe("Will ne echo'd back in the response"), // Docs
+    echo: z.string().default('Hello World!').describe("Will be echo'd back"),
 })
 
-// Output definition
+// Output defaults
 export const HealthCheckOutput = schema('HealthCheckOutput', {
-
-    echo: HealthCheckInput.shape.echo, // 1 of many ways to reuse defs
-
+    echo: HealthCheckInput.shape.echo,
     alive: z.boolean().default(true),
     kicking: z.boolean().default(true),
 })
 ```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```ts {5, 6, 10, 11} filename="healthCheck.resolver.ts"
+import { z, schema } from '@green-stack/schemas/v4'
+
+/* -- Schemas ------------ */
+
+// Input validation
+export const HealthCheckInput = schema('HealthCheckInput', {
+    echo: z.string().default('Hello World!').describe("Will be echo'd back"),
+})
+
+// Output defaults
+export const HealthCheckOutput = schema('HealthCheckOutput', {
+    echo: HealthCheckInput.shape.echo,
+    alive: z.boolean().default(true),
+    kicking: z.boolean().default(true),
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```ts {6, 7, 11, 12} filename="healthCheck.resolver.ts"
+import * as z from '@green-stack/schemas/mini'
+import { schema } from '@green-stack/schemas/mini'
+
+/* -- Schemas ------------ */
+
+// Input validation
+export const HealthCheckInput = schema('HealthCheckInput', {
+    echo: z._default(z.string(), 'Hello World!'),
+})
+
+// Output defaults
+export const HealthCheckOutput = schema('HealthCheckOutput', {
+    echo: HealthCheckInput.shape.echo,
+    alive: z._default(z.boolean(), true),
+    kicking: z._default(z.boolean(), true),
+})
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
 
 To be able to reuse these on the front-end later, you'll want to combine them as a "bridge":
 

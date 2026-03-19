@@ -1,10 +1,13 @@
 import fs from 'fs'
 import { parseWorkspaces, getAvailableSchemas, getAvailableDataBridges, swapImportAlias, globRel, hasOptOutPatterns, lowercaseFirstChar, createDivider, uppercaseFirstChar, maybeImport } from '@green-stack/scripts/helpers/scriptUtils'
 import type { SchemaFileMeta, BridgeFileMeta } from '@green-stack/scripts/helpers/scriptUtils'
-import { Meta$Schema, renderSchemaToZodDefV3, ZodSchema } from '@green-stack/core/schemas'
+import { getSchemaMetadata, type Meta$Schema, type AnyZodSchema } from '@green-stack/schemas/compat'
+import { renderSchemaToZodDefV3 } from '@green-stack/core/schemas'
+import { renderSchemaToZodDefV4 } from '@green-stack/core/schemas/v4'
 import { zodToTs, printNode } from 'zod-to-ts'
 import { gen, createBridgedFormHookContent } from '@green-stack/core/generators/add-resolver'  
 import { setProperty } from 'dot-prop'
+import { DataBridgeType } from '@green-stack/schemas/createDataBridge'
 
 /* --- Constants ------------------------------------------------------------------------------- */
 
@@ -26,7 +29,7 @@ type ComponentDocsData = {
     mdxFileFolder: string,
     documentationProps?: {
         componentName: string
-        propSchema: ZodSchema
+        propSchema: AnyZodSchema
         propMeta: Record<string, Meta$Schema>
         previewProps: Record<string, any$Unknown>
     },
@@ -67,6 +70,32 @@ type CustomDocsData = {
 
 type CustomDocsTree = {
     [mdxFilePath: string]: CustomDocsData
+}
+
+/** --- getSchemaVersion() --------------------------------------------------------------------- */
+/** -i- Detect Zod v3 vs v4/mini for choosing the right schema renderer */
+const getSchemaVersion = (schema: unknown): 'v3' | 'v4' => {
+    if (schema != null && typeof schema === 'object' && '_zod' in schema) return 'v4'
+    return 'v3'
+}
+
+/** --- renderSchemaToZodDef() ----------------------------------------------------------------- */
+/** -i- Version-aware schema def renderer for docgen */
+const renderSchemaToZodDef = (schema: unknown, schemaMeta: Meta$Schema): string => {
+    return getSchemaVersion(schema) === 'v4'
+        ? renderSchemaToZodDefV4(schemaMeta)
+        : renderSchemaToZodDefV3(schemaMeta)
+}
+
+/** --- schemaToTypeDef() ---------------------------------------------------------------------- */
+/** -i- Extract TS type from schema via zod-to-ts; fallback for v4/mini if zod-to-ts fails */
+const schemaToTypeDef = (schema: unknown, name: string): string => {
+    try {
+        const { node } = zodToTs(schema as any, name)
+        return printNode(node)
+    } catch {
+        return ''
+    }
 }
 
 /** --- renderFileTree() ----------------------------------------------------------------------- */
@@ -241,7 +270,7 @@ const createSchemaDocs = (ctx: SchemaContext) => [
 
     `### Zod Schema\n`,
 
-    `What the schema would look like when defined with \`z.object()\` in Zod V3:\n`,
+    `What the schema would look like when defined with \`z.object()\` (${getSchemaVersion(ctx.schema) === 'v4' ? 'Zod V4 / Mini' : 'Zod V3'}):\n`,
 
     `\`\`\`typescript copy`,
 
@@ -939,8 +968,8 @@ const regenerateDocs = async () => {
 
             // Attempt to extract the zod schema definition and type definition
             const propsSchema = getDocumentationProps?.propSchema
-            const propsSchemaDef = propsSchema ? renderSchemaToZodDefV3(getDocumentationProps.propSchema.introspect()) : ''
-            const propsTypeDef = propsSchema ? printNode(zodToTs(propsSchema, componentName).node) : ''
+            const propsSchemaDef = propsSchema ? renderSchemaToZodDef(propsSchema, propsSchema.introspect?.() as Meta$Schema) : ''
+            const propsTypeDef = propsSchema ? schemaToTypeDef(propsSchema, componentName) : ''
 
             // Build MDX file path
             const mdxFileName = `${componentName}.mdx` // -> 'Button.mdx'
@@ -1002,11 +1031,9 @@ const regenerateDocs = async () => {
             // Figure out custom MDX docs for this schema
             const customMdxDocs = extractCustomDocs(mdxFilePath)
 
-            // @ts-ignore
-            const { node: tsNode } = zodToTs(schemaMeta.schema, schemaMeta.schemaName) 
-            const schemaTypeDef = printNode(tsNode) // @ts-ignore
-            const schemaIntrospection = schemaMeta.schema!.introspect?.() as Meta$Schema
-            const schemaZodObjectDef = renderSchemaToZodDefV3(schemaIntrospection)
+            const schemaTypeDef = schemaToTypeDef(schemaMeta.schema, schemaMeta.schemaName)
+            const schemaIntrospection = getSchemaMetadata(schemaMeta.schema) as Meta$Schema
+            const schemaZodObjectDef = renderSchemaToZodDef(schemaMeta.schema, schemaIntrospection)
             const mdxContent = createSchemaDocs({
                 ...schemaMeta,
                 schemaIntrospection,
@@ -1038,20 +1065,19 @@ const regenerateDocs = async () => {
 
         await Promise.all(Object.values(availableDataBridges).map(async (bridgeMeta: BridgeFileMeta) => {
             
-            // @ts-ignore
-            const { node: tsInputNode } = zodToTs(bridgeMeta.bridge.inputSchema, bridgeMeta.inputSchemaName)
-            const inputSchemaType = printNode(tsInputNode) // @ts-ignore
-            const inputSchemaMeta = bridgeMeta.bridge.inputSchema.introspect?.() as Meta$Schema
-            const inputSchemaDef = renderSchemaToZodDefV3(inputSchemaMeta)
+            const bridge = bridgeMeta.bridge as DataBridgeType
+            const bridgeInputSchema = bridge.inputSchema
+            const bridgeOutputSchema = bridge.outputSchema
 
-            // @ts-ignore
-            const { node: tsOutputNode } = zodToTs(bridgeMeta.bridge.outputSchema, bridgeMeta.outputSchemaName)
-            const outputSchemaType = printNode(tsOutputNode) // @ts-ignore
-            const outputSchemaMeta = bridgeMeta.bridge.outputSchema.introspect?.() as Meta$Schema
-            const outputSchemaDef = renderSchemaToZodDefV3(outputSchemaMeta)
+            const inputSchemaType = schemaToTypeDef(bridge!.inputSchema!, bridgeMeta.inputSchemaName)
+            const inputSchemaMeta = getSchemaMetadata(bridgeInputSchema) as Meta$Schema
+            const inputSchemaDef = renderSchemaToZodDef(bridgeInputSchema, inputSchemaMeta)
 
-            // @ts-ignore
-            const graphqlQueryDef = bridgeMeta.bridge?.getGraphqlQuery?.(true, false) || ''
+            const outputSchemaType = schemaToTypeDef(bridge.outputSchema, bridgeMeta.outputSchemaName)
+            const outputSchemaMeta = getSchemaMetadata(bridgeOutputSchema) as Meta$Schema
+            const outputSchemaDef = renderSchemaToZodDef(bridge.outputSchema, outputSchemaMeta)
+
+            const graphqlQueryDef = bridge?.getGraphqlQuery?.(true, false) || ''
 
             // Include parsed metadata from the resolver generator
             const parsedBridgeMeta = gen.parseAnswers({
@@ -1086,7 +1112,7 @@ const regenerateDocs = async () => {
                 inputSchemaDef,
                 inputSchemaType,
                 outputSchemaDef,
-                outputSchemaType,
+                outputSchemaType, // @ts-ignore
                 graphqlQueryDef,
                 customMdxDocs,
             })

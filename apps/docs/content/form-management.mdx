@@ -1,8 +1,9 @@
 import { FileTree, Steps, Cards } from 'nextra/components'
+import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
 import { Image } from '@app/ui'
 
 <Image
-    src="/green-stack-logo.png"
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
     style={{ marginTop: 20 }}
     width={60}
     height={60}
@@ -77,6 +78,9 @@ formState.values.email // 'thorr@codinsonn.dev'
 
 Alternatively, your schema can define default values as well:
 
+<CodeBlockTabs items={['@zod/v3 & v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3 & v4">
+
 ```tsx /.default/
 const SomeFormSchema = schema('SomeFormSchema', {
     name: z.string().default('Thorr Codinsonn'),
@@ -84,10 +88,24 @@ const SomeFormSchema = schema('SomeFormSchema', {
 })
 
 const formState = useFormState(SomeFormSchema)
-
-formState.values.name // 'Thorr Codinsonn'
-formState.values.email // 'thorr@codinsonn.dev'
+// formState.values.name => 'Thorr Codinsonn'
 ```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```tsx /_default/
+const SomeFormSchema = schema('SomeFormSchema', {
+    name: z._default(z.string(), 'Thorr Codinsonn'),
+    email: z._default(z.email(), 'thorr@codinsonn.dev'),
+})
+
+const formState = useFormState(SomeFormSchema)
+// formState.values.name => 'Thorr Codinsonn'
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
 
 <div className="h-4" />
 
@@ -199,17 +217,17 @@ const SomeFormSchema = schema('SomeFormSchema', {
 
 Our [full-product.dev](https://fullproduct.dev) starterkit comes with some (minimally styled) universal form components out of the box.
 
-You can see them in the sidebar under `@app-core/forms`:
+You can see them in the sidebar under `@app-ui/forms`:
 
 <Cards>
-    <Cards.Card href="/@app-core/forms/Checkbox" title="Checkbox" icon="✅ " />
-    <Cards.Card href="/@app-core/forms/CheckList" title="CheckList" icon="✅ " />
-    <Cards.Card href="/@app-core/forms/NumberStepper" title="NumberStepper" icon="➕ " />
-    <Cards.Card href="/@app-core/forms/RadioGroup" title="RadioGroup" icon="🔘 " />
-    <Cards.Card href="/@app-core/forms/Select" title="Select" icon="↕ " />
-    <Cards.Card href="/@app-core/forms/Switch" title="Switch" icon="✅ " />
-    <Cards.Card href="/@app-core/forms/TextArea" title="TextArea" icon="✏️ " />
-    <Cards.Card href="/@app-core/forms/TextInput" title="TextInput" icon="✏️ " />
+    <Cards.Card href="/@app-ui/forms/Checkbox" title="Checkbox" icon="✅ " />
+    <Cards.Card href="/@app-ui/forms/CheckList" title="CheckList" icon="✅ " />
+    <Cards.Card href="/@app-ui/forms/NumberStepper" title="NumberStepper" icon="➕ " />
+    <Cards.Card href="/@app-ui/forms/RadioGroup" title="RadioGroup" icon="🔘 " />
+    <Cards.Card href="/@app-ui/forms/Select" title="Select" icon="↕ " />
+    <Cards.Card href="/@app-ui/forms/Switch" title="Switch" icon="✅ " />
+    <Cards.Card href="/@app-ui/forms/TextArea" title="TextArea" icon="✏️ " />
+    <Cards.Card href="/@app-ui/forms/TextInput" title="TextInput" icon="✏️ " />
 </Cards>
 
 > These are built with `useFormState` in mind and based on Nativewind-compatible [react-native-primitives](https://rn-primitives.vercel.app/).
