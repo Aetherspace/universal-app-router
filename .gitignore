@@ -63,3 +63,7 @@ yarn-error.log*
 
 # Pagefind (docs search)
 _pagefind/
+
+# Cursor
+.cursor/hooks/state
+.cursor/worktrees.json
