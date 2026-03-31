@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Schemas
 
-When editing schema files, reference [https://fullproduct.dev/docs/single-sources-of-truth](https://fullproduct.dev/docs/single-sources-of-truth) for:
+When editing schema files, reference [apps/docs/content/single-sources-of-truth.mdx](apps/docs/content/single-sources-of-truth.mdx) for:
 
 - Use `schema()` from `@green-stack/schemas` (not raw `z.object()`)
 - Schemas drive types, validation, GraphQL, API inputs/outputs, forms, docs and even DB models

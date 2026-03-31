@@ -1,0 +1,313 @@
+import { FileTree, Steps } from 'nextra/components'
+import { View, Image } from '@app/ui'
+
+<Image
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Cross-Platform Navigation + Routing
+
+<View className="h-4" />
+
+- [Making routes portable](/universal-routing#workspace-defined-routes)
+- [Adding page routes](/universal-routing#using-the-route-generator)
+- [`<Link/>`](/universal-routing#universal-link-component)
+- [`useRouter()`](/universal-routing#universal-userouter-hook)
+
+<div className="h-8" />
+
+## Workspace Defined Routes
+
+> We strongly recommend you ***define routes on the workspace level.***
+
+This way you can:
+
+- ✅ **Colocate** routes with the rest of a feature's domain (*maximizes copy-paste-ability*)
+- ✅ **Reuse them across platforms** (*auto re-exported* to **`@app/expo`** and **`@app/next`**)
+
+```shell {4, 6}
+features/@some-feature
+
+ └── /components/...
+ └── /screens/... # <- Reuses components
+      └── /HomeScreen.tsx
+ └── /routes/... # <- Reuses screens
+     └── /index.ts # <- Reuses e.g. 'HomeScreen.tsx'
+```
+
+For an example of what this might look like in an actual project, check the example below. Don't hesitate to click open some of the folders to get a better idea of how the routes are structured:
+
+<FileTree>
+    <FileTree.Folder name="apps">
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app / posts/...  ← Re-exported routes from /features/ in Expo" />
+        </FileTree.Folder>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.Folder name="app / posts/...  ← Re-exported routes from /features/ in Next" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature">
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="PostDetailScreen.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api / posts  ← e.g. /api/posts/...">
+                    <FileTree.File name="/create/route.ts" />
+                    <FileTree.File name="/read/[slug]/route.ts" />
+                    <FileTree.File name="/update/[slug]/route.ts" />
+                    <FileTree.File name="/delete/[slug]/route.ts" />
+                </FileTree.Folder>
+                <FileTree.Folder name="posts" defaultOpen>
+                    <FileTree.Folder name="[slug]  ← e.g. /posts/123/">
+                        <FileTree.File name="index.ts   ← reuses 'PostDetailScreen'" />
+                    </FileTree.Folder>
+                    <FileTree.File name="index.ts" />
+                </FileTree.Folder>
+            </FileTree.Folder>
+            <FileTree.File name="package.json  ← e.g. '@app/user-posts'" />
+        </FileTree.Folder>
+        <FileTree.Folder name="@other-feature">
+            <FileTree.Folder name="screens / ..." />
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="api / ..." />
+                <FileTree.Folder name="..." />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+> The recommended and easiest way to create a new route in a workspace is to use the Route Generator:
+
+<div className="h-8" />
+
+## Using the Route Generator
+
+```shell
+npm run add:route
+```
+
+> The add:route generator (Plop-based) will ask you some questions, like which url you’d like the route to have, and will generate the empty screens and routes folders in the workspace of your choosing, e.g.:
+
+```shell {4}
+>>> Modify "your-project-name" using custom generators
+
+? Where would you like to add this new route? # (Use arrow keys)  
+❯ features/@app-core  --  importable from: '@app/core' 
+  features/@some-feature  --  importable from: '@app/some-feature' 
+  features/@other-feature  --  importable from: '@app/other-feature'
+```
+
+`⬇⬇⬇`
+
+```shell {8, 9, 10}
+>>> Modify "your-project-name" using custom generators
+
+? Where would you like to add this new route? # -> features/@app-core
+? What should the screen component be called? # -> NewRouteScreen
+? What url do you want this route on? # e.g. "/examples/[slug]"
+? Would you like to fetch initial data for this route from a resolver? # No data fetching
+
+>>> Changes made:
+  • /features/@app-core/screens/NewRouteScreen.tsx # (add)
+  • /features/@app-core/routes/examples/[slug]/index.tsx # (add)
+
+>>> Success!
+```
+
+> We'll be ignoring [providing initial data](/data-fetching) for now, but we'll come back to it in [Universal Data Fetching](/data-fetching).
+
+<div className="h-8" />
+
+## Manually adding universal routes
+
+> You *could* define your routes twice, once in `@apps/expo` and once in `@apps/next`, in line with their way of working.
+
+> If you prefer to add routes manually, and like colocating to keep them portable, follow the steps below:
+
+<Steps>
+
+### Add a screen component
+
+Add a new screen component in a workspace `/screens/` folder, e.g.:
+
+```tsx filename="NewRouteScreen.tsx"
+// ...
+
+/* --- <NewRouteScreen> -------------------- */
+
+const NewRouteScreen = (props: ...) => {
+
+    // ...
+}
+
+/* --- Exports ----------------------------- */
+
+export default NewRouteScreen
+
+```
+
+*We'll dive into how to best type the `props` for routes in the [Universal Data Fetching](/data-fetching) docs.*
+
+### Export screen in `/routes/`
+
+You can use Next.js style routing conventions to export the screen component in the same workspace's `/routes/` folder, e.g.:
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@some-feature" defaultOpen>
+            <FileTree.Folder name="screens / ..." />
+            <FileTree.Folder name="routes" defaultOpen>
+                <FileTree.Folder name="examples / [slug] / index.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+```tsx {2, 5} filename="examples/[slug]/index.tsx"
+
+export { default } from '@app/core/screens/NewRouteScreen'
+
+// -i- Export any other next.js routing config here
+export const dynamic = 'auto'
+export const dynamicParams = true
+export const revalidate = false
+export const fetchCache = 'auto'
+export const runtime = 'nodejs'
+export const preferredRegion = 'auto'
+export const maxDuration = 5
+
+```
+
+### Run `npm run link:routes`
+
+![](https://fullproduct.dev/blog-assets/imgs/feature-routes-to-universal-links.jpg)
+
+This command will automatically re-export all routes from the workspace to the platform-specific `/app/` folder for Expo and Next.js
+
+```shell
+npm run link:routes
+```
+
+> This deduplication will happen automatically when restarting with `npm run dev`
+
+`⬇⬇⬇`
+
+<FileTree>
+    <FileTree.Folder name="apps / expo" defaultOpen>
+        <FileTree.Folder name="app / examples / [slug] / index.tsx  ← Re-exported route from /features/ in Expo" />
+    </FileTree.Folder>
+    <FileTree.Folder name="apps / next" defaultOpen>
+        <FileTree.Folder name="app / examples / [slug] / page.tsx  ← Re-exported route from /features/ in Next" />
+    </FileTree.Folder>
+</FileTree>
+
+</Steps>
+
+<div className="h-8" />
+
+## Navigating pages
+
+You can navigate using the `useRouter` hook or `Link` component from `@green-stack/navigation`. They provide APIs familiar to how navigation works in both the Next.js and `expo-router` app routers.
+
+While they do use each platform's underlying navigation system, they are not limited to just `expo-router` or `next.js`. Instead they will provide universal navigation utility.
+
+<div className="h-8" />
+
+### Universal `useRouter()` hook
+
+```tsx
+import { useRouter } from '@green-stack/navigation/useRouter'
+```
+
+You can use `router.push()` to navigate to a new page:
+
+```tsx
+const router = useRouter()
+
+router.push('/examples/[slug]', '/examples/123')
+```
+
+> `.push()` will use a push operation on mobile if possible.
+
+There are also other methods available on the `router` object:
+
+- `router.navigate()` - Navigate to the provided href
+- `router.replace()` - Navigate without appending to the history
+- `router.back()` - Go back in the history
+- `router.canGoBack()` - Check if there's history that supports invoking the `back()` function
+- `router.setParams()` - Update the current route query params without navigating
+
+<div className="h-8" />
+
+### Universal `<Link/>` component
+
+If you import the `Link` component from `@green-stack/navigation`, it will automatically use the correct navigation system for the platform you are on.
+
+```tsx copy
+import { Link } from '@green-stack/navigation'
+```
+
+However, you can also ***import it from `@app/ui` to apply tailwind styles***:
+
+```tsx copy
+import { Link } from '@app/ui'
+```
+
+You can use the `href` prop to navigate to a new page:
+
+```tsx {3}
+<Link
+    className="text-link p-2 rounded"
+    href="/examples/[slug]"
+>
+    See example
+</Link>
+```
+
+<div className="h-8" />
+
+#### `UniversalLinkProps`
+
+| Property               | Type                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|------------------------|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| children               | React.ReactNode                      | The content to be rendered inside the link.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| href                   | string \| HREF                       | The path to route to on web or mobile. String only. Hints for internal routes provided through codegen.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| style                  |                                      | Style prop: https://reactnative.dev/docs/text#style                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| className              | string                               | Nativewind classNames should be applied to either the parent or children of Link. Ideally, create or use a TextLink component instead.                                                                                                                                                                                                                                                                                                                                                        |
+| replace                | boolean                              | Should replace the current route without adding to the history - Default: false.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| onPress                |                                      | Extra handler that fires when the link is pressed.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| target                 |                                      | Specifies where to display the linked URL.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| asChild                | boolean                              | **Mobile only** - Forward props to child component. Useful for custom buttons - Default: false.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| push                   | boolean                              | **Mobile only** - Should push the current route, always adding to the history - Default: true.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| testID                 | string \| undefined                  | **Mobile only** - Used to locate this view in end-to-end tests.                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| nativeID               | string \| undefined                  | **Mobile only** - Used to reference react managed views from native code. @deprecated use `id` instead.                                                                                                                                                                                                                                                                                                                                                                                           |
+| id                     | string \| undefined                  | **Mobile only** - Used to reference react managed views from native code.                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| allowFontScaling       |                                      | **Mobile only** - Specifies whether fonts should scale to respect Text Size accessibility settings.                                                                                                                                                                                                                                                                                                                                                                                               |
+| numberOfLines          |                                      | **Mobile only** - Specifies the maximum number of lines to use for rendering text.                                                                                                                                                                                                                                                                                                                                                                                                                |
+| maxFontSizeMultiplier  |                                      | **Mobile only** - Specifies the maximum scale factor for text.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| suppressHighlighting   |                                      | **Mobile only** - When true, no visual change is made when text is pressed down.                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| scroll                 | boolean                              | **Web only** - Whether to override the default scroll behavior - Default: false.                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| shallow                | boolean                              | **Web only** - Update the path of the current page without rerunning getStaticProps, getServerSideProps or getInitialProps - Default: false.                                                                                                                                                                                                                                                                                                                                                      |
+| passHref               | boolean                              | **Web only** - Forces `Link` to send the `href` property to its child - Default: false.                                                                                                                                                                                                                                                                                                                                                                                                           |
+| prefetch               | boolean                              | **Web only** - Prefetch the page in the background. Any `<Link />` that is in the viewport (initially or through scroll) will be preloaded. Prefetch can be disabled by passing `prefetch={false}`. When `prefetch` is set to `false`, prefetching will still occur on hover. Pages using [Static Generation](/docs/basic-features/data-fetching/get-static-props.md) will preload `JSON` files with the data for faster page transitions. Prefetching is only enabled in production. - Default: true |
+| locale                 | string \| false                      | **Web only** - The active locale is automatically prepended. `locale` allows for providing a different locale. When `false` `href` has to include the locale as the default behavior is disabled.                                                                                                                                                                                                                                                                                                 |
+| as                     | Url \| undefined                     | **Web only** - Optional decorator for the path that will be shown in the browser URL bar.                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+<div className="h-8" />
+
+## Further reading
+
+From our own docs:
+- [Building APIs](/data-resolvers)
+- [Universal Data Fetching](/data-fetching)
+
+Relevant external docs:
+- [Next.js Route segment config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) - Determine rendering & caching strategy per route
+- [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) - Used for [Data Resolvers and API's](/data-resolvers)
+- [Expo Router](https://docs.expo.dev/develop/file-based-routing/) and [React Navigation](https://reactnavigation.org/docs/getting-started) - Used under the hood on mobile
+

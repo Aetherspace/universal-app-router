@@ -1,0 +1,73 @@
+import { Image } from '@app/ui'
+import { FileTree } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Usage - `MarkdownTheme`
+</TitleWrapper>
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Universal `MarkdownTheme` component
+
+```tsx copy
+import MarkdownTheme from '@app/mdx'
+```
+
+`MarkdownTheme` wraps MDX content and maps markdown elements (headings, paragraphs, lists, blockquotes, links, images) to your design system primitives from `@app/ui`. It builds on [@bacons/mdx](https://github.com/EvanBacon/expo-mdx)'s `MDXComponents`, which compiles MDX at build time and accepts custom component overrides per element type.
+
+<div className="h-6" />
+
+### Element mapping
+
+| Markdown | Rendered as |
+|----------|-------------|
+| `h1`, `h2`, `h3` | `H1`, `H2`, `H3` from `@app/ui` |
+| `p` | `P` |
+| `ul`, `li` | `View`, `Text` with list styling |
+| `blockquote` | `View` with left border |
+| `a` | `Link` (external links open in new tab) |
+| `img` | `MarkdownImage` (responsive, layout-aware) |
+
+<div className="h-6" />
+
+### Web enhancements
+
+On web, `MarkdownTheme` also:
+
+- Adds `target="_blank"` to external links
+- Renders anchor links (`- #`) on headings (click to copy URL, smooth scroll)
+- Scrolls to `#hash` in the URL on mount
+
+<div className="h-6" />
+
+### Styling
+
+- **React Native** — Uses `StyleSheet` and NativeWind `className` for spacing, typography, and layout
+- **Web** — Uses `markdown.theme.css` for typography, list styling, and heading anchor hover states. The CSS targets the `#markdown-theme` wrapper.
+
+<FileTree>
+    <FileTree.Folder name="packages/@app-mdx" defaultOpen>
+        <FileTree.File name="MarkdownTheme.tsx" />
+        <FileTree.File name="markdown.theme.css" />
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-6" />
+
+### Usage
+
+```tsx copy
+import MarkdownTheme from '@app/mdx'
+import ReadMe from './ReadMe.mdx'
+
+<MarkdownTheme>
+    <ReadMe />
+</MarkdownTheme>
+```

@@ -1,0 +1,698 @@
+import { View, Image } from '@app/ui'
+import { FileTree } from 'nextra/components'
+import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
+import { TitleWrapper, Hidden } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Intro - Schemas for Abstractions
+</TitleWrapper>
+
+<Image
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Schemas as Single Sources of Truth
+
+<View className="h-4" />
+
+We support three schema entrypoints: **v3** (default), **v4**, and **mini**. All work with our `schema()` wrapper and tooling.
+
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
+```ts copy
+import { z, schema } from '@green-stack/schemas'
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```ts copy
+import { z, schema } from '@green-stack/schemas/v4'
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```ts copy
+import * as z from '@green-stack/schemas/mini'
+import { schema } from '@green-stack/schemas/mini'
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
+
+In the [Project Structure](/project-structure) docs, we talked about how predictable patterns in folders and files can help you move faster through automation.
+
+This guide explains how **[Zod](https://zod.dev) based schemas** can help you gain even more speed through a **predictable** way of **defining your data shapes**, *when paired with tooling built around it*:
+
+A core feature of this universal starterkit is taking what works and making it better. This is why we invented `schema()` as a **tiny wrapper around zod's `z.object()`**. You can use it to define your datastructures *just once* for the entire monorepo, whether you use Zod v3, v4, or mini.
+
+> `zod` is a schema validation library built with Typescript in mind. By extending it with `schema()`, we can leverage its powerful features to create single sources of truth for GraphQL, API handlers, Database Models and even automatic component docs.
+
+<div className="h-8" />
+
+## Why Single Sources of Truth?
+
+![Tweet by Matt Pocock: The right abstraction, found at the right time, can save you weeks of work. It's often worth putting the time in.](https://fullproduct.dev/blog-assets/imgs/matt-pocock-right-abstractions.jpg)
+
+<div className="h-4" />
+
+### The problem
+
+Think about all the places you might need to redefine the structure of your data. Quite an extensive list for what is **essentially describing the same data**.
+
+![Slide screenshot asking the question of where you might need to re-define data across the lifetime of a project](https://fullproduct.dev/blog-assets/imgs/data-shape-redefinitions.jpg)
+
+Generally speaking, you never want to define your data shape more than once. Not only is it redundant and a pain to do, it's also a recipe for disaster.
+
+If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
+
+![Slide screenshot listing the risks of redefining your data in all these places](https://fullproduct.dev/blog-assets/imgs/redefining-shapes-risks.jpg)
+
+<div className="h-4" />
+
+### The solution
+
+Now Imagine you can get all of this from just one schema:
+
+- ✅ Types
+- ✅ Validation + defaults
+- ✅ DB models
+- ✅ API inputs & outputs
+- ✅ Form state
+- ✅ Documentation
+- ✅ Mock & test data
+- ✅ GraphQL schema defs
+
+You can use `schema()` to build out the shape of our data in one go. The resulting object will enable us to create all other definitions from it for (e.g.) GraphQL, DB models, docs and more. Meaning we can avoid ever declaring it again.
+
+This is a huge win for maintainability and developer experience, as it avoids the need to keep it all in sync. No more redeclaring the same data shape for all your component props, database models or function args / responses.
+
+<div className="h-8" />
+
+## Building Schemas with Zod
+
+Let's have a look at how `zod` and `schema()` defs translate to Typescript types: 👇
+
+<div className="h-4" />
+
+### Choosing v3, v4, or Mini
+
+- **@zod/v3**: `@green-stack/schemas` — Zod v3 API, most widely used.
+- **@zod/v4**: `@green-stack/schemas/v4` — Zod v4 API with extended methods.
+- **@zod/mini**: `@green-stack/schemas/mini` — Zod v4-mini (lighter bundle), uses `z._default(schema, value)` instead of `.default()`.
+- **Compat layer**: `@green-stack/schemas/compat` — Helper utils and types for all three (e.g. `getSchemaMetadata`, `applySchemaDefaults`, `SchemaInput`, `Meta$Schema`). Does not include schema creation — import `z` and `schema` from your chosen entrypoint.
+
+All three work with `schema()`, introspection, and the rest of the toolkit. See the [Compat API reference](/@green-stack-core/schemas/compat) for shared utilities.
+
+An object in this sense is a key-value pair, often used to represent the shape of a data "unit":
+
+```shell
+some-workspace
+ 
+ └── /schemas/... # <- Single sources of truth
+     └── User.ts # <- e.g. User schema
+```
+
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
+```tsx {4, 8} /Requires a name/1 /'User'/ filename="User.ts"
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, keep it the same as your schema and TS type
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().min(18), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
+    birthdate: z.date().nullish(), // = same as calling .nullable().optional()
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```tsx {4, 8} /Requires a name/1 /'User'/ filename="User.ts"
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, keep it the same as your schema and TS type
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().min(2), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().min(18), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z.boolean().default(false), // <- Marked optional, defaults to false
+    birthdate: z.date().nullish(), // = same as calling .nullable().optional()
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```tsx {4, 8} /Requires a name/1 /'User'/ filename="User.ts"
+export const User = schema('User', {
+    // Requires a name value (☝️) to port to other formats later, keep it the same as your schema and TS type
+
+    // Zod can help you go even narrower than typescript
+    name: z.string().check(z.minLength(2)), // <- e.g. Needs to be a string with at least 2 letters
+    age: z.number().check(z.minimum(18)), // <- e.g. Age must be a number of at least 18
+
+    // Just like TS, it can help you indicate fields as optional
+    isAdmin: z._default(z.boolean(), false), // <- Marked optional, defaults to false
+    birthdate: z.nullish(z.date()), // = same as calling nullable(optional(...))
+})
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
+
+> Check the full [schema reference docs](/@green-stack-core/schemas) for all available ways to build and describe schemas across v3, v4, and mini.
+
+<div className="h-4" />
+
+### Extracting Types
+
+The main thing to use schemas for is to hard-link validation with types.
+
+You can extract the type from the schema using `z.infer()`, `z.input()` or `z.output()`:
+
+```tsx filename="User.ts"
+// Extract type from the schema and export it as a type alias
+export type User = z.infer<typeof User>
+
+// If you have defaults, you can use z.input() or z.output() instead
+export type UserOutput = z.output<typeof User>
+export type UserInput = z.input<typeof User>
+```
+
+`⬇⬇⬇`
+
+```tsx /?/
+// {
+//     name: string,
+//     age: number,
+//     isAdmin?: boolean,
+//     birthDate?: Date | null,
+// }
+```
+
+> In this case where we check the resulting type of `z.input()`, the 'isAdmin' field will be marked as optional, as it's supposedly not defaulted to `false` yet. If we'd inspect `z.output()`, it would be marked as required since it's either provided or presumed defaulted.
+
+<div className="h-4" />
+
+### Schema Validation
+
+You can use the `.parse()` method to validate inputs against the schema:
+
+```tsx {1, 4} /.shape.age/
+// Call .parse() on the whole User schema...
+const newUser = User.parse(someInput) // <- Auto infers 'User' type if valid
+
+// ...or validate idividual fields by using '.shape' 👇
+User.shape.age.parse("Invalid - Not a number")
+// Throws => ZodError: "Expected a number, recieved a string."
+// Luckily, TS will already catch this in your editor ( instant feedback 🙌 )
+```
+
+If a field's value does not match the schema, it will throw a `ZodError`:
+
+```ts {8, 14} /.issues/
+try {
+
+    // 🚧 Will fail validation
+    const someNumber = z.number().parse("Not a number")
+
+} catch (error) { // ⬇⬇⬇
+
+    /* Throws 'ZodError' with a .issues array:
+        [{
+            code: 'invalid_type',
+            expected: 'number',
+            received: 'string',
+            path: [],
+            message: 'Expected number, received string',
+        }]
+    */
+
+}
+```
+
+<div className="h-8" />
+
+## Reusing and Expanding schemas
+
+It can happen that you need to differentiate between two similar data shapes, for example, needing to expand on an existing shape.
+
+<FileTree>
+    <FileTree.Folder name="schemas" defaultOpen>
+        <FileTree.File name="User.ts" />
+        <FileTree.File name="AdminUser.ts ← extension of 'User'" />
+    </FileTree.Folder>
+</FileTree>
+
+You can add new fields by calling `.extendSchema()` on the original schema:
+
+```ts {6} /.extendSchema/ filename="AdminUser.ts"
+// Extend the User schema
+const AdminUser = User.extendSchema('AdminUser', {
+    isAdmin: z.boolean().default(true),
+})
+
+type AdminUser = z.infer<typeof AdminUser>
+
+// {
+//     name: string,
+//     age: number,
+//     birthDate?: Date | null,
+//
+//     isAdmin?: boolean, // <- New field added
+// }
+```
+
+> You will **need to provide a new name** for the extended schema. This ensures there is no conflict with the original one when we port it to other formats.
+
+There are other ways to create schemas from other ones, similar to how you would do it with Typescript:
+
+- [`.pickSchema()`](/@green-stack-core/schemas#pickschema---select-fields) - to pick a subset of fields
+- [`.omitSchema()`](/@green-stack-core/schemas#omitschema---remove-fields) - to remove a subset of fields
+
+<div className="h-4" />
+
+### Defining Defaults
+
+You can mark fields as optional or provide default values by using either:
+- `.optional()` - to allow `undefined`
+- `.nullable()` - to allow `null`
+- `.nullish()` - to allow both
+
+You can also use `.default()` to provide a default value when the field isn't passed in. (Mini uses `z._default(schema, value)`.)
+
+<CodeBlockTabs items={['@zod/v3', '@zod/v4', '@zod/mini']} defaultIndex={0}>
+    <CodeBlockTab tabTitle="@zod/v3">
+
+```ts {8} /.optional()/ /.nullable()/ /.nullish()/ /.default/2 filename="User.ts"
+// Define a schema with optional and nullable fields
+const User = schema('...', {
+
+    name: z.string().optional(), // <- Allow undefined
+    age: z.number().nullable(), // <- Allow null
+    birthData: z.date().nullish(), // <- Allow both
+
+    // Use .default() to make optional in args,
+    // but provide a default value when it IS undefined
+    isAdmin: z.boolean().default(false), // <- false
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/v4">
+
+```ts {8} /.optional()/ /.nullable()/ /.nullish()/ /.default/2 filename="User.ts"
+// Define a schema with optional and nullable fields
+const User = schema('...', {
+
+    name: z.string().optional(), // <- Allow undefined
+    age: z.number().nullable(), // <- Allow null
+    birthData: z.date().nullish(), // <- Allow both
+
+    // Use .default() to make optional in args,
+    // but provide a default value when it IS undefined
+    isAdmin: z.boolean().default(false), // <- false
+})
+```
+
+    </CodeBlockTab>
+    <CodeBlockTab tabTitle="@zod/mini">
+
+```ts {9} /z.optional(/2 /z.nullable(/2 /z.nullish(/2 /z._default(/2 filename="User.ts"
+// Define a schema with optional and nullable fields
+// Zod mini uses functional wrappers: z.optional(), z.nullable(), z.nullish() instead of .optional(), .nullable(), .nullish()
+const User = schema('...', {
+
+    name: z.optional(z.string()), // <- Allow undefined
+    age: z.nullable(z.number()), // <- Allow null
+    birthData: z.nullish(z.date()), // <- Allow both
+
+    // mini uses _default(schema, value) instead of .default()
+    isAdmin: z._default(z.boolean(), false), // <- false
+})
+```
+
+    </CodeBlockTab>
+</CodeBlockTabs>
+
+> When using `.default()`, you might need to be more specifc when inferring types. You can use `z.input()` or `z.output()` to get the correct type. Based on which you choose, defaulted fields will be either optional or required.
+
+<div className="h-4" />
+
+### Marking fields as sensitive
+
+```ts
+    password: z.string().sensitive()
+```
+
+In your schemas, you can mark fields as sensitive using `.sensitive()`. This will:
+
+- Exclude the field from appearing in the GraphQL schema, introspection or queries
+- Mark the field as strippable in API resolvers / responses (*)
+- Mark the field with `isSensitive: true` in schema introspection
+
+<div className="h-8" />
+
+## Transforming to other formats
+
+With both types and validation in place, you can now transform your schemas to other formats. This is where the real power of `schema()` comes into play.
+
+<div className="h-4" />
+
+### Schema introspection
+
+Before you can transform your schemas, you need to introspect them. This is done by calling `.introspect()` on the schema:
+
+```ts {3, 11} /User.introspect()/
+const userShapeMetadata = User.introspect()
+
+// ⬇⬇⬇ Lists the JSON representation of your data shape
+
+{
+    "name": "User",
+    "zodType": "ZodObject", // <- Zod class it was built with, e.g. z.object()
+    "baseType": "Object", // <- e.g. "Array" / "Boolean" / "String" / ...
+    "schema": {
+
+        // ☝️ Nested properties will be listed under "schema", e.g. object fields
+        "name": {
+            "zodType": "ZodString",
+            "baseType": "String",
+            "isOptional": false, // in case of .optional() or .default()
+        },
+        "age": {
+            zodType: "ZodNumber",
+            baseType: "Number", ...
+        },
+        "birthDate": {
+            zodType: "ZodDate",
+            baseType: "Date", ...
+        }
+
+    }
+}
+```
+
+> Don't worry though, you're unlikely to have to do this manually in your day-to-day work.
+
+A **deep introspection API** is what allows the kit to transform these zod schemas to other formats. Introspection is what enables schemas to serve as the **Single Sources of Truth for all data shapes**, *making them quite portable*.
+
+<div className="h-4" />
+
+### Introspection metadata
+
+This is all possible metadata you can extract with `.introspect()` **from a single schema field**:
+
+```ts
+type Metadata<S> = {
+
+    // Essentials
+    name?: string, // <- The name you passed to schema(), e.g. 'User'
+    zodType: ZOD_TYPE,
+    baseType: BASE_TYPE,
+
+    // Optionality and defaults
+    isOptional?: boolean,
+    isNullable?: boolean,
+    defaultValue?: any$Unknown,
+
+    // Documentation
+    exampleValue?: any$Unknown,
+    description?: string,
+    minLength?: number,
+    maxLength?: number,
+    exactLength?: number,
+    minValue?: number,
+    maxValue?: number,
+
+    // Flags
+    isInt?: boolean,
+    isBase64?: boolean,
+    isEmail?: boolean,
+    isURL?: boolean,
+    isUUID?: boolean,
+    isDate?: boolean,
+    isDatetime?: boolean,
+    isTime?: boolean,
+    isIP?: boolean,
+
+    // Literals, e.g. z.literal()
+    literalValue?: any$Unknown,
+    literalType?: 'string' | 'boolean' | 'number',
+    literalBase?: BASE_TYPE,
+
+    // e.g. Nested schema field(s) to represent:
+    // - object properties (like meta for 'age' / 'isAdmin' / ...)
+    // - array elements
+    // - tuple elements
+    schema?: S,
+
+    // The actual Zod object, only included with .introspect(true)
+    zodStruct?: z.ZodType & { ... }, // <- Outer zod schema (e.g. ZodDefault)
+    innerStruct?: z.ZodType & { ... }, // <- Inner zod schema (not wrapped)
+
+    // Mark as serverside only, strippable in API responses
+    isSensitive?: boolean, 
+
+    // Compatibility with other systems like databases & drivers
+    isID?: boolean,
+    isIndex?: boolean,
+    isUnique?: boolean,
+    isSparse?: boolean,
+}
+```
+
+This is just to show how it works under the hood. You're unlikely to need to use this directly in your day-to-day work.
+
+> Are you building your own tools that hook into the introspection result?  
+
+> Then you can use these generic metadata types to help provide type-safety:
+
+```ts copy
+import type { Metadata, Meta$Schema, Meta$Tuple, ... } from '@green-stack/schemas/compat'
+```
+
+A good example of how introspected schemas can be transformed through is in the [Automatic MDX Docs](TODO) plugin:
+
+<div className="h-4" />
+
+### Automatic MDX docgen
+
+```shell
+git merge with/automatic-docs
+```
+
+There's two ways schemas are used to create docs:
+
+1. **GraphQL schema comments** provide hints in the GraphQL playground - at `/api/graphql`
+2. **MDX component docs** generated from the prop schema, with interactive controls
+
+> No. 1 already works without any plugin when using our [recommended way to do GraphQL](/data-resolvers)
+
+> No. 2 happens automatically when running `npm run dev` after merging the docs plugin. ([see demo](/@app-ui/components/Button))
+
+**For the best documentation experience, you'll want to add some important metadata:**
+
+- `.describe()` - to add a description to the field
+- `.example()` - to provide an example value for previews / prop tables
+- `.default()` - to provide a default value (also counts as example value)
+
+Let's say you have a component with props defined in a schema, like a `<UserProfile />` component:
+
+```tsx {3, 6, 9, 15} filename="UserProfile.tsx"
+const UserProfileProps = schema('UserProfileProps', {
+
+    // Add a description to the field
+    name: z.string().describe('The name of the user'),
+
+    // Provide an example value
+    age: z.number().example(25),
+
+    // Add a description and example value
+    birthDate: z
+        .date()
+        .describe('User birthdate')
+        .example('1996-12-19'),
+
+    // Default values can be used as examples as well
+    isAdmin: z.boolean().default(false),
+})
+
+// Type alias
+type UserProfileProps = z.infer<typeof UserProfileProps>
+
+/* --- <UserProfile> --- */
+
+export const UserProfile = (props: UserProfileProps) => {
+    // ...
+}
+```
+
+Export the prop introspection result from the same file. This links the props schema to the component so it gets picked up by the docs generator:
+
+```shell {4} /getDocumentationProps/
+some-workspace
+ └── /components/...
+     └── UserProfile.tsx # <- export `getDocumentationProps`
+```
+
+You can use `.documentationProps()` on the props schema. This will match export the introspection so it matches the expected format and provides hints to further refine your docs. It will call `.introspect()` internally to include the metadata we need to render in the preview + prop table:
+
+```tsx {5} filename="UserProfile.tsx"
+// ...
+
+/* --- Docs --- */
+
+export const getDocumentationProps = UserProfileProps.documentationProps('UserProfile', {
+
+    // 🚧 All these options are optional:
+
+    valueProp: '...', // <- For form components, e.g. 'defaultValue', saved to docs URL state
+    onChangeProp: '...', // <- For form components, e.g. 'onTextChange', triggers save to URL state
+
+    // Alternative way to provide example props, e.g.:
+    exampleProps: {
+        name: 'John Doe',
+        age: 25,
+        birthDate: '1996-12-19',
+        isAdmin: false,
+    },
+
+})
+```
+
+Think of `getDocumentationProps` as a way to mark the component as documentable. It's a convention that the docs plugin will look for when generating the MDX docs.
+
+The end result will look like a Storybook-like documentation page for your component, with:
+
+- ✅ Component name & import path
+- ✅ Live preview of the component
+- ✅ Props table with types, descriptions, examples, defaults
+- ✅ Copyable component code for current prop settings
+- ✅ Interactive controls to update both live preview, code example and URL
+
+Check out a live example for the interactive [Button](/@app-ui/components/Button) component docs:
+
+[![DocgenExample](https://fullproduct.dev/blog-assets/imgs/nextra-url-docs-example.jpg)](/@app-ui/components/Button)
+
+### Custom Zod schema integrations
+
+**Out of the box:**
+
+- `npm run build:schema` - Builds your `schema.graphql` from zod schemas
+- `bridgedFetcher()` - Data fetcher that auto-scaffolds GraphQL query from zod input + output schemas
+- [`useFormState()`](/form-management) - Form state hook to provide typed form state and validation utils
+- `createSchemaModel()` - Creates `mock` model until merging any DB driver plugin 👇
+
+**In the near future, we will add plugin branches that further integrate zod schemas with DB and API solutions**
+
+<Hidden>
+
+**Interactive DB driver plugins:**
+
+- `with/mongoose` - zod to mongoose
+- `with/supabase` - zod to supabase
+- `with/prisma` - zod to prisma
+- `with/drizzle` - zod to drizzle
+- `with/airtable` - zod to airtable
+
+**API plugins:**
+
+- `with/trpc` - Pair zod Data Bridges with resolvers to create tRPC handlers
+
+> Note that these plugins are only available in the paid version of the starterkit.
+
+</Hidden>
+
+Using introspection and the resulting metadata, you could also create your own custom integrations.
+
+<div className="h-8" />
+
+## Schema generator
+
+Like all elements of our recommended way of working, there is a Plop-based code generator to help create a schema in a specific workspace:
+
+```shell copy
+npm run add:schema
+```
+
+`⬇⬇⬇`
+
+will prompt you for a target workspace and name:
+
+```shell
+>>> Modify "your-project" using custom generators
+
+? Where would you like to add this schema? 
+❯ @app/core # -- from features/app-core 
+  some-feature # -- from features/some-feature 
+  some-package # -- from packages/some-package
+```
+
+`⬇⬇⬇`
+
+```shell
+>>> Modify "your-project" using custom generators
+
+? Where would you like to add this schema? # @app/core
+? What is the schema name? # SomeData
+? Optional description? # ...
+
+>>> Changes made:
+  • /features/@app-core/schemas/SomeData.ts # (add)
+  • Opened 1 file in VSCode # (open-in-vscode)
+
+>>> Success!
+```
+
+`⬇⬇⬇`
+
+```shell
+@app-core
+ 
+ └── /schemas/...
+     └── SomeData.schema.ts
+```
+
+<Hidden>
+
+Though if you chose to also generate an integration, it might look like this instead:
+
+```shell
+@app-core
+
+ └── /schemas/...
+     └── SomeData.schema.ts 
+
+ └── /hooks/...
+     └── useSomeData.ts # <- Form state hook using `useFormState()`
+
+ └── /models/...
+     └── SomeData.ts # <- `@db/driver` model using `createSchemaModel()`
+```
+
+</Hidden>
+
+> Pretty powerful, right?
+
+### Further reading
+
+From our own docs:
+- [Data Bridges for fetching](/data-resolvers#start-from-a-databridge) - Starterkit Docs
+
+Relevant external resources:
+- [Zod's official docs](https://zod.dev) - zod.dev
+- [The Joy of Single Sources of Truth](https://dev.to/codinsonn/the-joy-of-single-sources-of-truth-277o) - Blogpost by [Thorr ⚡️ @codinsonn.dev](https://codinsonn.dev)

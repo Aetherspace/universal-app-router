@@ -1,0 +1,65 @@
+import { Select, getDocumentationProps } from '@app/ui/forms/Select.styled'
+import { ComponentDocs } from '@app/docs/components/ComponentDocs'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { FileTree, Callout } from 'nextra/components'
+
+<TitleWrapper>
+    ## Select
+</TitleWrapper>
+
+# Select
+
+```typescript copy
+import { Select } from '@app/ui'
+```
+
+<TitleWrapper>
+    ### Interactive Preview
+</TitleWrapper>
+
+<TitleWrapper>
+    ### Code Example
+</TitleWrapper>
+
+<ComponentDocs
+    component={Select}
+    docsConfig={getDocumentationProps}
+>
+    ## Select Props
+</ComponentDocs>
+
+<div className="h-8" />
+
+<TitleWrapper>
+## Source Code
+</TitleWrapper>
+
+### File Location
+
+You can find the source of the `Select` component in the following location:
+
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@app-ui" defaultOpen>
+            <FileTree.Folder name="forms" defaultOpen>
+                <FileTree.File name="Select.styled.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic component docs were auto-generated with `npm run regenerate:docs`. You can hook into automatic docgen by exporting `getDocumentationProps` from a component file. You'll want to provide example props from the ComponentProps zod schema, e.g:
+</Callout>
+
+```tsx /getDocumentationProps/ /documentationProps/ copy filename="Select.styled.tsx"
+/* --- Docs ---------------------- */
+
+export const getDocumentationProps = SelectProps.documentationProps('Select')
+```

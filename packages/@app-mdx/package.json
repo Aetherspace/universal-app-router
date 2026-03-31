@@ -1,0 +1,12 @@
+{
+  "name": "@app/mdx",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Universal MDX theme and components for web + native",
+  "scripts": {},
+  "dependencies": {
+    "@app/ui": "*",
+    "@bacons/mdx": "~1.0.3",
+    "@green-stack/core": "*"
+  }
+}

@@ -64,6 +64,9 @@ apps/expo/dist
 .turbo
 .vscode/tmp
 
+# Pagefind (docs search)
+_pagefind/
+
 # Cursor
 .cursor/hooks/state
 .cursor/worktrees.json

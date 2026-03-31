@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Data Resolvers
 
-When editing resolver files, reference [https://fullproduct.dev/docs/data-resolvers](https://fullproduct.dev/docs/data-resolvers) for:
+When editing resolver files, reference [apps/docs/content/data-resolvers.mdx](apps/docs/content/data-resolvers.mdx) for:
 
 - `createDataBridge()` - Combines input/output schemas for type-safe API bridges
 - `createResolver()` - Bind a bridge to business logic

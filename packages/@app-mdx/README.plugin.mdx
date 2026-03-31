@@ -1,0 +1,108 @@
+import { Image } from '@app/ui'
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+
+<TitleWrapper>
+    ## Universal MDX
+</TitleWrapper>
+
+<Image
+    src="/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# Universal MDX
+
+```md copy
+npx @fullproduct/universal-app install with/automatic-docs
+```
+
+This adds the `@app/mdx` workspace package for universal Markdown/MDX rendering, plus the `@app/docs` app with automatic documentation generation.
+
+```tsx copy
+import { MarkdownTheme, MarkdownImage } from '@app/mdx'
+```
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="docs" defaultOpen>
+            <FileTree.Folder name="pages/" />
+            <FileTree.Folder name="components/" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@app-mdx" defaultOpen>
+            <FileTree.File name="MarkdownTheme.tsx" />
+            <FileTree.File name="MarkdownImage.tsx" />
+            <FileTree.File name="markdown.theme.css" />
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-8" />
+
+## Markdown with `@bacons/mdx`
+
+The `@app/mdx` package provides a universal theme for rendering MDX content on both Web and React Native. It builds on [@bacons/mdx](https://github.com/EvanBacon/expo-mdx), which compiles MDX at build time and provides a set of customizable components for headings, paragraphs, links, images, and more.
+
+### How it works
+
+- **MarkdownTheme** — Wraps MDX content and maps markdown elements (h1–h3, p, ul, li, blockquote, a, img) to your design system components from `@app/ui`
+- **MarkdownImage** — A responsive image component used for `img` elements in MDX, with layout-based dimension calculation
+- **markdown.theme.css** — Web-specific styles for the theme (typography, list styling, anchor links on headings)
+
+Markdown is rendered through `@bacons/mdx`'s `MDXComponents`, which accepts custom component overrides per element type. `MarkdownTheme` passes your primitives so MDX inherits your app's look and feel.
+
+<div className="h-8" />
+
+### Usage
+
+```tsx copy
+import MarkdownTheme from '@app/mdx'
+import ReadMe from './ReadMe.mdx'
+
+<MarkdownTheme>
+    <ReadMe />
+</MarkdownTheme>
+```
+
+See [MarkdownTheme](/@app-mdx/providers/MarkdownTheme) and [MarkdownImage](/@app-mdx/components/MarkdownImage) for full docs.
+
+<div className="h-8" />
+
+## Automatic documentation generation
+
+The `@app/docs` app uses a `regenerate-docs` script that scans your `features/` and `packages/` workspaces and generates MDX documentation for schemas, resolvers, and components. This keeps docs in sync with your codebase while letting you add custom developer notes where needed.
+
+### How it works
+
+The script looks for:
+
+- **Schemas** in `{workspace}/schemas/{SchemaName}.schema.ts`
+- **Resolvers** via their DataBridge in `{workspace}/resolvers/{resolverName}.bridge.ts`
+- **Components** with `getDocumentationProps()` in `{workspace}/**/{ComponentName}.tsx`
+
+Each generated page includes imports, type definitions, usage examples, and links back to source files. You can extend any page with custom notes via `.docs.mdx` files placed next to the source.
+
+<div className="h-8" />
+
+### Regenerate docs
+
+```md copy
+npm run regenerate:docs
+```
+
+<div className="h-8" />
+
+### Full guide
+
+For schema, resolver, and component docgen, custom notes, and opt-out behavior, see:
+
+- **[Automatic Docgen](/automatic-docgen)** — Complete guide to the documentation system
+
+<Callout emoji="📚">
+Automatic docgen means your documentation stays up to date with your codebase. You write the code once, and comprehensive docs are generated. Add custom developer notes via `.docs.mdx` files next to the source when you need manual polish.
+</Callout>

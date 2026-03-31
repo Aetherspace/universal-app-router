@@ -9,6 +9,10 @@
     "babel-loader": "^9.2.1",
     "expo-status-bar": "~3.0.8",
     "raf": "^3.4.1",
+    "@mdx-js/loader": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "@next/mdx": "~16.2.1",
+    "@types/mdx": "^2.0.13",
     "next": "16.2.1"
   },
   "devDependencies": {

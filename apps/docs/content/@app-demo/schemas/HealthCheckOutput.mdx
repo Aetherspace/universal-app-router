@@ -1,0 +1,249 @@
+import { FileTree, Callout } from 'nextra/components'
+import { TitleWrapper } from '@app/docs/components/Hidden'
+import { View, Image } from '@app/ui'
+
+<TitleWrapper>
+    ## HealthCheckOutput
+</TitleWrapper>
+
+# HealthCheckOutput
+
+```typescript copy
+import { HealthCheckOutput } from '@app/demo/schemas/HealthCheckOutput'
+```
+
+### Location
+
+<FileTree>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-demo" defaultOpen>
+            <FileTree.Folder name="schemas" defaultOpen>
+                <FileTree.File name="HealthCheckOutput.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+### Zod Schema
+
+What the schema would look like when defined with `z.object()` (Zod V3):
+
+```typescript copy
+const HealthCheckOutput = z.object({
+    echo: z
+        .string()
+        .optional(),
+    status: z
+        .literal("OK"),
+    alive: z
+        .boolean(),
+    kicking: z
+        .boolean(),
+    now: z
+        .string(),
+    aliveTime: z
+        .number(),
+    aliveSince: z
+        .date(),
+    serverTimezone: z
+        .string(),
+    requestHost: z
+        .string()
+        .optional(),
+    requestProtocol: z
+        .string()
+        .optional(),
+    requestURL: z
+        .string()
+        .optional(),
+    baseURL: z
+        .string()
+        .optional(),
+    backendURL: z
+        .string()
+        .optional(),
+    apiURL: z
+        .string()
+        .optional(),
+    graphURL: z
+        .string()
+        .optional(),
+    port: z
+        .number()
+        .int()
+        .nullable(),
+    debugPort: z
+        .number()
+        .int()
+        .nullable(),
+    nodeVersion: z
+        .string()
+        .optional(),
+    v8Version: z
+        .string()
+        .optional(),
+    systemArch: z
+        .string()
+        .optional(),
+    systemPlatform: z
+        .string()
+        .optional(),
+    systemRelease: z
+        .string()
+        .optional(),
+    systemFreeMemory: z
+        .number()
+        .optional(),
+    systemTotalMemory: z
+        .number()
+        .optional(),
+    systemLoadAverage: z
+        .array(z.number())
+        .optional(),
+    context: z
+        .record(z.string(), z.unknown())
+        .nullish(),
+})
+```
+
+> (💡 Could be handy to copy-paste this schema info into an AI chat assistant)
+<div className="h-8" />
+
+### Type Definition
+
+You can extract the TypeScript type from the schema using `z.input()`, `z.output()` or `z.infer()` methods. e.g.:
+
+```typescript copy
+type HealthCheckOutput = z.input<typeof HealthCheckOutput>
+```
+
+What the resulting TypeScript type would look like:
+
+```typescript copy
+{
+    echo?: string | undefined;
+    status: "OK";
+    alive: boolean;
+    kicking: boolean;
+    now: string;
+    aliveTime: number;
+    aliveSince: Date;
+    serverTimezone: string;
+    requestHost?: string | undefined;
+    requestProtocol?: string | undefined;
+    requestURL?: string | undefined;
+    baseURL?: string | undefined;
+    backendURL?: string | undefined;
+    apiURL?: string | undefined;
+    graphURL?: string | undefined;
+    port: number | null;
+    debugPort: number | null;
+    nodeVersion?: string | undefined;
+    v8Version?: string | undefined;
+    systemArch?: string | undefined;
+    systemPlatform?: string | undefined;
+    systemRelease?: string | undefined;
+    systemFreeMemory?: number | undefined;
+    systemTotalMemory?: number | undefined;
+    systemLoadAverage?: number[] | undefined;
+    context?: ({
+        [x: string]: unknown;
+    } | null) | undefined;
+}
+```
+
+> (💡 Could be handy to copy-paste this type info into an AI chat assistant)
+<div className="h-8" />
+
+### Usage - Validation
+
+To validate data against this schema, you have a few options:
+
+```typescript copy
+// Throws if invalid
+const healthCheckOutput = HealthCheckOutput.parse(data)
+
+// Returns { success: boolean, data?: T, error?: ZodError }
+const healthCheckOutput = HealthCheckOutput.safeParse(data)
+
+```
+
+> This might be useful for parsing API input data or validating form data before submission.
+
+> You can also directly integrate this schema with form state managers like our own:
+
+<div className="h-8" />
+
+### Usage - Form State
+
+```typescript copy
+import { useFormState } from '@green-stack/forms/useFormState'
+
+const formState = useFormState(HealthCheckOutput, {
+    initialValues: { /* ... */ }, // Provide initial values?
+    validateOnMount: true, // Validate on component mount?
+})
+
+```
+
+Learn more about using schemas for form state in our [Form Management Docs](/form-management).
+
+<div className="h-8" />
+
+### Usage - Component Props / Docs
+
+Another potential use case for the 'HealthCheckOutput' schema is to type component props, provide default values and generate documentation for that component:
+
+```typescript copy
+export const HealthCheckOutputComponentProps = HealthCheckOutput.extend({
+    // Add any additional props here
+})
+
+export type HealthCheckOutputComponentProps = z.input<typeof HealthCheckOutputComponentProps>
+
+/* --- <HealthCheckOutputComponent/> --------------- */
+
+export const HealthCheckOutputComponent = (rawProps: HealthCheckOutputComponentProps) => {
+
+    // Extract the props and apply defaults + infer resulting type
+    const props = ComponentProps.applyDefaults(rawProps)
+
+    // ... rest of the component logic ...
+
+}
+
+/* --- Documentation --------------- */
+
+export const documentationProps = HealthCheckOutputComponentProps.documentationProps('HealthCheckOutputComponent')
+
+```
+
+<div className="h-8" />
+
+## Developer Notes
+
+### Why this schema?
+
+We included this schema in the starterkit as a reference guide for what schema docs look like.
+
+It's also reused in the [`healthCheck()`](/@app-core/resolvers/healthCheck) resolver, which has it's own auto-generated docs example.
+
+Learn more about how zod schemas work as the [Single Source of Truth](/single-sources-of-truth) for APIs, forms, GraphQL and other automations we consider the "right abstractions".
+
+### Adding your own schemas
+
+If you want to quickly replicate this way of working for setting up schemas with all the side-effects listed above, you can use our schema generator:
+
+```md copy
+npm run add:schema
+```
+
+<div className="h-8" />
+
+## Other
+
+### Disclaimer - Automatic Docgen
+
+<Callout emoji="🤖">
+These dynamic schema docs were auto-generated with `npm run regenerate:docs`. This happens automatically for schema files in any `\schemas\` folder. You can opt-out of this by adding `// export const optOut = true` somewhere in the file. 
+</Callout>

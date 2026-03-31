@@ -1,0 +1,154 @@
+
+@tailwind components;
+@tailwind utilities;
+
+/* --- Theme Variables ------------------------------------------------------------------------- */
+
+:root {
+    --background: 0, 0%, 100%;
+    --foreground: 240, 5%, 10%;
+    --primary: 222, 15%, 13%;
+    --primary-foreground: 0, 0%, 100%;
+    --secondary: 217, 13%, 19%;
+    --secondary-foreground: 210, 16%, 96%;
+    --accent: 240, 4.8%, 95.9%;
+    --accent-foreground: 240, 5.9%, 10%;
+    --card: 0, 0%, 100%;
+    --card-foreground: 240, 10%, 3.9%;
+    --popover: 0, 0%, 100%;
+    --popover-foreground: 240, 10%, 3.9%;
+    --link: 217, 90%, 70%;
+    --muted: 220, 8%, 65%;
+    --warn: 24, 89%, 47%;
+    --danger: 0, 78%, 47%;
+    --info: 197, 87%, 47%;
+    --success: 145, 67%, 40%;
+    --ring: 222, 22%, 15%;
+    --input: 216, 12%, 83%;
+}
+
+.dark:root {
+    --background: 216, 34%, 17%;
+    --foreground: 210, 16%, 96%;
+    --primary: 210, 16%, 96%;
+    --primary-foreground: 222, 15%, 13%;
+    --secondary: 220, 14%, 91%;
+    --secondary-foreground: 210, 23%, 26%;
+    --accent: 216, 34%, 25%;
+    --accent-foreground: 0, 0%, 98%;
+    --card: 216, 34%, 17%;
+    --card-foreground: 0, 0%, 98%;
+    --popover: 216, 34%, 17%;
+    --popover-foreground: 0, 0%, 98%;
+    --link: 213, 94%, 76%;
+    --muted: 220, 8%, 65%;
+    --warn: 24, 92%, 64%;
+    --danger: 0, 85%, 72%;
+    --info: 197, 87%, 47%;
+    --success: 145, 67%, 40%;
+    --ring: 222, 22%, 15%;
+    --input: 216, 12%, 83%;
+}
+
+/* -- Nextra Fixes ----------------------------------------------------------------------------- */
+
+.nextra-steps details h2,
+.nextra-steps details h3,
+.nextra-steps details h4,
+.nextra-steps details h5,
+.nextra-steps details h6 {
+    counter-increment: unset !important;
+    margin-top: unset !important;
+}
+
+.nextra-steps details h2::before,
+.nextra-steps details h3::before,
+.nextra-steps details h4::before,
+.nextra-steps details h5::before,
+.nextra-steps details h6::before {
+    content: none !important;
+}
+
+/* --- CodeBlockTabs --------------------------------------------------------------------------- */
+
+.code-block-tabs-root {
+	margin-top: 1.5rem;
+	overflow: hidden;
+	border-radius: 0.75rem;
+	border: 1px solid rgb(229 231 235);
+	background: rgb(243 244 246);
+}
+
+.dark .code-block-tabs-root {
+	border-color: rgb(55 65 81);
+	background: rgb(17 24 32);
+}
+
+.code-block-tabs-bar {
+	display: flex !important;
+	flex-direction: row !important;
+	flex-wrap: wrap !important;
+	gap: 0.5rem !important;
+	padding: 0rem 0.75rem 0 !important;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+	border-top: 1px solid rgb(229 231 235);
+    border-left: 1px solid rgb(229 231 235);
+    border-right: 1px solid rgb(229 231 235);
+    border-bottom: 2px solid rgb(229 231 235);
+	background: transparent;
+    overflow: visible;
+}
+
+.dark .code-block-tabs-bar {
+	border-color: rgb(55 65 81);
+	background: transparent;
+}
+
+.code-block-tabs-btn {
+	position: relative;
+	padding: 0.75rem 0rem;
+    margin: 0 0.5rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	cursor: pointer;
+	border: none;
+    bottom: -1px;
+	border-bottom: 2px solid transparent;
+	background: transparent;
+	border-radius: 0;
+	transition: color 0.15s, border-color 0.15s;
+}
+
+.code-block-tabs-btn:hover {
+	color: rgb(17 24 32);
+}
+
+.dark .code-block-tabs-btn:hover {
+	color: rgb(243 244 246);
+}
+
+.code-block-tabs-btn-inactive {
+	color: rgb(75 85 99);
+}
+
+.dark .code-block-tabs-btn-inactive {
+	color: rgb(156 163 175);
+}
+
+.code-block-tabs-btn-active {
+    font-weight: 600;
+	color: hsl(var(--primary));
+	border-bottom-color: hsl(var(--primary));
+	margin-bottom: -1px;
+}
+
+/* Flatten Nextra code block top corners only when wrapped in CodeBlockTabs */
+.code-block-tabs-content pre,
+.code-block-tabs-content [data-rehype-pretty-code-fragment],
+.code-block-tabs-content [data-rehype-pretty-code-fragment] > pre,
+.code-block-tabs-content [data-rehype-pretty-code-fragment] > div,
+.code-block-tabs-content > div > div {
+	border-top-left-radius: 0 !important;
+	border-top-right-radius: 0 !important;
+}

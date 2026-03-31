@@ -12,4 +12,10 @@ export const testableFeatures = [
         link: '/demos/forms',
         icon: '📝',
     },
+    {
+        title: 'Test Markdown?',
+        description: 'Render Markdown on Web + Native',
+        link: '/demos/markdown',
+        icon: '📃',
+    },
 ]

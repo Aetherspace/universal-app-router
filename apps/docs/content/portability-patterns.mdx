@@ -1,0 +1,260 @@
+import { FileTree } from 'nextra/components'
+import { View, Image } from '@app/ui'
+
+<Image
+    src="https://fullproduct.dev/docs/green-stack-logo.png"
+    style={{ marginTop: 20 }}
+    width={60}
+    height={60}
+    unoptimized
+/>
+
+# React Portability Patterns
+
+<View className="h-4" />
+
+This stack targets **Next.js (web)** and **Expo (iOS, Android, and often web)** from one codebase. **React Portability Patterns** are how we share one API in feature code while still using each platform’s best primitives under the hood.
+
+> For a **general** tour of React portability patterns, there’s a video in **[Further watching](#further-watching)** at the bottom of this page (*Must know React Portability Patterns* — Jack Herrington). Everything below is **this starterkit’s** take: `CoreContext`, `UniversalAppProviders`, and Expo vs Next wiring.
+
+<div className="h-8" />
+
+## Why platform file splits are not always enough
+
+Metro and TypeScript support suffixes like `.web.ts`, `.ios.ts`, and `.android.ts`. Those are great for **native vs web** differences.
+
+They are **not** always enough when:
+
+- **“Web” means two different stacks** — Next.js App Router and Expo Router both run on web but use **different** routing APIs and lifecycles.
+- You want **one stable import** (`useRouter`, `Image`, etc.) in shared features while injecting **optimized** implementations per app root.
+
+So we combine **suffix splits** with **explicit Next vs Expo modules** and **runtime injection** at the root layout.
+
+<div className="h-8" />
+
+## The pattern
+
+1. **Shared contract** — `*.types.ts` defines the hook/component surface both platforms must satisfy.
+2. **Per-environment implementations** — `*.next.ts(x)` and `*.expo.ts(x)` wrap Next.js or Expo Router / `next/image` / `expo-image`, etc.
+3. **Thin universal entry** — `*.ts` / `*.tsx` reads the implementation from **`CoreContext`** (wired through **`UniversalAppProviders`** in each app’s root layout).
+4. **Root wiring** — The Expo app passes the Expo implementation; the Next app passes the Next implementation. Feature code stays unchanged.
+
+That way you reuse **optimized** versions per environment without refactoring every screen when you add or change a platform.
+
+<div className="h-8" />
+
+### Where the wiring lives
+
+Expo and Next each have an **app root** that imports `*.expo` / `*.next` implementations and passes them into **`UniversalAppProviders`**. That provider fills **`CoreContext`** so shared code in `packages/@green-stack-core` can use one API (`useRouter`, `Image`, …) everywhere.
+
+<FileTree>
+    <FileTree.Folder name="apps" defaultOpen>
+        <FileTree.Folder name="expo" defaultOpen>
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.File name="ExpoRootLayout.tsx  ← passes Expo implementations" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+        <FileTree.Folder name="next" defaultOpen>
+            <FileTree.Folder name="app" defaultOpen>
+                <FileTree.File name="NextClientRootLayout.tsx  ← passes Next implementations" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="features" defaultOpen>
+        <FileTree.Folder name="@app-core" defaultOpen>
+            <FileTree.Folder name="screens" defaultOpen>
+                <FileTree.File name="UniversalAppProviders.tsx  ← CoreContext.Provider" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@green-stack-core" defaultOpen>
+            <FileTree.Folder name="context" defaultOpen>
+                <FileTree.File name="CoreContext.tsx" />
+            </FileTree.Folder>
+            <FileTree.Folder name="navigation" defaultOpen>
+                <FileTree.File name="useRouter.ts" />
+                <FileTree.File name="useRouter.expo.ts" />
+                <FileTree.File name="useRouter.next.ts" />
+                <FileTree.File name="useRouter.types.ts" />
+            </FileTree.Folder>
+            <FileTree.Folder name="components" defaultOpen>
+                <FileTree.File name="Image.tsx" />
+                <FileTree.File name="Image.expo.tsx" />
+                <FileTree.File name="Image.next.tsx" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+<div className="h-8" />
+
+### `CoreContext` at app roots
+
+`UniversalAppProviders` is the single place that puts the platform implementations on **`CoreContext`**. Feature code never imports `*.expo` or `*.next` directly—it uses the universal modules (`useRouter`, `Image`, …) which read from context.
+
+```tsx filename="features/@app-core/screens/UniversalAppProviders.tsx" copy
+import { CoreContext } from '@green-stack/context/CoreContext'
+
+// ...inside UniversalAppProviders — props are unpacked from the app root
+
+<CoreContext.Provider
+    value={{
+        contextImage,
+        contextLink,
+        contextRouter,
+        useContextRouteParams,
+        isExpo,
+        isNext,
+        isDebugMode,
+        setIsDebugMode,
+        requestContext: isServer ? props.requestContext : {},
+    }}
+>
+    {children}
+</CoreContext.Provider>
+```
+
+<div className="h-4" />
+
+Each app root imports the **Expo** or **Next** implementations and passes them into `UniversalAppProviders`:
+
+```tsx filename="apps/expo/app/ExpoRootLayout.tsx" copy
+import UniversalAppProviders from '@app/screens/UniversalAppProviders'
+import { Image as ExpoContextImage } from '@green-stack/components/Image.expo'
+import { Link as ExpoContextLink } from '@green-stack/navigation/Link.expo'
+import { useRouter as useExpoContextRouter } from '@green-stack/navigation/useRouter.expo'
+import { useRouteParams as useExpoRouteParams } from '@green-stack/navigation/useRouteParams.expo'
+
+export default function ExpoRootLayout() {
+    const expoContextRouter = useExpoContextRouter()
+
+    return (
+        <UniversalAppProviders
+            contextImage={ExpoContextImage}
+            contextLink={ExpoContextLink}
+            contextRouter={expoContextRouter}
+            useContextRouteParams={useExpoRouteParams}
+            isExpo
+        >
+            {/* ... */}
+        </UniversalAppProviders>
+    )
+}
+```
+
+<div className="h-4" />
+
+```tsx filename="apps/next/app/NextClientRootLayout.tsx" copy
+"use client"
+import { isServer } from '@app/config'
+import UniversalAppProviders from '@app/screens/UniversalAppProviders'
+import { Image as NextContextImage } from '@green-stack/core/components/Image.next'
+import { Link as NextContextLink } from '@green-stack/core/navigation/Link.next'
+import { useRouter as useNextContextRouter } from '@green-stack/navigation/useRouter.next'
+import { useRouteParams as useNextRouteParams } from '@green-stack/navigation/useRouteParams.next'
+
+const NextClientRootLayout = ({ children, requestContext }) => {
+    const nextContextRouter = useNextContextRouter()
+
+    return (
+        <UniversalAppProviders
+            contextImage={NextContextImage}
+            contextLink={NextContextLink}
+            contextRouter={nextContextRouter}
+            useContextRouteParams={useNextRouteParams}
+            requestContext={isServer ? requestContext : {}}
+            isNext
+        >
+            {children}
+        </UniversalAppProviders>
+    )
+}
+```
+
+<div className="h-4" />
+
+> **Note:** `useRouter` from the platform file returns the object stored as `contextRouter` (Expo calls the hook once at the root; Next does the same). Universal hooks like `useRouter()` from `@green-stack/navigation/useRouter` then read `contextRouter` from `CoreContext` anywhere under these providers.
+
+<div className="h-8" />
+
+## Examples in this repo
+
+### Navigation hooks
+
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@green-stack-core" defaultOpen>
+            <FileTree.Folder name="navigation" defaultOpen>
+                <FileTree.File name="useRouter.expo.ts" />
+                <FileTree.File name="useRouter.next.ts" />
+                <FileTree.File name="useRouter.ts" />
+                <FileTree.File name="useRouter.types.ts" />
+                <FileTree.File name="useRouteParams.expo.ts" />
+                <FileTree.File name="useRouteParams.next.ts" />
+                <FileTree.File name="useRouteParams.ts" />
+                <FileTree.File name="useRouteParams.types.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+- Deeper walkthrough: [`useRouter`](/@green-stack-core/navigation/useRouter), [`useRouteParams`](/@green-stack-core/navigation/useRouteParams), [`Link`](/@green-stack-core/navigation/Link)
+
+<div className="h-8" />
+
+### Universal `Image`
+
+<FileTree>
+    <FileTree.Folder name="packages" defaultOpen>
+        <FileTree.Folder name="@green-stack-core" defaultOpen>
+            <FileTree.Folder name="components" defaultOpen>
+                <FileTree.File name="Image.expo.tsx" />
+                <FileTree.File name="Image.next.tsx" />
+                <FileTree.File name="Image.tsx" />
+                <FileTree.File name="Image.types.ts" />
+            </FileTree.Folder>
+        </FileTree.Folder>
+    </FileTree.Folder>
+</FileTree>
+
+- `Image.next.tsx` — `next/image` on web  
+- `Image.expo.tsx` — `expo-image` on native  
+- Details: [`Image`](/@green-stack-core/components/Image)
+
+For styling those primitives with Tailwind, see [Write-once Universal UI](/write-once-styles).
+
+<div className="h-8" />
+
+## Adding another environment
+
+Add `YourThing.<environment>.ts(x)` that satisfies the shared types, then pass it through the appropriate prop on `UniversalAppProviders` (see the per-feature docs above for the exact prop name).
+
+<div className="h-8" />
+
+## Further watching
+
+Broader context on the same ideas (not specific to this repo):
+
+<div className="h-4" />
+
+<div className="w-full md:max-w-[640px]">
+    <div className="relative pt-[56.25%]">
+        <iframe
+            className="absolute inset-0 h-full w-full rounded-lg"
+            src="https://www.youtube.com/embed/yi8UCnXPu8U"
+            title="Must know React Portability Patterns — Jack Herrington"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+        />
+    </div>
+</div>
+
+<div className="h-8" />
+
+## Related
+
+- [Cross-Platform Routing](/universal-routing) — workspace-defined routes and generators  
+- [Write-once Universal UI](/write-once-styles) — Nativewind, `Image`, and theme  
+- [`useRouter`](/@green-stack-core/navigation/useRouter) — `contextRouter`, `UniversalAppProviders`, and `CoreContext` wiring
