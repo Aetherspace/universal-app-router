@@ -1,4 +1,4 @@
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 import { FileTree, Callout } from 'nextra/components'
 import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
@@ -17,6 +17,8 @@ import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
 
 # Automatic Documentation Generation
 
+<View className="h-4" />
+
 ```md copy
 npx @fullproduct/universal-app install with/automatic-docgen
 ```
@@ -26,6 +28,8 @@ npm run regenerate:docs
 ```
 
 The `regenerate-docs` script automatically generates documentation pages for schemas, resolvers, and components across your monorepo. This keeps your docs in sync with your codebase while letting you add custom developer notes where needed.
+
+<div className="h-4" />
 
 ### How it works
 
@@ -97,9 +101,9 @@ For each resolver, the docs include:
 
 ### Example
 
-The [`healthCheck`](/@app-core/resolvers/healthCheck) resolver is documented from `features/@app-core/resolvers/healthCheck.bridge.ts`:
+The [`healthCheck`](/@app-demo/resolvers/healthCheck) resolver is documented from `features/@app-demo/resolvers/healthCheck.bridge.ts`:
 
-```ts filename="features/@app-core/resolvers/healthCheck.bridge.ts"
+```ts filename="features/@app-demo/resolvers/healthCheck.bridge.ts"
 export const healthCheckBridge = createDataBridge({
     resolverName: 'healthCheck',
     inputSchema: HealthCheckInput,

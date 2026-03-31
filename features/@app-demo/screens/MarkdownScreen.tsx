@@ -2,7 +2,7 @@ import React from 'react'
 import { useColorScheme } from 'nativewind'
 import { StatusBar } from 'expo-status-bar'
 import { View, ScrollView, getThemeColor } from '@app/ui'
-import MarkdownTheme from '@app/mdx'
+import MarkdownTheme from '@app/mdx' // @ts-ignore
 import ReadMe from '../mdx/ReadMe.mdx'
 import BackButton from '@app/demo/components/BackButton'
 

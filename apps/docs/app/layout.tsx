@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     feedback={{ content: null }}
                     sidebar={{
                         autoCollapse: true,
-                        defaultMenuCollapseLevel: 2,
+                        defaultMenuCollapseLevel: 1,
                         toggleButton: true,
                     }}
                     copyPageButton

@@ -1,5 +1,5 @@
 import { FileTree, Steps } from 'nextra/components'
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 
 <Image
     src="https://fullproduct.dev/docs/green-stack-logo.png"
@@ -10,6 +10,8 @@ import { Image } from '@app/ui'
 />
 
 # Configuring your Universal App
+
+<View className="h-4" />
 
 ```ts copy
 import { appConfig } from '@app/config'
@@ -30,6 +32,8 @@ This doc will cover the basic of configuring your app:
 - [Managing Dependencies](#managing-dependencies)
 - [Mobile App specific config](#managing-expo-config)
 - [Web / next.js specific config](#managing-nextjs-config)
+
+<div className="h-8" />
 
 ## App Context Flags
 
@@ -59,6 +63,8 @@ if (appConfig.isNext) console.log('Running app with Next.js')
 if (appConfig.isExpoWebLocal) console.log('Running locally on web with Expo')
 if (appConfig.isNextWebLocal) console.log('Running locally on web with Next.js')
 ```
+
+<div className="h-8" />
 
 ## Managing environment variables
 
@@ -103,6 +109,8 @@ export const appConfig = {
 }
 ```
 
+<div className="h-4" />
+
 ### Env vars in Next.js
 
 For development, staging & production environments, check the next.js docs:  
@@ -112,11 +120,15 @@ https://nextjs.org/docs/app/building-your-application/configuring/environment-va
 > This means dynamically retrieving environment variables from e.g. `process.env[someKey]` might not work
 > It also means that you should never prefix with `NEXT_PUBLIC_` for sensitive / private keys
 
+<div className="h-4" />
+
 #### Managing secrets
 
 App secrets that should only be available server-side should:
 -  not be prefixed with `NEXT_PUBLIC_` (this omits then from the client-side)
 -  not be included in Expo's `.env.local` file (all expo env vars are public and included in bundle by default)
+
+<div className="h-4" />
 
 ### Env vars in Expo
 
@@ -126,6 +138,8 @@ https://docs.expo.dev/guides/environment-variables/
 > Note that Expo will inline environment variables in your bundle during builds & deployments
 > This means dynamically retrieving environment variables from e.g. `process.env[someKey]` will not work
 > It also means that you should never include sensitive / private keys 
+
+<div className="h-4" />
 
 ### Defining endpoints
 
@@ -161,6 +175,8 @@ export const appConfig = {
 
 > For the examples above, we've already set these up for local use.
 
+<div className="h-8" />
+
 ## Feature and Domain config
 
 <FileTree>
@@ -179,6 +195,8 @@ As stated in our [project structure](/project-structure) docs, workspaces should
 That means that each feature or package workspace can have its own dependencies.
 
 > This helps keep things modular, portable and colocated so features remain copy-pasteable.
+
+<div className="h-4" />
 
 ### Expo SDK compatible packages
 
@@ -206,6 +224,8 @@ This will ask you where you'd like to install the package:
 
 You can then specify one or multiple packages to have their SDK compatible versions installed.
 
+<div className="h-8" />
+
 ## Managing Expo config
 
 Check the Expo docs for configuring your mobile app with Expo:
@@ -224,6 +244,8 @@ Check the Expo docs for configuring your mobile app with Expo:
         </FileTree.Folder>
     </FileTree.Folder>
 </FileTree>
+
+<div className="h-8" />
 
 ## Managing Next.js config
 

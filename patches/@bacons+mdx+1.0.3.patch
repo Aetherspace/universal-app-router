@@ -1,0 +1,168 @@
+diff --git a/node_modules/@bacons/mdx/build/server/plugins/rehype-expo-local-images.js b/node_modules/@bacons/mdx/build/server/plugins/rehype-expo-local-images.js
+index a7bc895..dcab9ab 100644
+--- a/node_modules/@bacons/mdx/build/server/plugins/rehype-expo-local-images.js
++++ b/node_modules/@bacons/mdx/build/server/plugins/rehype-expo-local-images.js
+@@ -6,16 +6,18 @@ Object.defineProperty(exports, "rehypeExpoLocalImages", {
+     enumerable: true,
+     get: ()=>rehypeExpoLocalImages
+ });
+-function _unistUtilVisit() {
+-    const data = require("unist-util-visit");
+-    _unistUtilVisit = function() {
+-        return data;
+-    };
+-    return data;
++let _unistUtilVisitMod = null;
++async function _loadUnistUtilVisit() {
++    if (!_unistUtilVisitMod) {
++        // unist-util-visit@5+ is ESM-only; SWC compiles static imports to `require()` which fails.
++        _unistUtilVisitMod = await import("unist-util-visit");
++    }
++    return _unistUtilVisitMod;
+ }
+ function rehypeExpoLocalImages({ matchLocalAsset =(props)=>!!props.src.match(/^[.@]/)  } = {}) {
+-    return (tree)=>{
+-        (0, _unistUtilVisit().visit)(tree, "element", (node)=>{
++    return async (tree)=>{
++        const { visit } = await _loadUnistUtilVisit();
++        visit(tree, "element", (node)=>{
+             if (node.tagName === "img" && imageHasStringSource(node.properties) && matchLocalAsset(node.properties) && !node.properties.src.startsWith("require(")) {
+                 node.properties.src = `require("${node.properties.src}")`;
+             }
+diff --git a/node_modules/@bacons/mdx/build/server/plugins/rehype-inline-code.js b/node_modules/@bacons/mdx/build/server/plugins/rehype-inline-code.js
+index 064df2f..5a2848b 100644
+--- a/node_modules/@bacons/mdx/build/server/plugins/rehype-inline-code.js
++++ b/node_modules/@bacons/mdx/build/server/plugins/rehype-inline-code.js
+@@ -6,20 +6,22 @@ Object.defineProperty(exports, "rehypeInlineCode", {
+     enumerable: true,
+     get: ()=>rehypeInlineCode
+ });
+-function _unistUtilVisit() {
+-    const data = require("unist-util-visit");
+-    _unistUtilVisit = function() {
+-        return data;
+-    };
+-    return data;
++let _unistUtilVisitMod = null;
++async function _loadUnistUtilVisit() {
++    if (!_unistUtilVisitMod) {
++        // unist-util-visit@5+ is ESM-only; SWC compiles static imports to `require()` which fails.
++        _unistUtilVisitMod = await import("unist-util-visit");
++    }
++    return _unistUtilVisitMod;
+ }
+ function rehypeInlineCode() {
+-    return (tree)=>{
+-        (0, _unistUtilVisit().visit)(tree, "element", (node, _index, parent)=>{
++    return async (tree)=>{
++        const { visit, SKIP } = await _loadUnistUtilVisit();
++        visit(tree, "element", (node, _index, parent)=>{
+             var ref;
+             if (node.tagName === "code" && ((ref = parent) == null ? void 0 : ref.tagName) !== "pre") {
+                 node.tagName = "inlineCode";
+-                return _unistUtilVisit().SKIP;
++                return SKIP;
+             }
+             return undefined;
+         });
+diff --git a/node_modules/@bacons/mdx/build/server/plugins/rehype-prefix-tag-names.js b/node_modules/@bacons/mdx/build/server/plugins/rehype-prefix-tag-names.js
+index 0f16089..9487f3d 100644
+--- a/node_modules/@bacons/mdx/build/server/plugins/rehype-prefix-tag-names.js
++++ b/node_modules/@bacons/mdx/build/server/plugins/rehype-prefix-tag-names.js
+@@ -6,16 +6,18 @@ Object.defineProperty(exports, "rehypePrefixTagNames", {
+     enumerable: true,
+     get: ()=>rehypePrefixTagNames
+ });
+-function _unistUtilVisit() {
+-    const data = require("unist-util-visit");
+-    _unistUtilVisit = function() {
+-        return data;
+-    };
+-    return data;
++let _unistUtilVisitMod = null;
++async function _loadUnistUtilVisit() {
++    if (!_unistUtilVisitMod) {
++        // unist-util-visit@5+ is ESM-only; SWC compiles static imports to `require()` which fails.
++        _unistUtilVisitMod = await import("unist-util-visit");
++    }
++    return _unistUtilVisitMod;
+ }
+ function rehypePrefixTagNames({ prefix ="html."  } = {}) {
+-    return (tree)=>{
+-        (0, _unistUtilVisit().visit)(tree, "element", (node)=>{
++    return async (tree)=>{
++        const { visit } = await _loadUnistUtilVisit();
++        visit(tree, "element", (node)=>{
+             if (!node.tagName.startsWith(prefix)) {
+                 node.tagName = `${prefix}${node.tagName}`;
+             }
+diff --git a/node_modules/@bacons/mdx/build/server/plugins/rehype-strip-table-whitespace.js b/node_modules/@bacons/mdx/build/server/plugins/rehype-strip-table-whitespace.js
+index 5ef997e..75a8596 100644
+--- a/node_modules/@bacons/mdx/build/server/plugins/rehype-strip-table-whitespace.js
++++ b/node_modules/@bacons/mdx/build/server/plugins/rehype-strip-table-whitespace.js
+@@ -6,12 +6,13 @@ Object.defineProperty(exports, "rehypeStripTableWhitespace", {
+     enumerable: true,
+     get: ()=>rehypeStripTableWhitespace
+ });
+-function _unistUtilVisit() {
+-    const data = require("unist-util-visit");
+-    _unistUtilVisit = function() {
+-        return data;
+-    };
+-    return data;
++let _unistUtilVisitMod = null;
++async function _loadUnistUtilVisit() {
++    if (!_unistUtilVisitMod) {
++        // unist-util-visit@5+ is ESM-only; SWC compiles static imports to `require()` which fails.
++        _unistUtilVisitMod = await import("unist-util-visit");
++    }
++    return _unistUtilVisitMod;
+ }
+ /**
+  * HTML table elements (table, thead, tbody, tfoot, tr) cannot have whitespace
+@@ -26,8 +27,9 @@ function _unistUtilVisit() {
+     "colgroup", 
+ ]);
+ function rehypeStripTableWhitespace() {
+-    return (tree)=>{
+-        (0, _unistUtilVisit().visit)(tree, "element", (node)=>{
++    return async (tree)=>{
++        const { visit } = await _loadUnistUtilVisit();
++        visit(tree, "element", (node)=>{
+             // Check if this is a table-related element that cannot have whitespace children
+             const tagName = node.tagName.replace(/^html\./, "");
+             if (TABLE_ELEMENTS.has(tagName)) {
+diff --git a/node_modules/@bacons/mdx/build/server/plugins/remark-code-title.js b/node_modules/@bacons/mdx/build/server/plugins/remark-code-title.js
+index 04732d3..d7fdc91 100644
+--- a/node_modules/@bacons/mdx/build/server/plugins/remark-code-title.js
++++ b/node_modules/@bacons/mdx/build/server/plugins/remark-code-title.js
+@@ -8,19 +8,21 @@ Object.defineProperty(exports, /**
+     enumerable: true,
+     get: ()=>remarkLinkRewrite
+ });
+-function _unistUtilVisit() {
+-    const data = require("unist-util-visit");
+-    _unistUtilVisit = function() {
+-        return data;
+-    };
+-    return data;
++let _unistUtilVisitMod = null;
++async function _loadUnistUtilVisit() {
++    if (!_unistUtilVisitMod) {
++        // unist-util-visit@5+ is ESM-only; SWC compiles static imports to `require()` which fails.
++        _unistUtilVisitMod = await import("unist-util-visit");
++    }
++    return _unistUtilVisitMod;
+ }
+ function remarkLinkRewrite() {
+-    return (tree, file)=>{
++    return async (tree, file)=>{
+         if (!file.cwd || !file.history || !file.history.length) {
+             return;
+         }
+-        (0, _unistUtilVisit().visit)(tree, "code", (node)=>{
++        const { visit } = await _loadUnistUtilVisit();
++        visit(tree, "code", (node)=>{
+             if (node.meta) {
+                 node.value = "@@@" + node.meta + "@@@" + node.value;
+             }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Dimensions, Image as RNImage, LayoutChangeEvent } from 'react-native'
+import { Dimensions, Image as RNImage, LayoutChangeEvent, Platform } from 'react-native'
 import { Image, View } from '@app/ui'
 import { UniversalImageProps } from '@green-stack/core/components/Image.types'
 import '../markdown.theme.css'
@@ -69,7 +69,7 @@ export const MarkdownImage = (props: MarkdownImageProps) => {
                     src={src}
                     style={[finalDimensions, customStyles]}
                     contentFit="contain"
-                    unoptimized
+                    {...(Platform.OS === 'web' ? { unoptimized: true } : {})}
                 />
             )}
         </View>

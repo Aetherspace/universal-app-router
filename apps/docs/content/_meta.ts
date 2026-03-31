@@ -32,6 +32,7 @@ export const meta = {
 
     'app-config': 'Env Vars + App Config',
     'workspace-drivers': 'Workspace Drivers',
+    'portability-patterns': 'Portability Patterns',
 
     // -- Portability --
 
@@ -54,6 +55,24 @@ export const meta = {
     'generators': 'Code Generators',
     'automatic-docgen': 'Automatic Docgen',
     'git-based-plugins': 'Git Based Plugins',
+
+    // -- UI Kit --
+
+    '-- Design System': {
+        'type': 'separator',
+        'title': 'Design System',
+    },
+
+    '@app-ui': '@app/ui',
+
+    // -- App Kit --
+
+    '-- App Kit': {
+        'type': 'separator',
+        'title': 'FullProduct.dev APIs',
+    },
+
+    '@green-stack-core': '@green-stack/core',
 
     // -- Features --
 
@@ -80,9 +99,9 @@ export const meta = {
     // -- Plugins --
 
     ...(!isEmpty(pluginMeta) ? {
-        '-- Plugins': {
+        '-- Installed Plugins': {
             'type': 'separator',
-            'title': 'Plugins',
+            'title': 'Installed Plugins',
         },
     } : {}),
 

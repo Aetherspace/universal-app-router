@@ -1,4 +1,4 @@
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 import { FileTree, Callout } from 'nextra/components'
 
 <Image
@@ -9,15 +9,21 @@ import { FileTree, Callout } from 'nextra/components'
     unoptimized
 />
 
+<View className="h-4" />
+
 ## Workspace Drivers
 
 Drivers in FullProduct.dev are designed to keep features copy‑pasteable across projects while letting you swap implementations (Stripe vs. another provider, Mongo vs. another DB) with minimal refactors. They live as [workspace packages](/project-structure) and are wired up through a generated registry.
+
+<div className="h-4" />
 
 ### What is a driver?
 
 **Workspace‑based abstraction**: Each driver type has a core package (e.g. `@payments/driver`) that defines the shared API surface via Zod schemas and signatures, plus one or more implementation packages (e.g. `@payments/stripe`).
 
 **Portable by design**: Implementations live in their own workspace, so you can copy the folder between projects. Registry scripts stitch everything together.
+
+<div className="h-4" />
 
 ### Key files and scripts
 
@@ -57,6 +63,8 @@ const createDriversFileContent = (ctx: {
 ].join('\n')
 ```
 
+<div className="h-4" />
+
 ### Generated outputs
 
 **Driver options and types**: All available implementations get listed in a central config:
@@ -79,6 +87,8 @@ export const DRIVER_OPTIONS = {
 
 **Typed driver registries**:  
 Each driver type gets a generated barrel at `@app/registries/drivers/{type}.drivers.generated.ts` (e.g. `payments.drivers.generated.ts`), exposing a map from implementation key to its `driver` object.
+
+<div className="h-4" />
 
 ### Selecting a driver
 

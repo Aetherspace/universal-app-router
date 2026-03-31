@@ -1,5 +1,5 @@
 import { FileTree, Steps } from 'nextra/components'
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 
 <Image
     src="https://fullproduct.dev/docs/green-stack-logo.png"
@@ -10,6 +10,10 @@ import { Image } from '@app/ui'
 />
 
 # Universal UI
+
+<View className="h-4" />
+
+<div className="h-8" />
 
 ## Write and style once, render anywhere
 
@@ -107,6 +111,8 @@ Some primitives like the `Image` component have optimized versions for each envi
 
 - `next/image` for web
 - `expo-image` for mobile
+
+That split is part of our broader **[React Portability Patterns](/portability-patterns)** — shared types, per-platform `*.next` / `*.expo` modules, and injection via app providers so Next and Expo can each use the right API without duplicating feature code.
 
 To automatically use the right one per render context, we've provided our own universal `Image` component:
 
@@ -219,7 +225,7 @@ You can manage colors, default text sizes, spacing and other theme-related prope
 
 <FileTree>
     <FileTree.Folder name="features" defaultOpen>
-        <FileTree.Folder name="@app-core" defaultOpen>
+        <FileTree.Folder name="@app-ui" defaultOpen>
             <FileTree.File name="tailwind.theme.js  ← Main universal theme" />
             <FileTree.File name="tailwind.config.js  ← Reused" />
         </FileTree.Folder>

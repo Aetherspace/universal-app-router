@@ -4,7 +4,6 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
-        "../../apps/next/next-env.d.ts",
         "../../packages/@green-stack-core/global.d.ts",
         "../../packages/@app-ui/nativewind-env.d.ts",
         "../../features/@app-core/appConfig.ts",

@@ -22,6 +22,18 @@
             "dependsOn": ["@app/next#build"],
             "cache": false
         },
+        "@app/docs#dev": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/docs#build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/docs#start": {
+            "dependsOn": ["@app/docs#build"],
+            "cache": false
+        },
         "@app/expo#dev": {
             "dependsOn": ["@green-stack/core#build:schema"],
             "cache": false

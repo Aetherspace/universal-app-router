@@ -1,4 +1,4 @@
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 import { FileTree } from 'nextra/components'
 import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
 import { TitleWrapper, Hidden } from '@app/docs/components/Hidden'
@@ -16,6 +16,8 @@ import { TitleWrapper, Hidden } from '@app/docs/components/Hidden'
 />
 
 # Schemas as Single Sources of Truth
+
+<View className="h-4" />
 
 We support three schema entrypoints: **v3** (default), **v4**, and **mini**. All work with our `schema()` wrapper and tooling.
 
@@ -52,9 +54,13 @@ A core feature of this universal starterkit is taking what works and making it b
 
 > `zod` is a schema validation library built with Typescript in mind. By extending it with `schema()`, we can leverage its powerful features to create single sources of truth for GraphQL, API handlers, Database Models and even automatic component docs.
 
+<div className="h-8" />
+
 ## Why Single Sources of Truth?
 
 ![Tweet by Matt Pocock: The right abstraction, found at the right time, can save you weeks of work. It's often worth putting the time in.](https://fullproduct.dev/blog-assets/imgs/matt-pocock-right-abstractions.jpg)
+
+<div className="h-4" />
 
 ### The problem
 
@@ -67,6 +73,8 @@ Generally speaking, you never want to define your data shape more than once. Not
 If you need to change something, you have to remember to change it in all the places. If at any point you forget to do that, then you risk your datastructures getting out of sync. When that happens, it will likely lead to outdated editor hints or docs at best, and bugs or even crashes at worst.
 
 ![Slide screenshot listing the risks of redefining your data in all these places](https://fullproduct.dev/blog-assets/imgs/redefining-shapes-risks.jpg)
+
+<div className="h-4" />
 
 ### The solution
 
@@ -85,9 +93,13 @@ You can use `schema()` to build out the shape of our data in one go. The resulti
 
 This is a huge win for maintainability and developer experience, as it avoids the need to keep it all in sync. No more redeclaring the same data shape for all your component props, database models or function args / responses.
 
+<div className="h-8" />
+
 ## Building Schemas with Zod
 
 Let's have a look at how `zod` and `schema()` defs translate to Typescript types: 👇
+
+<div className="h-4" />
 
 ### Choosing v3, v4, or Mini
 
@@ -163,6 +175,8 @@ export const User = schema('User', {
 
 > Check the full [schema reference docs](/@green-stack-core/schemas) for all available ways to build and describe schemas across v3, v4, and mini.
 
+<div className="h-4" />
+
 ### Extracting Types
 
 The main thing to use schemas for is to hard-link validation with types.
@@ -190,6 +204,8 @@ export type UserInput = z.input<typeof User>
 ```
 
 > In this case where we check the resulting type of `z.input()`, the 'isAdmin' field will be marked as optional, as it's supposedly not defaulted to `false` yet. If we'd inspect `z.output()`, it would be marked as required since it's either provided or presumed defaulted.
+
+<div className="h-4" />
 
 ### Schema Validation
 
@@ -228,6 +244,8 @@ try {
 }
 ```
 
+<div className="h-8" />
+
 ## Reusing and Expanding schemas
 
 It can happen that you need to differentiate between two similar data shapes, for example, needing to expand on an existing shape.
@@ -264,6 +282,8 @@ There are other ways to create schemas from other ones, similar to how you would
 
 - [`.pickSchema()`](/@green-stack-core/schemas#pickschema---select-fields) - to pick a subset of fields
 - [`.omitSchema()`](/@green-stack-core/schemas#omitschema---remove-fields) - to remove a subset of fields
+
+<div className="h-4" />
 
 ### Defining Defaults
 
@@ -330,6 +350,8 @@ const User = schema('...', {
 
 > When using `.default()`, you might need to be more specifc when inferring types. You can use `z.input()` or `z.output()` to get the correct type. Based on which you choose, defaulted fields will be either optional or required.
 
+<div className="h-4" />
+
 ### Marking fields as sensitive
 
 ```ts
@@ -342,9 +364,13 @@ In your schemas, you can mark fields as sensitive using `.sensitive()`. This wil
 - Mark the field as strippable in API resolvers / responses (*)
 - Mark the field with `isSensitive: true` in schema introspection
 
+<div className="h-8" />
+
 ## Transforming to other formats
 
 With both types and validation in place, you can now transform your schemas to other formats. This is where the real power of `schema()` comes into play.
+
+<div className="h-4" />
 
 ### Schema introspection
 
@@ -383,6 +409,8 @@ const userShapeMetadata = User.introspect()
 > Don't worry though, you're unlikely to have to do this manually in your day-to-day work.
 
 A **deep introspection API** is what allows the kit to transform these zod schemas to other formats. Introspection is what enables schemas to serve as the **Single Sources of Truth for all data shapes**, *making them quite portable*.
+
+<div className="h-4" />
 
 ### Introspection metadata
 
@@ -458,6 +486,8 @@ import type { Metadata, Meta$Schema, Meta$Tuple, ... } from '@green-stack/schema
 ```
 
 A good example of how introspected schemas can be transformed through is in the [Automatic MDX Docs](TODO) plugin:
+
+<div className="h-4" />
 
 ### Automatic MDX docgen
 
@@ -588,6 +618,8 @@ Check out a live example for the interactive [Button](/@app-ui/components/Button
 </Hidden>
 
 Using introspection and the resulting metadata, you could also create your own custom integrations.
+
+<div className="h-8" />
 
 ## Schema generator
 

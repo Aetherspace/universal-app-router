@@ -4,7 +4,7 @@ module.exports = function (api) {
     return {
         presets: ["babel-preset-expo"],
         plugins: [
-            ['@babel.plugin-transform-react-jsx', {
+            ['@babel/plugin-transform-react-jsx', {
                 runtime: 'automatic',
                 importSource: 'nativewind',
                 jsxImportSource: 'nativewind',

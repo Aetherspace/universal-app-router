@@ -1,6 +1,6 @@
 import { FileTree, Steps } from 'nextra/components'
 import { CodeBlockTabs, CodeBlockTab } from '../components/CodeBlockTabs'
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 
 <Image
     src="https://fullproduct.dev/docs/green-stack-logo.png"
@@ -11,6 +11,8 @@ import { Image } from '@app/ui'
 />
 
 # Universal Data Fetching
+
+<View className="h-4" />
 
 **This doc covers our recommended way to set up data-fetching in a way that:**
 - ✅ Remains portable across different projects
@@ -275,6 +277,8 @@ export const getPostBridge = createDataBridge({
     </CodeBlockTab>
 </CodeBlockTabs>
 
+<div className="h-4" />
+
 ### Build a fetcher function
 
 > We suggest you use `GraphQL` for building your data-fetching function.
@@ -380,6 +384,8 @@ export const getPostFetcher = bridgedFetcher({
 - ✅ Uses the executable graphql schema serverside
 - ✅ Can be used in the browser or mobile using fetch
 
+<div className="h-4" />
+
 ### Define data-fetching steps in `/screens/`
 
 > You'll be using your fetcher in `createQueryBridge()` in one of our universal screen components:
@@ -461,6 +467,8 @@ const PostDetailScreen = (props: PostDetailScreenProps) => {
 }
 ```
 
+<div className="h-4" />
+
 ### Use the bridge and screen in `/routes/`
 
 > We now have the individual parts of our data-fetching, all that's left is to bring it all together in a route:
@@ -524,6 +532,8 @@ export const maxDuration = 5
 > 💡 Check Next.js [route segment config](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) later to understand the options you can set here.
 
 We'll be re-exporting this route segment config in the next step. We'll keep it in the same file as the main route component for colocation and enabling `@green-stack/scripts` to automatically re-export it.
+
+<div className="h-4" />
 
 ### Re-export the route in your apps
 

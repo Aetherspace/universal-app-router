@@ -39,7 +39,7 @@ export const DocsProviders = ({ children }: { children: React.ReactNode }) => {
         }
         const queuedThemeCheck = () => {
             window.scrollTo(0, 0)
-            new Array(20).fill(null).forEach((_, idx) => setTimeout(resolveTheme, idx * 200))
+            new Array(5).fill(null).forEach((_, idx) => setTimeout(resolveTheme, 1000 + idx * 200))
         }
         const $themeButtons = document.querySelectorAll('button[title="Change theme"]')
         $themeButtons.forEach($button => $button.addEventListener('click', queuedThemeCheck))

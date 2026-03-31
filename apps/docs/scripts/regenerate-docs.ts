@@ -1167,6 +1167,10 @@ const regenerateDocs = async () => {
             return Promise.resolve(true)
         }))
 
+        // Remove '@app/ui' and '@green-stack/core' from package meta as we assign them manually
+        if (workspaceMeta.packages['@app-ui']) delete workspaceMeta.packages['@app-ui']
+        if (workspaceMeta.packages['@green-stack-core']) delete workspaceMeta.packages['@green-stack-core']
+
         // Write package aliases to registries
         const hasFeatureMeta = Object.keys(workspaceMeta.features).length > 0
         const hasPackageMeta = Object.keys(workspaceMeta.packages).length > 0

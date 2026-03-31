@@ -22,15 +22,22 @@ export const MarkdownTheme = ({ children }: MarkdownThemeProps) => {
   return (
         <View id="markdown-theme" className="flex flex-col flex-grow flex-shrink">
             <MDXComponents
-                h1={(props) => <H1 className="mb-4" {...props} />}
-                h2={(props) => <H2 className="mb-4" {...props} />}
-                h3={(props) => <H3 className="mb-4" {...props} />}
-                p={(props) => <P className="mb-4 leading-5" {...props} />}
-                ul={(props) => <View className="p-0" {...props} />}
-                li={(props) => <Text className="mb-4" {...props} />}
-                blockquote={(props) => <View className="border-l-4 border-gray-300 text-base pl-4 pt-1 leading-6" {...props} />}
-                a={(props) => <Link className="mt-4 text-base underline text-center max-w-full overflow-hidden" target="_blank" {...props} />}
-                img={(props) => <MarkdownImage {...props} styles={styles.img} />}
+                components={{
+                    h1: (props) => <H1 className="mb-4" {...props} />,
+                    h2: (props) => <H2 className="mb-4" {...props} />,
+                    h3: (props) => <H3 className="mb-4" {...props} />,
+                    p: (props) => <P className="mb-4 leading-5" {...props} />,
+                    ul: (props) => <View className="p-0" {...props} />,
+                    li: (props) => <Text className="mb-4" {...props} />,
+                    blockquote: (props) => (
+                        <View
+                            className="border-l-4 border-gray-300 text-base pl-4 pt-1 leading-6"
+                            {...props}
+                        />
+                    ),
+                    a: (props) => <Link className="mt-4 text-base underline text-center max-w-full overflow-hidden" target="_blank" {...props} />,
+                    img: (props) => <MarkdownImage {...props} styles={styles.img} />,
+                }}
             >
                 {children}
             </MDXComponents>

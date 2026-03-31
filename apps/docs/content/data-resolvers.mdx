@@ -1,5 +1,5 @@
 import { FileTree, Steps } from 'nextra/components'
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 import { TitleWrapper } from '@app/docs/components/Hidden'
 
 <TitleWrapper>
@@ -15,6 +15,8 @@ import { TitleWrapper } from '@app/docs/components/Hidden'
 />
 
 # Building a flexible API
+
+<View className="h-4" />
 
 ```shell
 @app-core
@@ -165,6 +167,8 @@ It's a metadata object you can use from either side to provide / transform / ext
 
 > For this reason, we suggest you add `.bridge.ts` to your bridge filenames.
 
+<div className="h-4" />
+
 ### Add your business logic
 
 <FileTree>
@@ -231,6 +235,8 @@ export const updatePost = createResolver(async ({
 
 > The difference with a regular function, since the logic is bundled together with its data-bridge / input + output metadata, is that we can easily transform it into APIs:
 
+<div className="h-4" />
+
 ### Turn resolver into an API route handler
 
 > We recommend workspaces follow Next.js API route conventions. This is so our scripts can automatically re-export them to the `@app/next` workspace later.
@@ -278,6 +284,8 @@ What `createNextRouteHandler()` does under the hood:
 
 > Restart your dev server or run `npm run link:routes` to make sure your new API route is available.
 
+<div className="h-4" />
+
 ### GraphQL, without the hassle
 
 ![](https://fullproduct.dev/blog-assets/imgs/schema-from-zod.jpg)
@@ -311,6 +319,8 @@ This will:
 You can now check out your GraphQL API playground at [/api/graphql](http://localhost:3000/api/graphql)
 
 ![Apollo Server GraphQL Playground Preview](https://github.com/FullProduct-dev/universal-app-router/assets/5967956/3b6b1d98-1228-44a4-aaa0-968664a027c3)
+
+<div className="h-4" />
 
 ### Optional - Add a universal fetcher
 
@@ -480,6 +490,8 @@ To prevent unauthorized acces, you likely want to:
 
 > We offer some solutions to help here but do not provide a default for you. More info on this in our recommended [Auth Plugins](TODO) in the sidebar.
 
+<div className="h-4" />
+
 ### Using the request context
 
 Our standard middleware adds any JSON serializable request context (like auth headers) to the `context` object in your resolver utils, e.g.:
@@ -504,6 +516,8 @@ export const updateProfile = createResolver(async ({
 ```
 
 This could be a good way to check for authorization in your resolver logic itself vs relying solely on middleware.
+
+<div className="h-4" />
 
 ### Marking fields as sensitive
 

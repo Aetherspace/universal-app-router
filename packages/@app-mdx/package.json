@@ -6,7 +6,7 @@
   "scripts": {},
   "dependencies": {
     "@app/ui": "*",
-    "@bacons/mdx": "*",
+    "@bacons/mdx": "~1.0.3",
     "@green-stack/core": "*"
   }
 }

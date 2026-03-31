@@ -48,6 +48,7 @@
     "build:preview": "node -v && npx turbo run @app/next#build @app/next#start",
     "build:schema": "npx turbo run @green-stack/core#build:schema",
     "build:theme-colors": "npx turbo run @green-stack/core#build:theme-colors",
+    "preview:docs": "node -v && npx turbo run @app/docs#build @app/docs#start",
     "check:workspaces": "npx turbo run @green-stack/core#check:workspaces",
     "check:workspaces:fix": "FIX_MODE=true npx turbo run @green-stack/core#check:workspaces",
     "collect:generators": "npx turbo run @green-stack/core#collect:generators",
@@ -70,6 +71,7 @@
     "test": "npm -w @green-stack/core test",
     "typecheck": "npx turbo run typecheck",
     "typecheck:web": "npx turbo run @app/next#typecheck",
+    "typecheck:docs": "npx turbo run @app/docs#typecheck",
     "typecheck:mobile": "npx turbo run @app/expo#typecheck",
     "turbo:login": "npx turbo login",
     "turbo:link": "npx turbo link",
@@ -78,6 +80,7 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.9.1",
+    "@bacons/mdx": "~1.0.3",
     "@turbo/gen": "^2.9.0",
     "expo": "~54.0.0",
     "expo-constants": "~18.0.10",

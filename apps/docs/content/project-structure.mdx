@@ -1,4 +1,4 @@
-import { Image } from '@app/ui'
+import { View, Image } from '@app/ui'
 import { FileTree } from 'nextra/components'
 
 <Image
@@ -10,6 +10,8 @@ import { FileTree } from 'nextra/components'
 />
 
 # Project structure
+
+<View className="h-4" />
 
 ```shell
 your-universal-app/
@@ -33,6 +35,8 @@ your-universal-app/
      └── /some-utility-package/...
 ```
 
+<div className="h-8" />
+
 ## Why not just a single workspace?
 
 There's two main reasons why the starterkit is structured this way:
@@ -42,6 +46,8 @@ There's two main reasons why the starterkit is structured this way:
 2. It facilitates **architecting for copy-paste**. A workspace folder within a monorepo is the ideal unit of work to copy and paste between projects. You define your custom code and the dependencies it needs in a single folder, and can then consume it in another workspace. Colocating the UI / API / models / schemas / utils / constants / resolvers / components / hooks for a single, portable, feature.
 
 ![](https://fullproduct.dev/blog-assets/imgs/colocate-by-feature-workspaces.jpg)
+
+<div className="h-8" />
 
 ## Monorepo workspaces
 
@@ -58,6 +64,8 @@ There's two main reasons why the starterkit is structured this way:
 > "This **modular approach** is essential to monorepos, a repository structure that houses multiple interconnected packages, facilitating streamlined management and development of large-scale projects."
 
 > "In JavaScript, **each 'package workspace' has a `package.json` file at its root**, which contains metadata about the package, including its name, version, and any dependencies."
+
+<div className="h-4" />
 
 ### Feature workspaces
 
@@ -87,6 +95,8 @@ Each of these might have specific routes or route-segments, data shapes, compone
 
 Think of these as the main sections of your app that would feel like either bloating the `@app/core` workspace, or that you know you'll reuse later in another project.
 
+<div className="h-4" />
+
 ### Package workspaces
 
 Package workspaces are less defined by features and more focused on utility. They're the place to put code that you'd like to consume across feature workspaces. Kind of like an NPM package, but local, editable and portable.
@@ -112,6 +122,8 @@ your-universal-app/
 
      └── /emails/...
 ```
+
+<div className="h-4" />
 
 ### Workspace structure
 
@@ -263,6 +275,8 @@ There are two main reasons for this recommended structure:
 
 Aside from `/schemas/`, `/models/`, `/resolvers/`, `/routes/` and `/icons/`, we have no automations related to the other folders. The names are just suggestions, and you can rename, add or split as you see fit.
 
+<div className="h-8" />
+
 ## Turborepo Basics
 
 The tool we use to manage the monorepo is called **[Turborepo](https://turbo.build/repo)**.
@@ -346,6 +360,8 @@ npm run gen
 
 > More about FullProduct.dev specific generators on our [generators page](/generators).
 
+<div className="h-8" />
+
 ## The registry pattern
 
 Ofcourse, any portable code you write in an isolated workspace is useless if you ultimately can't tie it all together in your apps or core features.
@@ -415,7 +431,11 @@ your-universal-app/
 
 In the other docs, we'll dive deeper into what each of these registries is used for.
 
+<div className="h-8" />
+
 ## Further reading
+
+<div className="h-4" />
 
 ### [Workspace Drivers](/workspace-drivers)
 
@@ -424,6 +444,8 @@ FullProduct.dev comes with an entire workspace based driver system:
 - Add a layer of abstraction on top of different provider options
 - Change underlying providers without refactoring much if any code
 - Plugins with workspace drivers for [Auth](https://fullproduct.dev/docs/@auth-clerk/README) / [Payments](https://fullproduct.dev/docs/@payments-driver/README) (e.g. [Stripe](https://fullproduct.dev/docs/@payments-stripe/README)) / etc...
+
+<div className="h-4" />
 
 ### Monorepo tools explained
 
