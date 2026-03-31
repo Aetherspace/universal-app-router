@@ -1,0 +1,55 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "outputs": [".next/**", "!.next/cache/**"],
+            "cache": true
+        },
+        "dev": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/next#dev": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/next#build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/next#start": {
+            "dependsOn": ["@app/next#build"],
+            "cache": false
+        },
+        "@app/expo#dev": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/expo#build": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "outputs": ["dist/**"],
+            "cache": true
+        },
+        "android": {
+            "cache": false
+        },
+        "ios": {
+            "cache": false
+        },
+        "@app/expo#web": {
+            "dependsOn": ["@green-stack/core#build:schema"],
+            "cache": false
+        },
+        "@app/expo#add-dependencies": {
+            "cache": false
+        },
+        "env:local": {
+            "cache": false
+        },
+        "typecheck": {
+            "cache": true,
+            "outputs": []
+        }
+    }
+}

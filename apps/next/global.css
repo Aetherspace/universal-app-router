@@ -1,3 +1,60 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Tailwind Theme -------------------------------------------------------------------------- */
+
+@layer base {
+    :root {
+        --background: 0, 0%, 100%;
+        --foreground: 240, 5%, 10%;
+        --primary: 222, 15%, 13%;
+        --primary-foreground: 0, 0%, 100%;
+        --secondary: 217, 13%, 19%;
+        --secondary-foreground: 210, 16%, 96%;
+        --accent: 240, 4.8%, 95.9%;
+        --accent-foreground: 240, 5.9%, 10%;
+        --card: 0, 0%, 100%;
+        --card-foreground: 240, 10%, 3.9%;
+        --popover: 0, 0%, 100%;
+        --popover-foreground: 240, 10%, 3.9%;
+        --link: 217, 90%, 70%;
+        --muted: 220, 8%, 65%;
+        --warn: 24, 89%, 47%;
+        --danger: 0, 78%, 47%;
+        --info: 197, 87%, 47%;
+        --success: 145, 67%, 40%;
+        --ring: 222, 22%, 15%;
+        --input: 216, 12%, 83%;
+    }
+
+    .dark:root {
+        --background: 216, 34%, 17%;
+        --foreground: 210, 16%, 96%;
+        --primary: 210, 16%, 96%;
+        --primary-foreground: 222, 15%, 13%;
+        --secondary: 220, 14%, 91%;
+        --secondary-foreground: 210, 23%, 26%;
+        --accent: 216, 34%, 25%;
+        --accent-foreground: 0, 0%, 98%;
+        --card: 216, 34%, 17%;
+        --card-foreground: 0, 0%, 98%;
+        --popover: 216, 34%, 17%;
+        --popover-foreground: 0, 0%, 98%;
+        --link: 213, 94%, 76%;
+        --muted: 220, 8%, 65%;
+        --warn: 24, 92%, 64%;
+        --danger: 0, 85%, 72%;
+        --info: 197, 87%, 47%;
+        --success: 145, 67%, 40%;
+        --ring: 222, 22%, 15%;
+        --input: 216, 12%, 83%;
+    }
+}
+
+/* --- CSS Reset ------------------------------------------------------------------------------- */
+
 /* -i- Upgrade from the CSS reset that came with Expo's default Next.js setup */
 /* Follows the setup for react-native-web: */
 /* https://necolas.github.io/react-native-web/docs/setup/#root-element */

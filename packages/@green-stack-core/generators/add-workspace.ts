@@ -1,0 +1,190 @@
+/* eslint-disable import/no-anonymous-default-export */
+import { PlopTypes } from '@turbo/gen'
+import { a, validateNonEmptyNoSpaces } from '../scripts/helpers/scriptUtils'
+import { createPrompts } from '../scripts/helpers/scriptUtils'
+
+/* --- Disclaimer ------------------------------------------------------------------------------ */
+
+// -i- Learn more about Plop Generators at:
+// -i- https://github.com/plopjs/plop
+
+/* --- Usage ----------------------------------------------------------------------------------- */
+
+// -i- npm run add:workspace -- --args <workspaceType> <folderName> <packageName> <workspaceStructure> <packageDescription> (pass _ to prompt for missing args)
+// -i- npm run add:workspace -- --workspaceType feature --folderName @app-core --packageName @app/core --workspaceStructure schemas resolvers components hooks screens routes utils --packageDescription "desc"
+// -i- npm run add:workspace -- --open  (open generated files in preferred editor)
+
+/* --- Constants ------------------------------------------------------------------------------- */
+
+const WORKSPACE_FOLDER_MAPPER = {
+    feature: 'features',
+    package: 'packages',
+} as const
+
+/* --- Prompts --------------------------------------------------------------------------------- */
+
+export const gen = createPrompts('add-workspace', {
+
+    workspaceType: {
+        type: 'list',
+        message: 'What type of workspace would you like to generate?',
+        choices: Object.keys(WORKSPACE_FOLDER_MAPPER),
+        default: 'feature',
+    },
+    folderName: {
+        type: 'input',
+        message: 'What foldername do you want to give this workspace?',
+    },
+    packageName: {
+        type: 'input',
+        message: `What package name would you like to import from? ${a.muted('(used for package.json)')}`,
+    },
+    workspaceStructure: {
+        type: 'checkbox',
+        message: `Optional: What will this workspace contain? ${a.muted('(optional extra folder setup)')}`,
+        choices: ['schemas', 'resolvers', 'components', 'hooks', 'screens', 'routes', 'utils'],
+    },
+    packageDescription: {
+        type: 'input',
+        message: `Optional: How would you shortly describe the package? ${a.muted('(used for package.json)')}`,
+        default: 'todo: add description',
+    },
+
+}, {
+
+    compute: {
+        folderName: {
+            validate: validateNonEmptyNoSpaces,
+        },
+        packageName: {
+            validate: validateNonEmptyNoSpaces,
+        },
+    },
+
+    parser: (answers) => {
+
+        // Args
+        const { workspaceType, folderName, packageName } = answers
+
+        // -- Vars --
+
+        const workspaceFolder = WORKSPACE_FOLDER_MAPPER[workspaceType as keyof typeof WORKSPACE_FOLDER_MAPPER] // prettier-ignore
+        const workspacePath = `${workspaceFolder}/${folderName}`
+        const isFeature = workspaceType === 'feature'
+
+        const usesCustomLicense = ['green-stack'].some((word) => packageName.includes(word))
+        let packageLicense = isFeature ? 'MIT' : 'UNLICENSED'
+        if (usesCustomLicense) packageLicense = 'SEE LICENSE IN LICENSE.md'
+        const isPrivate = isFeature || usesCustomLicense
+        const privateLine = isPrivate ? '\n    "private": true,' : ''
+
+        // -- Return --
+
+        return {
+            ...answers,
+            workspaceFolder,
+            workspacePath,
+            isFeature,
+            isPrivate,
+            usesCustomLicense,
+            packageLicense,
+            privateLine,
+        }
+    },
+
+})
+
+/* --- Types ----------------------------------------------------------------------------------- */
+
+type Answers = typeof gen._values
+type Context = typeof gen._parsed
+
+/* --- Templates ------------------------------------------------------------------------------- */
+
+const tsConfigTemplate = `{
+    "extends": "@app/core/tsconfig",
+    "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        "../../apps/next/next-env.d.ts",
+        "../../packages/@green-stack-core/global.d.ts",
+        "../../packages/@app-ui/nativewind-env.d.ts",
+        "../../features/@app-core/appConfig.ts",
+        "../../features/**/*.ts",
+        "../../features/**/*.tsx",
+    ],
+    "exclude": ["node_modules"]
+}`
+
+/** --- createPackageJsonContent() ------------------------------------------------------------- */
+/** -i- Builds package.json contents for a new workspace based on passed metadata */
+const createPackageJsonContent = (ctx: Context) => [
+    '{',
+    `    "name": "${ctx.packageName}",`,
+    `    "version": "0.0.1",${ctx.privateLine}`,
+    `    "description": "${ctx.packageDescription}",`,
+    '    "scripts": {},',
+    '    "dependencies": {}',
+    '}',
+].join('\n')
+
+/** --- Workspace Generator -------------------------------------------------------------------- */
+/** -i- Simple generator to add a new feature or package workspace */
+export const registerWorkspaceGenerator = (plop: PlopTypes.NodePlopAPI) => {
+    plop.setGenerator(gen.name, {
+        description: 'Create a new feature or package workspace',
+        prompts: gen.prompts,
+        actions: (data: GenAnswers) => {
+
+            // Context
+            const ctx = gen.parseAnswers(data)            
+            
+            // -- Actions --
+            
+            const actions = [
+                {
+                    type: 'add',
+                    path: `${ctx.workspacePath}/package.json`,
+                    template: createPackageJsonContent(ctx),
+                },
+                {
+                    type: 'add',
+                    path: `${ctx.workspacePath}/tsconfig.json`,
+                    template: tsConfigTemplate,
+                }
+            ] as PlopTypes.ActionType[]
+            
+            // -- Helpers --
+            
+            const addOptionalStructure = (folderName: string, file: string) => {
+                if (ctx.workspaceStructure.includes(folderName)) {
+                    actions.push({
+                        type: 'add',
+                        path: `${ctx.workspacePath}/${folderName}/${file}`,
+                    })
+                }
+            }
+            
+            // -- Optionals --
+            
+            addOptionalStructure('schemas', '.gitkeep')
+            addOptionalStructure('resolvers', '.gitkeep')
+            addOptionalStructure('components', '.gitkeep')
+            addOptionalStructure('hooks', '.gitkeep')
+            addOptionalStructure('screens', '.gitkeep')
+            addOptionalStructure('routes', '.gitkeep')
+            addOptionalStructure('utils', '.gitkeep')
+            
+            // -- Generate --
+            
+            return [
+                ...actions,
+                {
+                    type: 'open-files-in-editor',
+                    paths: [`${ctx.workspacePath}/package.json`],
+                },
+                { type: 'install' },
+            ]
+        },
+    })
+}

@@ -8,6 +8,8 @@
     ],
     "web": {
       "bundler": "metro"
-    }
+    },
+    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic"
   }
 }
